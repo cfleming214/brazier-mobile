@@ -1,0 +1,21 @@
+# DROP-61 scenario 9: Radar renders from the persisted query cache offline, then reconciles.
+appId: com.drophawk.app
+tags: [offline, android-only] # setAirplaneMode is Android-only in Maestro
+---
+- runFlow:
+    file: ../subflows/sign-in.yaml
+- runFlow: ../subflows/add-prismatic-watch.yaml
+- tapOn: '← RADAR'
+- assertVisible: 'Prismatic Evolutions Elite Trainer Box'
+- setAirplaneMode: enabled
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Prismatic Evolutions Elite Trainer Box'
+    timeout: 15000
+- setAirplaneMode: disabled
+- extendedWaitUntil:
+    visible:
+      id: 'system-strip'
+    timeout: 20000
+- assertVisible: 'Monitoring · 1'

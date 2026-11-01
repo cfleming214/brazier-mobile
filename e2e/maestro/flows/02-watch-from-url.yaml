@@ -1,0 +1,28 @@
+# DROP-59 scenario 3: Best Buy and Target product URLs resolve to the same canonical product.
+appId: com.drophawk.app
+tags: [watches]
+---
+- runFlow:
+    file: ../subflows/sign-in.yaml
+- tapOn:
+    id: 'tab-add'
+- tapOn:
+    id: 'search-input'
+- inputText: 'https://www.bestbuy.com/site/sample/9000001.p?skuId=9000001'
+- tapOn:
+    id: 'use-link'
+- assertVisible: 'Prismatic Evolutions Elite Trainer Box'
+- tapOn:
+    id: 'close-add-watch'
+- tapOn:
+    id: 'tab-add'
+- tapOn:
+    id: 'search-input'
+- inputText: 'https://www.target.com/p/sample/-/A-90000001'
+- tapOn:
+    id: 'use-link'
+- assertVisible: 'Prismatic Evolutions Elite Trainer Box'
+- tapOn:
+    id: 'save-watch'
+- assertVisible:
+    id: 'watch-product-name'

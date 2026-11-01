@@ -1,0 +1,23 @@
+# Adds a watch for Prismatic Evolutions ETB from catalog search with all carried retailers armed.
+appId: com.drophawk.app
+---
+- tapOn:
+    id: 'tab-add'
+- tapOn:
+    id: 'search-input'
+- inputText: 'Prismatic Evolutions ETB'
+- extendedWaitUntil:
+    visible:
+      id: 'search-result-0'
+    timeout: 10000
+- tapOn:
+    id: 'search-result-0'
+- assertVisible:
+    id: 'configure-product-name'
+- assertVisible: 'Prismatic Evolutions Elite Trainer Box'
+- tapOn:
+    id: 'save-watch'
+- extendedWaitUntil:
+    visible:
+      id: 'watch-product-name'
+    timeout: 10000

@@ -1,0 +1,26 @@
+# Signs in a fresh user with the emailed code. Callers pass EMAIL.
+appId: com.drophawk.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      notifications: allow
+- tapOn:
+    id: 'email-input'
+- inputText: ${EMAIL}
+- tapOn:
+    id: 'send-link'
+- assertVisible:
+    id: 'code-input'
+- runScript:
+    file: ../scripts/get-otp.js
+    env:
+      EMAIL: ${EMAIL}
+- tapOn:
+    id: 'code-input'
+- inputText: ${output.otp}
+- tapOn:
+    id: 'verify-code'
+- extendedWaitUntil:
+    visible: 'RADAR'
+    timeout: 15000
