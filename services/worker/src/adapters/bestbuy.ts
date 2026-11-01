@@ -39,8 +39,8 @@ export function mapBestBuy(
       state,
       priceCents: p.salePrice != null ? Math.round(p.salePrice * 100) : null,
       marketplaceOnly: p.marketplace === true,
-      shipAvailable: p.onlineAvailability,
-      pickupAvailable: p.inStoreAvailability,
+      shipAvailable: p.onlineAvailability === true,
+      pickupAvailable: p.inStoreAvailability === true,
     },
     now,
   );
