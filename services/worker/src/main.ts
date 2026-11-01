@@ -27,7 +27,14 @@ async function main() {
     db,
     createPushClient(config.EXPO_PUSH_URL, config.EXPO_ACCESS_TOKEN),
   );
-  const poller = new Poller({ db, adapters, governors, notifier });
+  const poller = new Poller({
+    db,
+    adapters,
+    governors,
+    notifier,
+    // Compressing poll intervals is only honoured against the fake retailer, never real stores.
+    intervalScale: config.FAKE_RETAILER_URL ? config.POLL_INTERVAL_SCALE : 1,
+  });
   const jobs = createJobs({ config, db, notifier, adapters: [...adapters.values()] });
 
   // Health and metrics endpoint (used by the latency test and E2E tier assertions).

@@ -94,3 +94,37 @@ describe('Metrics', () => {
     expect(m.checksPerMinute()).toBe(0);
   });
 });
+
+describe('confirmation priority', () => {
+  it('routine polls keep a token in reserve for confirming reads', () => {
+    let t = 0;
+    const policy = {
+      enabled: true,
+      maxRequestsPerMinute: 30,
+      allowedEndpoints: [],
+      automationAllowed: false,
+      backoffSeconds: 60,
+    };
+    const gov = new RetailerGovernor(policy, () => t);
+    let routine = 0;
+    while (gov.acquire('routine')) routine++;
+    expect(routine).toBe(4); // burst of 5, one held back
+    expect(gov.acquire('confirm')).toBe(true);
+    expect(gov.acquire('confirm')).toBe(false);
+    t += 2_000; // one token refills
+    expect(gov.acquire('routine')).toBe(false);
+    expect(gov.acquire('confirm')).toBe(true);
+  });
+
+  it('does not reserve on very small budgets', () => {
+    const policy = {
+      enabled: true,
+      maxRequestsPerMinute: 6,
+      allowedEndpoints: [],
+      automationAllowed: false,
+      backoffSeconds: 60,
+    };
+    const gov = new RetailerGovernor(policy, () => 0);
+    expect(gov.acquire('routine')).toBe(true);
+  });
+});

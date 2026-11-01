@@ -57,6 +57,8 @@ export interface PollerDeps {
   detector?: DetectorOptions;
   /** Delay before the confirming second read (ms). */
   confirmDelayMs?: number;
+  /** Multiplies tier intervals. Test stacks only (see config.POLL_INTERVAL_SCALE). */
+  intervalScale?: number;
 }
 
 /**
@@ -112,14 +114,22 @@ export class Poller {
     if (!s.last_checked_at) return true;
     const age = this.now() - Date.parse(s.last_checked_at);
     if (s.confirmations > 0) return age >= (this.d.confirmDelayMs ?? 1000);
-    return age >= TIER_INTERVAL_S[s.poll_tier] * 1000;
+    return age >= TIER_INTERVAL_S[s.poll_tier] * 1000 * (this.d.intervalScale ?? 1);
   }
 
   /** Run one loop. Returns how many SKUs were checked. */
   async tick(): Promise<number> {
     const skus = await this.watched();
     await this.updateTiers(skus);
-    const due = skus.filter((s) => this.isDue(s));
+    // Confirming reads first (an alert is waiting on them), then the fastest tiers.
+    const rank: Record<PollTier, number> = { burst: 0, hot: 1, normal: 2, cold: 3 };
+    const due = skus
+      .filter((s) => this.isDue(s))
+      .sort(
+        (a, b) =>
+          Number(b.confirmations > 0) - Number(a.confirmations > 0) ||
+          rank[a.poll_tier] - rank[b.poll_tier],
+      );
     const byRetailer = new Map<RetailerSlug, WatchedSku[]>();
     for (const s of due)
       byRetailer.set(s.retailer_id, [...(byRetailer.get(s.retailer_id) ?? []), s]);
@@ -134,7 +144,8 @@ export class Poller {
         const size = PER_SKU.includes(retailer) ? 1 : BATCH;
         for (let i = 0; i < list.length; i += size) {
           const chunk = list.slice(i, i + size);
-          if (!gov.acquire()) break; // over budget or backing off: try again next tick
+          const priority = chunk.some((s) => s.confirmations > 0) ? 'confirm' : 'routine';
+          if (!gov.acquire(priority)) break; // over budget or backing off: try again next tick
           const started = this.now();
           try {
             const results = await adapter.fetchAvailability(

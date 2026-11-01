@@ -1,4 +1,7 @@
+import { fileURLToPath } from 'node:url';
+import { readFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
+import { dirname, join, normalize, resolve } from 'node:path';
 import { RetailerSlug, StockState } from '@drophawk/shared';
 
 /**
@@ -27,6 +30,15 @@ export interface RequestLog {
   path: string;
   at: string;
 }
+
+/** Recorded adapter fixtures shared with the worker's contract tests (DROP-57). */
+const FIXTURES_DIR = resolve(
+  process.env.FIXTURES_DIR ??
+    join(
+      dirname(fileURLToPath(import.meta.url)),
+      '../../../services/worker/src/__tests__/fixtures',
+    ),
+);
 
 export function createFakeRetailer() {
   const skus = new Map<string, SkuState>();
@@ -70,11 +82,27 @@ export function createFakeRetailer() {
     const method = req.method ?? 'GET';
 
     if (parts[0] !== 'control' && parts[0] !== 'health') {
-      requests.push({ method, path: url.pathname, at: new Date().toISOString() });
+      requests.push({ method, path: url.pathname + url.search, at: new Date().toISOString() });
     }
 
     try {
       if (parts[0] === 'health') return send(res, 200, { ok: true });
+
+      // ---- Recorded fixtures: GET /fixtures/api/bestbuy-products.json, /fixtures/pages/x.html ----
+      if (method === 'GET' && parts[0] === 'fixtures') {
+        const rel = normalize(parts.slice(1).map(decodeURIComponent).join('/'));
+        const file = resolve(FIXTURES_DIR, rel);
+        if (!file.startsWith(FIXTURES_DIR + '/')) return send(res, 400, { error: 'bad path' });
+        try {
+          const body = await readFile(file);
+          res.writeHead(200, {
+            'content-type': file.endsWith('.html') ? 'text/html' : 'application/json',
+          });
+          return res.end(body);
+        } catch {
+          return send(res, 404, { error: 'no such fixture' });
+        }
+      }
 
       // ---- Control API (used by tests only) ----
       if (parts[0] === 'control') {

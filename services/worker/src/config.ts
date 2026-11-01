@@ -19,6 +19,8 @@ const Env = z.object({
   EXPO_PUSH_URL: z.string().url().default('https://exp.host'),
   EXPO_ACCESS_TOKEN: z.string().optional(),
   TICK_MS: z.coerce.number().int().positive().default(1000),
+  /** E2E only: shrink tier intervals (e.g. 0.02). Ignored unless FAKE_RETAILER_URL is set. */
+  POLL_INTERVAL_SCALE: z.coerce.number().positive().max(1).default(1),
   /** JSON array of {url, source, trust} RSS/Atom feeds for the calendar (official news, TCG news sites). */
   CALENDAR_FEEDS: z
     .string()

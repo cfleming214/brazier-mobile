@@ -17,9 +17,10 @@ export class TokenBucket {
     this.tokens = Math.min(this.burst, this.tokens + ((t - this.last) / 60_000) * this.perMinute);
     this.last = t;
   }
-  tryTake(n = 1): boolean {
+  /** Take n tokens, refusing if that would leave fewer than `keep` in the bucket. */
+  tryTake(n = 1, keep = 0): boolean {
     this.refill();
-    if (this.tokens < n) return false;
+    if (this.tokens - n < keep) return false;
     this.tokens -= n;
     return true;
   }
@@ -71,9 +72,14 @@ export class RetailerGovernor {
     this.bucket = new TokenBucket(policy.maxRequestsPerMinute, now);
     this.breaker = new CircuitBreaker(policy.backoffSeconds * 1000, 3, now);
   }
-  /** True when a request may be made right now (and consumes a token). */
-  acquire(): boolean {
-    return this.policy.enabled && this.breaker.canRequest() && this.bucket.tryTake();
+  /**
+   * True when a request may be made right now (and consumes a token). Routine polls leave one token
+   * in reserve so a restock's confirming read never queues behind them; the overall rate is unchanged.
+   */
+  acquire(priority: 'confirm' | 'routine' = 'routine'): boolean {
+    if (!this.policy.enabled || !this.breaker.canRequest()) return false;
+    const reserve = priority === 'routine' && this.policy.maxRequestsPerMinute >= 12 ? 1 : 0;
+    return this.bucket.tryTake(1, reserve);
   }
   allowsUrl(url: string): boolean {
     const bare = url.replace(/^https?:\/\//, '');

@@ -50,7 +50,7 @@ describe('fake retailer', () => {
     await fetch(`${base}/walmart/availability?skus=X`);
     const log = await fetch(`${base}/control/requests`).then((r) => r.json());
     expect(log).toHaveLength(1);
-    expect(log[0].path).toBe('/walmart/availability');
+    expect(log[0].path).toBe('/walmart/availability?skus=X');
   });
 
   it('rejects unknown retailers and states', async () => {
@@ -61,5 +61,24 @@ describe('fake retailer', () => {
       body: JSON.stringify({ state: 'MAYBE' }),
     });
     expect(r2.status).toBe(400);
+  });
+});
+
+describe('fixtures route', () => {
+  it('serves the shared adapter fixtures and refuses path traversal', async () => {
+    const { server } = createFakeRetailer();
+    await new Promise<void>((r) => server.listen(0, r));
+    const base = `http://localhost:${(server.address() as { port: number }).port}`;
+    try {
+      const ok = await fetch(`${base}/fixtures/api/bestbuy-products.json`);
+      expect(ok.status).toBe(200);
+      expect(((await ok.json()) as { products: unknown[] }).products.length).toBeGreaterThan(0);
+      const html = await fetch(`${base}/fixtures/pages/target-in-stock.html`);
+      expect(html.headers.get('content-type')).toBe('text/html');
+      expect((await fetch(`${base}/fixtures/..%2F..%2Fpackage.json`)).status).toBe(400);
+      expect((await fetch(`${base}/fixtures/api/missing.json`)).status).toBe(404);
+    } finally {
+      server.close();
+    }
   });
 });

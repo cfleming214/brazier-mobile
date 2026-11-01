@@ -43,6 +43,7 @@ services:
       SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:?run `supabase status` and export SUPABASE_SERVICE_ROLE_KEY}
       FAKE_RETAILER_URL: http://fake-retailer:4010
       EXPO_PUSH_URL: http://fake-push:4020
-      TICK_MS: '500'
+      TICK_MS: '200'
+      POLL_INTERVAL_SCALE: '0.02'
     extra_hosts: ['host.docker.internal:host-gateway']
     ports: ['8787:8787']
