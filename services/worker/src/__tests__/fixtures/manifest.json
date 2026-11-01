@@ -1,0 +1,43 @@
+{
+  "_doc": "Expected adapter output per recorded fixture (DROP-57). Shared by adapter-fixtures.test.ts and the fake retailer's /fixtures route. Re-record with services/worker/scripts/record-fixtures.ts.",
+  "api": {
+    "bestbuy": {
+      "file": "api/bestbuy-products.json",
+      "expect": {
+        "6000001": { "state": "IN_STOCK", "marketplaceOnly": false, "priceCents": 5999 },
+        "6000002": { "state": "OUT_OF_STOCK" },
+        "6000003": { "state": "PREORDER" },
+        "6000004": { "state": "IN_STOCK", "marketplaceOnly": true },
+        "6999999": { "state": "DELISTED" }
+      }
+    },
+    "walmart": {
+      "file": "api/walmart-items.json",
+      "expect": {
+        "7000001": { "state": "IN_STOCK", "marketplaceOnly": false, "priceCents": 4997 },
+        "7000002": { "state": "OUT_OF_STOCK" },
+        "7000003": { "state": "PREORDER" },
+        "7000004": { "state": "IN_STOCK", "marketplaceOnly": true },
+        "7999999": { "state": "DELISTED" }
+      }
+    },
+    "amazon": {
+      "file": "api/amazon-getitems.json",
+      "expect": {
+        "B0FIXTURE1": { "state": "IN_STOCK", "marketplaceOnly": false, "priceCents": 5999 },
+        "B0FIXTURE2": { "state": "OUT_OF_STOCK" },
+        "B0FIXTURE3": { "state": "PREORDER" },
+        "B0FIXTURE4": { "state": "IN_STOCK", "marketplaceOnly": true },
+        "B0FIXTURE9": { "state": "DELISTED" }
+      }
+    }
+  },
+  "pages": {
+    "target": {
+      "target-in-stock.html": { "state": "IN_STOCK" },
+      "target-oos-limit.html": { "state": "OUT_OF_STOCK" }
+    },
+    "gamestop": { "gamestop-marketplace.html": { "marketplaceOnly": true } },
+    "pokemoncenter": { "pkc-preorder.html": { "state": "PREORDER" } }
+  }
+}
