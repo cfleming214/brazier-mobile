@@ -1,0 +1,34 @@
+# Test doubles for integration and E2E runs. Supabase itself runs via `supabase start`.
+# The worker service joins this file in Phase 2 (DROP-27).
+name: drophawk-e2e
+services:
+  fake-retailer:
+    build:
+      context: ..
+      dockerfile: e2e/fake-retailer/Dockerfile
+    ports: ['4010:4010']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4010/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      retries: 10
+  fake-push:
+    build:
+      context: ..
+      dockerfile: e2e/fake-push/Dockerfile
+    ports: ['4020:4020']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4020/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      retries: 10
