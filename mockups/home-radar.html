@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DropHawk Radar Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: one phone-sized "operations console" centered on a dark field, with spec notes beside it on wide screens. Single dark theme by choice. */
+  --bg: #070b10;
+  --field: #0b1118;
+  --panel: #101923;
+  --panel-2: #142030;
+  --line: #1e2b3a;
+  --ink: #dbe5ee;
+  --muted: #7f92a5;
+  --accent: #ffb547;      /* hawk amber: brand + interactive */
+  --live: #34d399;        /* semantic: in stock */
+  --watch: #5cc8ff;       /* semantic: monitoring */
+  --dead: #ff6470;        /* semantic: sold out / down */
+  --warn: #ff9248;        /* semantic: degraded */
+  --font-display: "Chakra Petch", "Rajdhani", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: radial-gradient(1200px 700px at 50% -10%, #102030 0%, var(--bg) 60%) fixed, var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100%;
+  padding: 32px 16px 48px;
+}
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) 390px minmax(0, 260px);
+  gap: 40px;
+  justify-content: center;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.intro h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: .04em;
+  margin: 0 0 8px;
+  text-wrap: balance;
+}
+.intro p, .notes li { color: var(--muted); font-size: 14px; line-height: 1.55; }
+.intro .tag {
+  display: inline-block; font-family: var(--font-mono); font-size: 11px;
+  color: var(--accent); border: 1px solid #3a2c14; background: #1a140a;
+  padding: 3px 8px; border-radius: 4px; letter-spacing: .08em;
+}
+.notes h2 {
+  font-family: var(--font-display); font-size: 13px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink); margin: 0 0 12px;
+}
+.notes ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; counter-reset: n; }
+.notes li { counter-increment: n; display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+.notes li::before {
+  content: counter(n); font-family: var(--font-mono); font-size: 11px; color: var(--bg);
+  background: var(--accent); width: 20px; height: 20px; border-radius: 50%;
+  display: grid; place-items: center; margin-top: 1px;
+}
+.notes b { color: var(--ink); font-weight: 600; }
+.notes code { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+
+/* ---------- Phone ---------- */
+.phone {
+  width: 390px; height: 844px;
+  background: var(--field);
+  border-radius: 48px;
+  border: 1px solid #263445;
+  box-shadow: 0 0 0 10px #05080c, 0 0 0 11px #1b2633, 0 40px 80px rgba(0,0,0,.6);
+  overflow: hidden;
+  position: relative;
+  display: flex; flex-direction: column;
+}
+.statusbar {
+  height: 50px; padding: 16px 28px 0;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-body); font-weight: 600; font-size: 15px;
+  flex: none;
+}
+.island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 120px; height: 34px; background: #000; border-radius: 20px; }
+.sb-icons { display: flex; gap: 6px; align-items: center; }
+.scroll { flex: 1; overflow-y: auto; padding: 4px 14px 120px; scrollbar-width: none; }
+.scroll::-webkit-scrollbar { display: none; }
+
+.mark { font-family: var(--font-mono); color: var(--muted); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+
+/* Header */
+.hdr { display: flex; align-items: center; justify-content: space-between; padding: 6px 2px 12px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-logo { width: 32px; height: 32px; border-radius: 8px; background: #1a140a; border: 1px solid #3a2c14; display: grid; place-items: center; }
+.brand h2 { margin: 0; font-family: var(--font-display); font-size: 20px; letter-spacing: .08em; line-height: 1; }
+.brand .mark { margin-top: 3px; display: block; }
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--panel); display: grid; place-items: center; color: var(--ink); position: relative; cursor: pointer;
+}
+.icon-btn .dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--panel); }
+.icon-btn:focus-visible, .go:focus-visible, .seg button:focus-visible, .fab:focus-visible, .tab:focus-visible, .row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* System strip */
+.sys {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 8px 10px; font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+}
+.sys .ok { color: var(--live); font-weight: 600; }
+.sys .sep { width: 1px; height: 12px; background: var(--line); }
+.sys .num { color: var(--ink); font-variant-numeric: tabular-nums; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--live); position: relative; flex: none; }
+.pulse::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--live); animation: ping 1.6s ease-out infinite; }
+@keyframes ping { from { transform: scale(.6); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 9px 8px 8px; position: relative; overflow: hidden; }
+.kpi::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c); }
+.kpi .v { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: var(--c); }
+.kpi .l { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; }
+
+/* Panel */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; margin-top: 12px; }
+.panel-h { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 8px; }
+.panel-h h3 { margin: 0; font-family: var(--font-display); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.panel-h h3 .count { font-family: var(--font-mono); font-size: 10px; color: var(--bg); background: var(--c, var(--muted)); border-radius: 4px; padding: 1px 5px; letter-spacing: 0; }
+.panel-h a { font-family: var(--font-mono); font-size: 10px; color: var(--accent); text-decoration: none; letter-spacing: .08em; }
+
+/* Adapter health */
+.adapters { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 0 10px 10px; }
+.ad { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 4px 5px; text-align: center; }
+.ad .code { font-family: var(--font-mono); font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.ad .code i { width: 6px; height: 6px; border-radius: 50%; background: var(--s); display: inline-block; }
+.ad .lat { font-family: var(--font-mono); font-size: 9px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.ad.degraded { border-color: #4a2e18; }
+.ad.off { opacity: .5; }
+
+/* Next window */
+.next { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 4px 12px 12px; align-items: center; }
+.ring { position: relative; width: 64px; height: 64px; }
+.ring svg { transform: rotate(-90deg); }
+.ring .t { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.next .title { font-size: 14px; font-weight: 600; line-height: 1.3; }
+.next .meta { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; border: 1px solid currentColor; }
+.chip.confirmed { color: var(--live); }
+.chip.burst { color: var(--accent); }
+
+/* Segment */
+.seg { display: flex; gap: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 3px; margin-top: 12px; }
+.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; padding: 7px 0; border-radius: 7px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--panel-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+
+/* Watch cards (live) */
+.card { margin: 0 10px 10px; background: linear-gradient(180deg, #0f2620 0%, var(--panel-2) 60%); border: 1px solid #1d4a3a; border-radius: 12px; padding: 11px 11px 10px; position: relative; overflow: hidden; }
+.card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--live); box-shadow: 0 0 12px var(--live); }
+.card-top { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: start; }
+.thumb { width: 44px; height: 52px; border-radius: 6px; background: linear-gradient(160deg, #2a1f4a, #19243b); border: 1px solid #2c3a52; display: grid; place-items: center; font-family: var(--font-mono); font-size: 8px; color: #b8a6ff; letter-spacing: .06em; text-align: center; line-height: 1.2; }
+.thumb.alt { background: linear-gradient(160deg, #3a1e24, #1b2333); color: #ffb0b8; border-color: #4a2a33; }
+.thumb.blue { background: linear-gradient(160deg, #13304a, #19243b); color: #9dd8ff; }
+.thumb.gold { background: linear-gradient(160deg, #3a2e12, #1d2230); color: #ffd58a; }
+.card h4 { margin: 0; font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.card .sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); margin-top: 3px; }
+.badge { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; padding: 3px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.badge.live { color: #052016; background: var(--live); }
+.badge.live i { width: 5px; height: 5px; border-radius: 50%; background: #052016; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+.card-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+.stat { background: rgba(7,11,16,.55); border: 1px solid var(--line); border-radius: 7px; padding: 6px 7px; }
+.stat .k { font-family: var(--font-mono); font-size: 8.5px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+.stat .v { font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.stat .v .d { font-size: 10px; font-weight: 500; }
+.up { color: var(--live); } .down { color: var(--dead); }
+.card-bot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.spark { flex: 1; height: 28px; }
+.go { border: 0; background: var(--accent); color: #1a1004; font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: .1em; padding: 8px 14px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.go:hover { filter: brightness(1.08); }
+
+/* Monitoring rows */
+.rows { padding: 0 6px 6px; }
+.row { display: grid; grid-template-columns: 6px 1fr auto; gap: 10px; align-items: center; padding: 9px 6px; border-top: 1px solid var(--line); cursor: pointer; border-radius: 6px; }
+.row:first-child { border-top: 0; }
+.row:hover { background: var(--panel-2); }
+.row .bar { width: 4px; height: 30px; border-radius: 2px; background: var(--c); }
+.row .n { font-size: 13px; font-weight: 500; line-height: 1.25; }
+.row .m { font-family: var(--font-mono); font-size: 10px; color: var(--muted); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; }
+.row .r { text-align: right; font-family: var(--font-mono); font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row .r b { display: block; font-size: 11px; color: var(--c); letter-spacing: .08em; font-weight: 600; }
+.polling { display: inline-flex; align-items: center; gap: 4px; }
+.polling::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--watch); animation: blink 1.2s steps(2) infinite; }
+
+/* Event log */
+.log { font-family: var(--font-mono); font-size: 10px; line-height: 1.7; padding: 2px 12px 10px; color: var(--muted); height: 124px; overflow: hidden; position: relative; }
+.log::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: linear-gradient(transparent, var(--panel)); }
+.log div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log .ts { color: #566a7e; }
+.log .rt { color: var(--ink); display: inline-block; width: 30px; }
+.log .ev-in { color: var(--live); } .ev-oos { color: var(--dead); } .ev-sup { color: var(--warn); } .ev-push { color: var(--accent); } .ev-poll { color: var(--watch); }
+.log div.new { animation: flash 1.2s ease-out; }
+@keyframes flash { from { background: rgba(255,181,71,.15); } to { background: transparent; } }
+
+/* Tab bar + FAB */
+.fab { justify-self: center; align-self: start; margin-top: -2px; width: 48px; height: 44px; border-radius: 14px; border: 0; background: var(--accent); color: #1a1004; display: grid; place-items: center; box-shadow: 0 10px 24px rgba(255,181,71,.25), 0 0 0 4px rgba(255,181,71,.12); cursor: pointer; }
+.tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 86px; padding: 8px 10px 26px; background: rgba(10,16,23,.92); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); }
+.tab { border: 0; background: none; color: var(--muted); display: grid; justify-items: center; gap: 4px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.tab.on { color: var(--accent); }
+.home-ind { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: #c9d4de; opacity: .8; }
+
+.sample { text-align: center; margin-top: 14px; font-family: var(--font-mono); font-size: 10px; color: #4e6175; letter-spacing: .06em; }
+
+@media (max-width: 1060px) {
+  .stage { grid-template-columns: 390px; }
+  .intro, .notes { max-width: 390px; }
+  .intro { order: -1; }
+}
+@media (max-width: 430px) {
+  body { padding: 16px 8px 32px; }
+  .stage { grid-template-columns: minmax(0, 1fr); }
+  .phone { width: 100%; height: 820px; border-radius: 36px; box-shadow: 0 20px 40px rgba(0,0,0,.6); }
+  .island { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <section class="intro">
+    <span class="tag">MOCKUP · v0.1 · RADAR</span>
+    <h1>DropHawk Radar</h1>
+    <p>The home screen designed as a command center. You see system health first, then what's buying now, then what's being watched, then the raw event stream. Pokémon TCG sealed product at launch retailers.</p>
+    <p>Telemetry ticks live: last-checked timers, the next-window countdown and the event log are animated with sample data.</p>
+  </section>
+
+  <div>
+    <div class="phone" role="img" aria-label="DropHawk Radar home screen mockup">
+      <div class="island"></div>
+      <div class="statusbar">
+        <span>3:04</span>
+        <span class="sb-icons" aria-hidden="true">
+          <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="22" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/><rect x="24" y="4" width="1.5" height="4" rx=".75" fill="currentColor" opacity=".5"/></svg>
+        </span>
+      </div>
+
+      <div class="scroll">
+        <!-- Header -->
+        <div class="hdr">
+          <div class="brand">
+            <div class="brand-logo" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffb547" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5" opacity=".6"/><path d="M12 12 L19 6"/><circle cx="16.5" cy="8" r="1.2" fill="#ffb547"/></svg>
+            </div>
+            <div>
+              <h2>RADAR</h2>
+              <span class="mark">Ops · Pokémon TCG</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px">
+            <button class="icon-btn" aria-label="Search watches">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            </button>
+            <button class="icon-btn" aria-label="Alerts, 2 unread">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+              <span class="dot"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- System status -->
+        <div class="sys">
+          <span class="pulse"></span>
+          <span class="ok">POLLER ONLINE</span>
+          <span class="sep"></span>
+          <span>p95 <span class="num">1.8s</span></span>
+          <span class="sep"></span>
+          <span><span class="num" id="checks">412</span>/min</span>
+          <span class="sep"></span>
+          <span>push <span class="num" style="color:var(--live)">OK</span></span>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpis">
+          <div class="kpi" style="--c: var(--live)"><div class="v">2</div><div class="l">Live now</div></div>
+          <div class="kpi" style="--c: var(--watch)"><div class="v">9</div><div class="l">Watching</div></div>
+          <div class="kpi" style="--c: var(--dead)"><div class="v">3</div><div class="l">Sold out</div></div>
+          <div class="kpi" style="--c: var(--accent)"><div class="v">5</div><div class="l">Alerts 24h</div></div>
+        </div>
+
+        <!-- Adapter health -->
+        <div class="panel">
+          <div class="panel-h">
+            <h3>Retailer adapters</h3>
+            <a href="#adapters">5/6 UP</a>
+          </div>
+          <div class="adapters">
+            <div class="ad" style="--s: var(--live)"><div class="code"><i></i>BBY</div><div class="lat">API 210ms</div></div>
+            <div class="ad" style="--s: var(--live)"><div class="code"><i></i>TGT</div><div class="lat">340ms</div></div>
+            <div class="ad" style="--s: var(--live)"><div class="code"><i></i>WMT</div><div class="lat">API 190ms</div></div>
+            <div class="ad" style="--s: var(--live)"><div class="code"><i></i>GME</div><div class="lat">410ms</div></div>
+            <div class="ad degraded" style="--s: var(--warn)"><div class="code"><i></i>PKC</div><div class="lat" style="color:var(--warn)">BACKOFF</div></div>
+            <div class="ad off" style="--s: var(--muted)"><div class="code"><i></i>AMZ</div><div class="lat">PENDING</div></div>
+          </div>
+        </div>
+
+        <!-- Next drop window -->
+        <div class="panel">
+          <div class="panel-h">
+            <h3>Next window</h3>
+            <a href="#calendar">CALENDAR →</a>
+          </div>
+          <div class="next">
+            <div class="ring" aria-label="Countdown to next drop window">
+              <svg width="64" height="64" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="27" fill="none" stroke="#1e2b3a" stroke-width="5"/>
+                <circle id="ringArc" cx="32" cy="32" r="27" fill="none" stroke="#ffb547" stroke-width="5" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="40"/>
+              </svg>
+              <div class="t" id="cd">08:42</div>
+            </div>
+            <div>
+              <div class="title">Pokémon Center preorder: Mega Evolution ETB (PC exclusive)</div>
+              <div class="meta">
+                <span class="chip confirmed">Confirmed</span>
+                <span class="chip burst">Burst at T-10</span>
+                <span>3:13 AM ET</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Segment -->
+        <div class="seg" role="group" aria-label="Filter watches">
+          <button aria-pressed="true">All 14</button>
+          <button aria-pressed="false">Live 2</button>
+          <button aria-pressed="false">Watch 9</button>
+          <button aria-pressed="false">Out 3</button>
+        </div>
+
+        <!-- Live now -->
+        <div class="panel">
+          <div class="panel-h" style="--c: var(--live)">
+            <h3>Live now <span class="count">2</span></h3>
+            <span class="mark" style="color:var(--live)">Act fast</span>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="thumb">PRE<br>ETB</div>
+              <div>
+                <h4>Prismatic Evolutions Elite Trainer Box</h4>
+                <div class="sub">TARGET · TCIN 93954435 · ship + pickup</div>
+              </div>
+              <span class="badge live"><i></i>IN STOCK</span>
+            </div>
+            <div class="card-stats">
+              <div class="stat"><div class="k">Price</div><div class="v">$59.99 <span class="d up">MSRP</span></div></div>
+              <div class="stat"><div class="k">Live for</div><div class="v" id="live1">0:47</div></div>
+              <div class="stat"><div class="k">Typ. sellout</div><div class="v">~6 min</div></div>
+            </div>
+            <div class="card-bot">
+              <svg class="spark" id="spark1" viewBox="0 0 200 28" preserveAspectRatio="none" aria-label="Stock history, last 14 days"></svg>
+              <button class="go">GO
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="thumb alt">DRI<br>BNDL</div>
+              <div>
+                <h4>Destined Rivals Booster Bundle</h4>
+                <div class="sub">BEST BUY · SKU 6624827 · ship only</div>
+              </div>
+              <span class="badge live"><i></i>IN STOCK</span>
+            </div>
+            <div class="card-stats">
+              <div class="stat"><div class="k">Price</div><div class="v">$26.99 <span class="d up">MSRP</span></div></div>
+              <div class="stat"><div class="k">Live for</div><div class="v" id="live2">2:13</div></div>
+              <div class="stat"><div class="k">Comp</div><div class="v">$41 <span class="d up">+52%</span></div></div>
+            </div>
+            <div class="card-bot">
+              <svg class="spark" id="spark2" viewBox="0 0 200 28" preserveAspectRatio="none" aria-label="Stock history, last 14 days"></svg>
+              <button class="go">GO
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monitoring -->
+        <div class="panel">
+          <div class="panel-h" style="--c: var(--watch)">
+            <h3>Monitoring <span class="count">9</span></h3>
+            <a href="#all">VIEW ALL</a>
+          </div>
+          <div class="rows">
+            <div class="row" tabindex="0" style="--c: var(--accent)">
+              <span class="bar"></span>
+              <div>
+                <div class="n">Mega Evolution ETB (PC exclusive)</div>
+                <div class="m"><span>PKC</span><span>·</span><span class="polling">BURST 5s</span><span>·</span><span>≤ $65</span></div>
+              </div>
+              <div class="r"><b>ARMED</b><span data-ago="3">3s ago</span></div>
+            </div>
+            <div class="row" tabindex="0" style="--c: var(--watch)">
+              <span class="bar"></span>
+              <div>
+                <div class="n">Phantasmal Flames Booster Box</div>
+                <div class="m"><span>WMT BBY GME +2</span><span>·</span><span class="polling">30s</span></div>
+              </div>
+              <div class="r"><b>OOS</b><span data-ago="12">12s ago</span></div>
+            </div>
+            <div class="row" tabindex="0" style="--c: var(--watch)">
+              <span class="bar"></span>
+              <div>
+                <div class="n">Journey Together ETB</div>
+                <div class="m"><span>TGT WMT</span><span>·</span><span class="polling">30s</span><span>·</span><span>pickup ≤ 25km</span></div>
+              </div>
+              <div class="r"><b>OOS</b><span data-ago="21">21s ago</span></div>
+            </div>
+            <div class="row" tabindex="0" style="--c: var(--watch)">
+              <span class="bar"></span>
+              <div>
+                <div class="n">Prismatic Evolutions Super-Premium Collection</div>
+                <div class="m"><span>6 retailers</span><span>·</span><span class="polling">1m</span><span>·</span><span>est. Thu 3am</span></div>
+              </div>
+              <div class="r"><b>OOS</b><span data-ago="44">44s ago</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event log -->
+        <div class="panel">
+          <div class="panel-h">
+            <h3>Event stream</h3>
+            <span class="mark"><span class="pulse" style="display:inline-block; width:6px; height:6px; margin-right:6px; vertical-align:middle"></span>Live</span>
+          </div>
+          <div class="log" id="log" aria-live="off"></div>
+        </div>
+
+        <div class="sample">SAMPLE DATA · NOT LIVE INVENTORY</div>
+      </div>
+
+      <nav class="tabbar" aria-label="Main">
+        <button class="tab on" aria-current="page">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12l6-5"/></svg>Radar
+        </button>
+        <button class="tab">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendar
+        </button>
+        <button class="fab" aria-label="Add watch">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+        <button class="tab">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h13"/></svg>Feed
+        </button>
+        <button class="tab">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile
+        </button>
+      </nav>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    <h2>What's on screen</h2>
+    <ol>
+      <li><span><b>System strip.</b> Poller status, detection-to-push p95, checks per minute. Turns red if push delivery fails (<code>AlertPermissionGate</code>).</span></li>
+      <li><span><b>KPI tiles.</b> Counts by watch state. Each tile filters the list below.</span></li>
+      <li><span><b>Adapter health.</b> One cell per retailer, showing its rate-governor state. PKC shows backoff after 429s.</span></li>
+      <li><span><b>Next window.</b> <code>CountdownRing</code> for the nearest confirmed calendar event. Polling switches to burst at T-10.</span></li>
+      <li><span><b>Live now.</b> <code>WatchCard</code> with time in stock, typical sellout time, comp, a 14-day restock sparkline and a one-tap GO into checkout.</span></li>
+      <li><span><b>Monitoring.</b> Compact rows with poll tier, retailers and filters. The right column shows state and last-checked time.</span></li>
+      <li><span><b>Event stream.</b> Raw poll, detect, suppress and push events, so you can see why an alert did or didn't fire.</span></li>
+    </ol>
+  </aside>
+</div>
+
+<script>
+(function () {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Sparklines: restock spikes over 14 days (1 = in stock)
+  function spark(id, data, color) {
+    const el = document.getElementById(id);
+    const w = 200, h = 28, n = data.length, step = w / (n - 1);
+    const y = v => h - 3 - v * (h - 8);
+    let grid = '';
+    for (let i = 0; i < n; i += 4) grid += `<line x1="${i*step}" x2="${i*step}" y1="0" y2="${h}" stroke="#1e2b3a" stroke-width="1"/>`;
+    let d = `M0 ${y(data[0])}`;
+    for (let i = 1; i < n; i++) d += ` L${i*step} ${y(data[i-1])} L${i*step} ${y(data[i])}`;
+    const area = d + ` L${w} ${h} L0 ${h} Z`;
+    el.innerHTML = grid +
+      `<path d="${area}" fill="${color}" opacity=".14"/>` +
+      `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>` +
+      `<circle cx="${w-2}" cy="${y(data[n-1])}" r="3" fill="${color}"/>`;
+  }
+  spark('spark1', [0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1], '#34d399');
+  spark('spark2', [0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1], '#34d399');
+
+  // Ticking timers
+  let cdSec = 8 * 60 + 42, l1 = 47, l2 = 133;
+  const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const arc = document.getElementById('ringArc');
+  const agoEls = [...document.querySelectorAll('[data-ago]')];
+  function tick() {
+    cdSec = Math.max(0, cdSec - 1); l1++; l2++;
+    const mm = String(Math.floor(cdSec / 60)).padStart(2, '0'), ss = String(cdSec % 60).padStart(2, '0');
+    document.getElementById('cd').textContent = `${mm}:${ss}`;
+    arc.setAttribute('stroke-dashoffset', (169.6 * (cdSec / 900)).toFixed(1));
+    document.getElementById('live1').textContent = fmt(l1);
+    document.getElementById('live2').textContent = fmt(l2);
+    agoEls.forEach(el => {
+      let v = +el.dataset.ago + 1;
+      const limit = el.textContent.startsWith('3') || +el.dataset.ago < 6 ? 5 : 60;
+      if (v > limit) v = 1;
+      el.dataset.ago = v; el.textContent = `${v}s ago`;
+    });
+    document.getElementById('checks').textContent = 400 + Math.floor(Math.random() * 30);
+  }
+
+  // Event log
+  const events = [
+    ['TGT', 'ev-in',   'IN_STOCK  PRE ETB  $59.99  confirmed 2/2'],
+    ['SYS', 'ev-push', 'PUSH  3 devices  prio=high  412ms'],
+    ['WMT', 'ev-sup',  'SUPPRESS  PFL BBOX  3P seller $189'],
+    ['BBY', 'ev-poll', 'POLL  48 SKUs  batch  210ms'],
+    ['PKC', 'ev-oos',  'HTTP 429  backoff 120s'],
+    ['GME', 'ev-poll', 'POLL  JTG ETB  OOS  402ms'],
+    ['TGT', 'ev-sup',  'SUPPRESS  JTG ETB  pickup 61km > 25km'],
+    ['BBY', 'ev-in',   'IN_STOCK  DRI BNDL  $26.99  confirmed 2/2'],
+    ['WMT', 'ev-poll', 'POLL  31 SKUs  batch  188ms'],
+    ['TGT', 'ev-oos',  'FLAP  MEG BNDL  OOS in 1.1s  no alert'],
+    ['SYS', 'ev-push', 'PUSH  1 device  prio=high  388ms'],
+    ['PKC', 'ev-poll', 'BURST  MEG ETB PC  5s tier armed'],
+  ];
+  const log = document.getElementById('log');
+  let t = new Date(2026, 10, 1, 3, 4, 12, 418), idx = 0;
+  function stamp() {
+    t = new Date(t.getTime() + 300 + Math.floor(Math.random() * 1800));
+    const p = (n, l = 2) => String(n).padStart(l, '0');
+    return `${p(t.getHours())}:${p(t.getMinutes())}:${p(t.getSeconds())}.${p(t.getMilliseconds(), 3)}`;
+  }
+  function addLine(animate) {
+    const [rt, cls, msg] = events[idx++ % events.length];
+    const div = document.createElement('div');
+    div.innerHTML = `<span class="ts">${stamp()}</span> <span class="rt">${rt}</span> <span class="${cls}">${msg}</span>`;
+    if (animate) div.className = 'new';
+    log.prepend(div);
+    while (log.children.length > 9) log.lastChild.remove();
+  }
+  for (let i = 0; i < 7; i++) addLine(false);
+
+  // Segment buttons toggle visual state only
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    b.setAttribute('aria-pressed', 'true');
+  }));
+
+  if (!reduce) {
+    setInterval(tick, 1000);
+    setInterval(() => addLine(true), 2400);
+  }
+})();
+</script>
+</body>
+</html>
