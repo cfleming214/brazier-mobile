@@ -18,6 +18,7 @@ import { liveRetailer } from '@/components/WatchCard';
 import { pollTierLabel, retailerNames, statusColor, timeAgo } from '@/lib/format';
 import { openRetailer } from '@/lib/openRetailer';
 import { useDeleteWatch, useStockEvents, useUpdateWatch, useWatch } from '@/lib/queries';
+import { typicalWindow, useRestockStats } from '@/lib/calendar';
 import { colors, fonts, radius, space } from '@/lib/theme';
 
 const stateColor: Record<string, string> = {
@@ -34,6 +35,7 @@ export default function WatchDetail() {
   const now = useNow();
   const { data: w, isLoading, isError } = useWatch(id);
   const { data: events = [] } = useStockEvents(w?.product_id);
+  const { data: stats = [] } = useRestockStats(w?.product_id);
   const update = useUpdateWatch();
   const remove = useDeleteWatch();
   const [maxPrice, setMaxPrice] = useState('');

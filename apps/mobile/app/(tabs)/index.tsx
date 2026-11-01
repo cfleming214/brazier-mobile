@@ -16,7 +16,14 @@ import { retailerNames, timeAgo } from '@/lib/format';
 import { summarize } from '@/lib/radar';
 import { openRetailer } from '@/lib/openRetailer';
 import { useAuth } from '@/lib/auth';
-import { useDeleteWatch, useNextEvent, useUpdateWatch, useWatches } from '@/lib/queries';
+import {
+  useDeleteWatch,
+  useNextEvent,
+  useStockEvents,
+  useUpdateWatch,
+  useWatches,
+} from '@/lib/queries';
+import { useRestockStats } from '@/lib/calendar';
 import {
   pollerOnline,
   useActivity,
@@ -233,11 +240,10 @@ export default function Radar() {
               >
                 <View style={{ gap: space.sm }}>
                   {live.map((w) => (
-                    <WatchCard
+                    <LiveCard
                       key={w.watch_id}
                       watch={w}
                       now={now}
-                      history={historyFromRetailers(w)}
                       onPress={() => router.push(`/watch/${w.watch_id}`)}
                       onGo={(r) => openRetailer(r)}
                       onPause={() =>
@@ -282,7 +288,30 @@ export default function Radar() {
   );
 }
 
-/** Until restock history lands (DROP-49), show the current live period only. */
+/** WatchCard with restock stats (typical sellout) and 14-day history for its product. */
+function LiveCard(props: Omit<Parameters<typeof WatchCard>[0], 'typicalSelloutMin' | 'history'>) {
+  const { data: stats = [] } = useRestockStats(props.watch.product_id);
+  const { data: events = [] } = useStockEvents(props.watch.product_id);
+  const medians = stats
+    .map((s) => s.median_in_stock_min)
+    .filter((m): m is number => m != null)
+    .sort((a, b) => a - b);
+  const history = events.length
+    ? events.map((e) => ({
+        at: new Date(e.observed_at).getTime(),
+        inStock: e.new_state === 'IN_STOCK',
+      }))
+    : historyFromRetailers(props.watch);
+  return (
+    <WatchCard
+      {...props}
+      history={history}
+      typicalSelloutMin={medians.length ? medians[Math.floor(medians.length / 2)]! : null}
+    />
+  );
+}
+
+/** Fallback before any history exists: show the current live period only. */
 function historyFromRetailers(w: WatchOverview): StockPoint[] {
   return w.retailers
     .filter((r) => r.state === 'IN_STOCK' && r.last_checked_at)

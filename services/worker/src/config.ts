@@ -19,6 +19,15 @@ const Env = z.object({
   EXPO_PUSH_URL: z.string().url().default('https://exp.host'),
   EXPO_ACCESS_TOKEN: z.string().optional(),
   TICK_MS: z.coerce.number().int().positive().default(1000),
+  /** JSON array of {url, source, trust} RSS/Atom feeds for the calendar (official news, TCG news sites). */
+  CALENDAR_FEEDS: z
+    .string()
+    .default('[]')
+    .transform(
+      (s) => JSON.parse(s) as { url: string; source: string; trust: 'official' | 'news' }[],
+    ),
+  /** Shared secret for the inbound newsletter webhook (POST /inbound/email). */
+  INBOUND_SECRET: z.string().optional(),
   METRICS_PORT: z.coerce.number().int().positive().default(8787),
 });
 

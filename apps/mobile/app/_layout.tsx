@@ -87,6 +87,7 @@ function Navigator({ signedIn }: { signedIn: boolean }) {
         <Stack.Screen name="watch/[id]" />
         <Stack.Screen name="scan" options={{ presentation: 'fullScreenModal' }} />
         <Stack.Screen name="notifications" />
+        <Stack.Screen name="calendar-submit" options={{ presentation: 'modal' }} />
         <Stack.Screen name="settings/notifications" />
       </Stack.Protected>
       <Stack.Protected guard={!signedIn}>

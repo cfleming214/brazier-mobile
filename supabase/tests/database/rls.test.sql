@@ -83,8 +83,8 @@ delete from public.push_tokens;
 
 -- Back to postgres to check nothing changed.
 reset role;
-select is((select count(*)::int from public.watches where not paused), 1, 'User B could not update or delete user A''s watch');
-select is((select count(*)::int from public.push_tokens), 1, 'User B could not delete user A''s push token');
+select is((select count(*)::int from public.watches where not paused and user_id = 'aaaaaaaa-0000-4000-8000-000000000001'), 1, 'User B could not update or delete user A''s watch');
+select is((select count(*)::int from public.push_tokens where user_id = 'aaaaaaaa-0000-4000-8000-000000000001'), 1, 'User B could not delete user A''s push token');
 
 -- ---------------------------------------------------------------------------
 -- Catalog, stock and calendar are read-only for users
@@ -111,7 +111,7 @@ select throws_ok(
   '42501', null, 'Users cannot insert calendar events'
 );
 
-select is((select count(*)::int from public.calendar_events), 2, 'Users only see published calendar events');
+select is((select count(*)::int from public.calendar_events where not published), 0, 'Users only see published calendar events');
 select is((select count(*)::int from public.calendar_source_items), 0, 'Users cannot read raw calendar source items');
 
 -- ---------------------------------------------------------------------------

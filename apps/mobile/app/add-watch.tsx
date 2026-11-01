@@ -19,7 +19,7 @@ import { colors, fonts, radius, space } from '@/lib/theme';
 
 /** Add Watch: find a product (search, paste a link or scan), then choose retailers and filters. */
 export default function AddWatch() {
-  const params = useLocalSearchParams<{ productId?: string; retailer?: string }>();
+  const params = useLocalSearchParams<{ productId?: string; retailer?: string; q?: string }>();
   const [productId, setProductId] = useState<string | null>(params.productId ?? null);
   return (
     <Screen>
@@ -42,15 +42,15 @@ export default function AddWatch() {
           onBack={() => setProductId(null)}
         />
       ) : (
-        <Find onPick={setProductId} />
+        <Find onPick={setProductId} initialQuery={params.q} />
       )}
     </Screen>
   );
 }
 
-function Find({ onPick }: { onPick: (id: string) => void }) {
-  const [q, setQ] = useState('');
-  const [debounced, setDebounced] = useState('');
+function Find({ onPick, initialQuery }: { onPick: (id: string) => void; initialQuery?: string }) {
+  const [q, setQ] = useState(initialQuery ?? '');
+  const [debounced, setDebounced] = useState(initialQuery ?? '');
   const [message, setMessage] = useState<string | null>(null);
   const [resolving, setResolving] = useState(false);
   const { data: results = [], isFetching } = useProductSearch(debounced);
