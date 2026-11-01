@@ -12,7 +12,8 @@ import {
   View,
 } from 'react-native';
 import { Button, Panel, Screen, T } from '@/components/ui';
-import { resolveUrl, type ProductSearchResult } from '@/lib/api';
+import { isFreeLimitError, resolveUrl, type ProductSearchResult } from '@/lib/api';
+import { track } from '@/lib/monitoring';
 import { retailerNames, WATCHABLE_RETAILERS } from '@/lib/format';
 import { useCreateWatch, useProduct, useProductSearch } from '@/lib/queries';
 import { colors, fonts, radius, space } from '@/lib/theme';
@@ -233,9 +234,15 @@ function Configure({
         includeMarketplace: marketplace,
         pickupRadiusKm: radiusKm,
       });
+      track('watch_created', { retailers: chosen.length, marketplace });
       router.dismissTo('/');
       router.push(`/watch/${id}`);
     } catch (e) {
+      if (isFreeLimitError(e)) {
+        track('watch_limit_hit');
+        router.push('/paywall?reason=limit');
+        return;
+      }
       const msg = e instanceof Error ? e.message : '';
       setError(
         msg.includes('duplicate')

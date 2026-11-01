@@ -57,3 +57,10 @@ export const statusColor = {
 } as const;
 
 export const pollTierLabel = { cold: '5m', normal: '1m', hot: '30s', burst: 'BURST 5s' } as const;
+
+/** Average alert→open response time for the Profile hit-rate panel. */
+export function formatResponseTime(seconds: number | null | undefined): string {
+  if (seconds == null) return '—';
+  if (seconds < 60) return `${seconds}s`;
+  return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+}

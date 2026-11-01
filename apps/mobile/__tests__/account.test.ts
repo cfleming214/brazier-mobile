@@ -1,0 +1,25 @@
+import { isFreeLimitError } from '@/lib/api';
+import { formatResponseTime } from '@/lib/format';
+import { shouldPersistQuery } from '@/lib/queryClient';
+
+describe('account helpers', () => {
+  it('detects the free-tier trigger error', () => {
+    expect(isFreeLimitError(new Error('FREE_LIMIT: free plan allows 3 active watches'))).toBe(true);
+    expect(isFreeLimitError(new Error('duplicate key'))).toBe(false);
+    expect(isFreeLimitError('FREE_LIMIT')).toBe(false);
+  });
+
+  it('formats response times', () => {
+    expect(formatResponseTime(null)).toBe('—');
+    expect(formatResponseTime(42)).toBe('42s');
+    expect(formatResponseTime(125)).toBe('2m 5s');
+  });
+
+  it('never persists device-only queries to AsyncStorage', () => {
+    expect(shouldPersistQuery({ state: { status: 'success' } })).toBe(true);
+    expect(shouldPersistQuery({ state: { status: 'success' }, meta: { persist: false } })).toBe(
+      false,
+    );
+    expect(shouldPersistQuery({ state: { status: 'error' } })).toBe(false);
+  });
+});

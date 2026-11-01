@@ -14,7 +14,6 @@ import { useNow } from '@/hooks/useNow';
 import type { WatchOverview, WatchStatus } from '@/lib/api';
 import { retailerNames, timeAgo } from '@/lib/format';
 import { summarize } from '@/lib/radar';
-import { openRetailer } from '@/lib/openRetailer';
 import { useAuth } from '@/lib/auth';
 import {
   useDeleteWatch,
@@ -245,7 +244,7 @@ export default function Radar() {
                       watch={w}
                       now={now}
                       onPress={() => router.push(`/watch/${w.watch_id}`)}
-                      onGo={(r) => openRetailer(r)}
+                      onGo={() => router.push(`/checkout/${w.watch_id}`)}
                       onPause={() =>
                         update.mutate({ id: w.watch_id, patch: { paused: !w.paused } })
                       }

@@ -1,5 +1,5 @@
 begin;
-select plan(24);
+select plan(25);
 
 -- ---------------------------------------------------------------------------
 -- Every public table has row level security on
@@ -118,7 +118,7 @@ select is((select count(*)::int from public.calendar_source_items), 0, 'Users ca
 -- Profiles: own row only, plan not user-editable
 -- ---------------------------------------------------------------------------
 select is((select count(*)::int from public.profiles), 1, 'Users see only their own profile');
-update public.profiles set plan = 'pro';
+select throws_ok($$ update public.profiles set plan = 'pro' $$, '42501', null, 'Profile writes are denied outright');
 reset role;
 select is(
   (select plan from public.profiles where id = 'bbbbbbbb-0000-4000-8000-000000000002'),

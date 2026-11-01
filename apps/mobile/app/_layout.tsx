@@ -15,10 +15,13 @@ import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { QueryProvider } from '@/lib/queryClient';
 import { usePushSetup } from '@/hooks/usePushSetup';
+import { identify, initMonitoring, wrapRoot } from '@/lib/monitoring';
+import { configurePurchases, resetPurchases } from '@/lib/purchases';
 import { colors } from '@/lib/theme';
 
 export { ErrorBoundary } from 'expo-router';
 
+initMonitoring();
 SplashScreen.preventAutoHideAsync();
 
 const navTheme = {
@@ -33,7 +36,7 @@ const navTheme = {
   },
 };
 
-export default function RootLayout() {
+function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     ChakraPetch_600SemiBold,
     ChakraPetch_700Bold,
@@ -64,8 +67,18 @@ export default function RootLayout() {
   );
 }
 
+export default wrapRoot(RootLayout);
+
 function RootNavigator() {
   const { session, loading } = useAuth();
+  const userId = session?.user.id ?? null;
+
+  useEffect(() => {
+    if (loading) return;
+    identify(userId);
+    if (userId) void configurePurchases(userId).catch(() => {});
+    else void resetPurchases();
+  }, [loading, userId]);
 
   useEffect(() => {
     if (!loading) SplashScreen.hideAsync();
@@ -89,6 +102,9 @@ function Navigator({ signedIn }: { signedIn: boolean }) {
         <Stack.Screen name="notifications" />
         <Stack.Screen name="calendar-submit" options={{ presentation: 'modal' }} />
         <Stack.Screen name="settings/notifications" />
+        <Stack.Screen name="settings/checkout-profiles" />
+        <Stack.Screen name="checkout/[id]" options={{ presentation: 'formSheet' }} />
+        <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
       </Stack.Protected>
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="sign-in" />

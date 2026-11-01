@@ -22,6 +22,17 @@ export const queryClient = new QueryClient({
   },
 });
 
+/**
+ * Queries tagged `meta.persist = false` (device-only checkout profiles) must never be written
+ * to AsyncStorage, which is unencrypted. Only successful queries are persisted.
+ */
+export function shouldPersistQuery(q: {
+  state: { status: string };
+  meta?: Record<string, unknown>;
+}) {
+  return q.state.status === 'success' && q.meta?.persist !== false;
+}
+
 const persister = createAsyncStoragePersister({
   storage: AsyncStorage,
   key: 'drophawk-query-cache',
@@ -31,7 +42,12 @@ export function QueryProvider({ children }: { children: ReactNode }) {
   return (
     <PersistQueryClientProvider
       client={queryClient}
-      persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 * 7, buster: 'v1' }}
+      persistOptions={{
+        persister,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        buster: 'v1',
+        dehydrateOptions: { shouldDehydrateQuery: shouldPersistQuery },
+      }}
       onSuccess={() => queryClient.resumePausedMutations()}
     >
       {children}

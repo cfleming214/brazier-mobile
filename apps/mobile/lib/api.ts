@@ -234,3 +234,57 @@ export async function productStockEvents(
   ) as unknown as (StockEventRow & { retailer_skus: { retailer_id: RetailerSlug } })[];
   return rows.map((r) => ({ ...r, retailer_id: r.retailer_skus.retailer_id }));
 }
+
+// ---------------------------------------------------------------------------
+// Account, plans and hit rate (Phase 4)
+// ---------------------------------------------------------------------------
+
+export type Plan = 'free' | 'pro' | 'pro_squad';
+export const FREE_WATCH_LIMIT = 3;
+
+export interface MyProfile {
+  id: string;
+  plan: Plan;
+  plan_expires_at: string | null;
+}
+
+export interface HitRateStats {
+  alerts_received: number;
+  carts_opened: number;
+  avg_response_seconds: number | null;
+}
+
+/** True when an insert/update was rejected by the free-tier watch limit trigger. */
+export function isFreeLimitError(e: unknown): boolean {
+  return e instanceof Error && e.message.includes('FREE_LIMIT');
+}
+
+export async function getMyProfile(): Promise<MyProfile | null> {
+  const rows = check(
+    await supabase.from('profiles').select('id, plan, plan_expires_at').limit(1),
+  ) as MyProfile[];
+  return rows[0] ?? null;
+}
+
+export async function getHitRate(): Promise<HitRateStats> {
+  const rows = check(
+    await supabase
+      .from('hit_rate_stats')
+      .select('alerts_received, carts_opened, avg_response_seconds')
+      .limit(1),
+  ) as HitRateStats[];
+  return rows[0] ?? { alerts_received: 0, carts_opened: 0, avg_response_seconds: null };
+}
+
+/** Records that the user opened a retailer from the Checkout Sheet (feeds hit-rate stats). */
+export async function markCartOpened(watchId: string) {
+  check(await supabase.rpc('mark_cart_opened', { p_watch_id: watchId }));
+}
+
+export async function exportMyData(): Promise<Record<string, unknown>> {
+  return check(await supabase.rpc('export_my_data'));
+}
+
+export async function deleteMyAccount() {
+  check(await supabase.rpc('delete_my_account'));
+}

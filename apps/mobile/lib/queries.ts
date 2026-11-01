@@ -84,3 +84,15 @@ export function useDeleteWatch() {
     onSettled: () => qc.invalidateQueries({ queryKey: keys.watches }),
   });
 }
+
+export const accountKeys = {
+  profile: ['me', 'profile'] as const,
+  hitRate: ['me', 'hit-rate'] as const,
+  checkoutProfiles: ['device', 'checkout-profiles'] as const,
+};
+
+export const useMyProfile = () =>
+  useQuery({ queryKey: accountKeys.profile, queryFn: api.getMyProfile, staleTime: 60_000 });
+
+export const useHitRate = () =>
+  useQuery({ queryKey: accountKeys.hitRate, queryFn: api.getHitRate, staleTime: 60_000 });

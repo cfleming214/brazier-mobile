@@ -46,7 +46,8 @@
           "color": "#ffb547"
         }
       ],
-      "expo-font"
+      "expo-font",
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true
@@ -56,6 +57,9 @@
       "eas": {
         "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
       }
+    },
+    "runtimeVersion": {
+      "policy": "fingerprint"
     }
   }
 }

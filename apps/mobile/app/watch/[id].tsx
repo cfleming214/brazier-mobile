@@ -50,8 +50,7 @@ export default function WatchDetail() {
   // Alert action "Go to Checkout" lands here with ?go=1.
   useEffect(() => {
     if (go === '1' && w) {
-      const live = liveRetailer(w);
-      if (live) void openRetailer(live);
+      if (liveRetailer(w)) router.push(`/checkout/${w.watch_id}`);
     }
   }, [go, w?.watch_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -134,7 +133,11 @@ export default function WatchDetail() {
               {r.url ? (
                 <Pressable
                   testID={`open-${r.retailer_id}`}
-                  onPress={() => openRetailer(r)}
+                  onPress={() =>
+                    r.state === 'IN_STOCK'
+                      ? router.push(`/checkout/${w.watch_id}?retailer=${r.retailer_id}`)
+                      : openRetailer(r)
+                  }
                   style={[
                     styles.open,
                     r.state === 'IN_STOCK' && { backgroundColor: colors.accent },
