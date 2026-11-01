@@ -1,5 +1,4 @@
 # Test doubles for integration and E2E runs. Supabase itself runs via `supabase start`.
-# The worker service joins this file in Phase 2 (DROP-27).
 name: drophawk-e2e
 services:
   fake-retailer:
@@ -32,3 +31,18 @@ services:
         ]
       interval: 5s
       retries: 10
+  worker:
+    build:
+      context: ..
+      dockerfile: services/worker/Dockerfile
+    depends_on:
+      fake-retailer: { condition: service_healthy }
+      fake-push: { condition: service_healthy }
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:-http://host.docker.internal:54321}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:?run `supabase status` and export SUPABASE_SERVICE_ROLE_KEY}
+      FAKE_RETAILER_URL: http://fake-retailer:4010
+      EXPO_PUSH_URL: http://fake-push:4020
+      TICK_MS: '500'
+    extra_hosts: ['host.docker.internal:host-gateway']
+    ports: ['8787:8787']

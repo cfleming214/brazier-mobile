@@ -14,6 +14,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { QueryProvider } from '@/lib/queryClient';
+import { usePushSetup } from '@/hooks/usePushSetup';
 import { colors } from '@/lib/theme';
 
 export { ErrorBoundary } from 'expo-router';
@@ -73,6 +74,11 @@ function RootNavigator() {
   if (loading) return null;
 
   const signedIn = session != null;
+  return <Navigator signedIn={signedIn} />;
+}
+
+function Navigator({ signedIn }: { signedIn: boolean }) {
+  usePushSetup(signedIn);
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.field } }}>
       <Stack.Protected guard={signedIn}>
@@ -80,6 +86,8 @@ function RootNavigator() {
         <Stack.Screen name="add-watch" options={{ presentation: 'modal' }} />
         <Stack.Screen name="watch/[id]" />
         <Stack.Screen name="scan" options={{ presentation: 'fullScreenModal' }} />
+        <Stack.Screen name="notifications" />
+        <Stack.Screen name="settings/notifications" />
       </Stack.Protected>
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="sign-in" />

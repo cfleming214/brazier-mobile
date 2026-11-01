@@ -38,3 +38,8 @@ insert into public.calendar_events (product_id, title, event_type, retailer_id, 
    now() + interval '5 days', 'rumored', 0.4, '[{"source": "sample", "url": null}]', true),
   (null, 'Unpublished draft event', 'set_release', null,
    now() + interval '30 days', 'rumored', 0.2, '[]', false);
+
+-- Health rows for retailers inserted above (the migration seeds rows for retailers that exist at migration time).
+insert into public.adapter_health (retailer_id, status)
+select id, case when (policy->>'enabled')::boolean then 'unknown' else 'disabled' end from public.retailers
+on conflict do nothing;

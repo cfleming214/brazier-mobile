@@ -1,4 +1,6 @@
+import { router } from 'expo-router';
 import { ScrollView, View } from 'react-native';
+import { AlertPermissionGate } from '@/components/AlertPermissionGate';
 import { Button, Panel, Screen, T } from '@/components/ui';
 import { signOut, useAuth } from '@/lib/auth';
 import { colors, space } from '@/lib/theme';
@@ -15,6 +17,13 @@ export default function Profile() {
             <T testID="profile-email">{session?.user.email ?? '—'}</T>
           </View>
         </Panel>
+        <AlertPermissionGate />
+        <Button
+          testID="open-notification-settings"
+          label="Notification settings"
+          variant="ghost"
+          onPress={() => router.push('/settings/notifications')}
+        />
         <Panel title="Plan">
           <T variant="muted">Free · 3 watches</T>
         </Panel>

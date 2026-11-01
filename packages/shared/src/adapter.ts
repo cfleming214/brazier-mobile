@@ -29,6 +29,10 @@ export interface AvailabilityResult {
   marketplaceOnly: boolean;
   shipAvailable: boolean;
   pickupAvailable: boolean;
+  /** Distance to the nearest store with pickup stock, when the adapter knows it. */
+  nearestStoreKm?: number | null;
+  /** Protections seen on the page or API, e.g. "queue", "captcha", "limit:1" (DROP-91). */
+  protections?: string[];
   observedAt: string;
 }
 

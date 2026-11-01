@@ -216,6 +216,12 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
+      '@drophawk/fake-push':
+        specifier: workspace:*
+        version: link:../../e2e/fake-push
+      '@drophawk/fake-retailer':
+        specifier: workspace:*
+        version: link:../../e2e/fake-retailer
       '@types/node':
         specifier: ^22.10.0
         version: 22.20.5

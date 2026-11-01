@@ -1,7 +1,10 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { AdapterGrid } from '@/components/AdapterGrid';
+import { AlertPermissionGate } from '@/components/AlertPermissionGate';
 import { CountdownRing } from '@/components/CountdownRing';
+import { EventStream } from '@/components/EventStream';
 import { Icon } from '@/components/Icon';
 import type { StockPoint } from '@/components/Sparkline';
 import { Button, EmptyState, Panel, Screen, T } from '@/components/ui';
@@ -12,7 +15,16 @@ import type { WatchOverview, WatchStatus } from '@/lib/api';
 import { retailerNames, timeAgo } from '@/lib/format';
 import { summarize } from '@/lib/radar';
 import { openRetailer } from '@/lib/openRetailer';
+import { useAuth } from '@/lib/auth';
 import { useDeleteWatch, useNextEvent, useUpdateWatch, useWatches } from '@/lib/queries';
+import {
+  pollerOnline,
+  useActivity,
+  useAdapterHealth,
+  useInbox,
+  usePollerMetrics,
+  useRealtimeRadar,
+} from '@/lib/telemetry';
 import { colors, fonts, radius, space } from '@/lib/theme';
 
 type Filter = 'all' | WatchStatus;
@@ -24,13 +36,24 @@ export default function Radar() {
   const update = useUpdateWatch();
   const remove = useDeleteWatch();
   const [filter, setFilter] = useState<Filter>('all');
+  const { session } = useAuth();
+  useRealtimeRadar(session?.user.id);
+  const { data: health = [] } = useAdapterHealth();
+  const { data: metrics } = usePollerMetrics();
+  const { data: activity = [] } = useActivity();
+  const { data: inbox = [] } = useInbox();
+  const unread = inbox.filter((n) => !n.read_at).length;
+  const online = pollerOnline(metrics, now);
+  const upCount = health.filter((h) => h.status === 'ok').length;
+  const enabledCount = health.filter(
+    (h) => h.status !== 'disabled' && h.retailer_id !== 'tcgplayer',
+  ).length;
 
   const s = useMemo(() => summarize(watches), [watches]);
   const filtered =
     filter === 'all' ? watches : watches.filter((w) => w.status === filter && !w.paused);
   const live = filtered.filter((w) => w.status === 'live' && !w.paused);
   const rest = filtered.filter((w) => !(w.status === 'live' && !w.paused));
-  const checkedRecently = s.lastChecked && now - new Date(s.lastChecked).getTime() < 5 * 60_000;
 
   return (
     <Screen>
@@ -59,29 +82,39 @@ export default function Radar() {
             >
               <Icon name="search" color={colors.ink} size={18} />
             </Pressable>
-            <View style={styles.iconBtn}>
+            <Pressable
+              testID="open-inbox"
+              accessibilityLabel={`Notifications, ${unread} unread`}
+              style={styles.iconBtn}
+              onPress={() => router.push('/notifications')}
+            >
               <Icon name="bell" color={colors.ink} size={18} />
-            </View>
+              {unread > 0 ? <View style={styles.unreadDot} /> : null}
+            </Pressable>
           </View>
         </View>
 
         <View style={styles.sys} testID="system-strip">
-          <View
-            style={[styles.dot, { backgroundColor: checkedRecently ? colors.live : colors.muted }]}
-          />
+          <View style={[styles.dot, { backgroundColor: online ? colors.live : colors.muted }]} />
           <T
             variant="mono"
-            style={{
-              color: checkedRecently ? colors.live : colors.muted,
-              fontFamily: fonts.monoSemi,
-            }}
+            style={{ color: online ? colors.live : colors.muted, fontFamily: fonts.monoSemi }}
           >
-            {checkedRecently ? 'POLLER ONLINE' : 'POLLER IDLE'}
+            {online ? 'POLLER ONLINE' : 'POLLER OFFLINE'}
           </T>
-          <T variant="mono" style={{ color: colors.muted }}>
-            · last check {timeAgo(s.lastChecked, now)}
-          </T>
+          {online ? (
+            <T variant="mono" style={{ color: colors.muted }}>
+              · p95 {metrics?.p95Ms != null ? `${(metrics.p95Ms / 1000).toFixed(1)}s` : '—'} ·{' '}
+              {metrics?.checksPerMin ?? 0}/min
+            </T>
+          ) : (
+            <T variant="mono" style={{ color: colors.muted }}>
+              · last check {timeAgo(s.lastChecked, now)}
+            </T>
+          )}
         </View>
+
+        <AlertPermissionGate compact />
 
         <View style={styles.kpis}>
           <Kpi
@@ -117,6 +150,19 @@ export default function Radar() {
             onPress={() => setFilter('all')}
           />
         </View>
+
+        {health.length ? (
+          <Panel
+            title="Retailer adapters"
+            right={
+              <T variant="mono" style={{ color: colors.accent }}>
+                {upCount}/{enabledCount} UP
+              </T>
+            }
+          >
+            <AdapterGrid health={health} />
+          </Panel>
+        ) : null}
 
         {nextEvent ? (
           <Panel
@@ -220,6 +266,17 @@ export default function Radar() {
             ) : null}
           </>
         )}
+
+        <Panel
+          title="Event stream"
+          right={
+            <T variant="mono" style={{ color: online ? colors.live : colors.muted }}>
+              {online ? '● LIVE' : 'PAUSED'}
+            </T>
+          }
+        >
+          <EventStream events={activity} />
+        </Panel>
       </ScrollView>
     </Screen>
   );
@@ -292,6 +349,15 @@ const styles = StyleSheet.create({
     paddingVertical: space.sm,
   },
   dot: { width: 8, height: 8, borderRadius: 4 },
+  unreadDot: {
+    position: 'absolute',
+    top: 7,
+    right: 7,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.accent,
+  },
   kpis: { flexDirection: 'row', gap: 6 },
   kpi: {
     flex: 1,
