@@ -27,10 +27,16 @@ jobs:
       - run: pnpm test
 
   database:
-    name: Migrations, schema lint, RLS tests
+    name: Migrations, schema lint, RLS tests, worker integration
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - uses: supabase/setup-cli@v1
         with:
           version: 2.122.0
@@ -39,6 +45,10 @@ jobs:
       - run: supabase test db
       - name: Sign-in email contains a 6-digit code
         run: bash e2e/scripts/check-auth-email.sh
+      - name: Worker integration tests (catalog import, poll -> detect -> notify, latency)
+        run: |
+          eval "$(supabase status -o env | grep -E '^(SERVICE_ROLE_KEY|API_URL)=')"
+          SUPABASE_URL=$API_URL SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY pnpm --filter @drophawk/worker test
 
   e2e-services:
     name: Test doubles build and pass their tests
