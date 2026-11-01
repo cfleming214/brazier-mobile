@@ -1,0 +1,23 @@
+{
+  "totalItems": 2,
+  "success": true,
+  "errors": [],
+  "results": [
+    {
+      "groupId": 23821,
+      "name": "SV: Prismatic Evolutions",
+      "abbreviation": "PRE",
+      "isSupplemental": false,
+      "publishedOn": "2025-01-17T00:00:00",
+      "categoryId": 3
+    },
+    {
+      "groupId": 24073,
+      "name": "SV09: Journey Together",
+      "abbreviation": "JTG",
+      "isSupplemental": false,
+      "publishedOn": "2025-03-28T00:00:00",
+      "categoryId": 3
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "totalItems": 4,
+  "success": true,
+  "errors": [],
+  "results": [
+    {
+      "productId": 593355,
+      "name": "Prismatic Evolutions Elite Trainer Box",
+      "groupId": 23821,
+      "imageUrl": "https://tcgplayer-cdn.tcgplayer.com/product/593355_200w.jpg",
+      "url": "https://www.tcgplayer.com/product/593355/pokemon-sv-prismatic-evolutions-prismatic-evolutions-elite-trainer-box",
+      "extendedData": []
+    },
+    {
+      "productId": 600518,
+      "name": "Prismatic Evolutions Super Premium Collection",
+      "groupId": 23821,
+      "url": "https://www.tcgplayer.com/product/600518/x",
+      "extendedData": [{ "name": "UPC", "value": "0-820650-85980-5" }]
+    },
+    {
+      "productId": 610001,
+      "name": "Umbreon ex - 161/131",
+      "groupId": 23821,
+      "extendedData": [
+        { "name": "Number", "value": "161/131" },
+        { "name": "Rarity", "value": "Special Illustration Rare" }
+      ]
+    },
+    {
+      "productId": 610002,
+      "name": "Prismatic Evolutions Code Card",
+      "groupId": 23821,
+      "extendedData": []
+    }
+  ]
+}

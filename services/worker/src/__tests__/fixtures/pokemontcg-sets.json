@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "sv8pt5",
+      "name": "Prismatic Evolutions",
+      "series": "Scarlet & Violet",
+      "releaseDate": "2025/01/17",
+      "images": { "logo": "https://images.pokemontcg.io/sv8pt5/logo.png" }
+    },
+    {
+      "id": "sv9",
+      "name": "Journey Together",
+      "series": "Scarlet & Violet",
+      "releaseDate": "2025/03/28",
+      "images": { "logo": "https://images.pokemontcg.io/sv9/logo.png" }
+    },
+    {
+      "id": "sv10",
+      "name": "Destined Rivals",
+      "series": "Scarlet & Violet",
+      "releaseDate": "2025/05/30"
+    }
+  ],
+  "page": 1,
+  "pageSize": 250,
+  "count": 3,
+  "totalCount": 3
+}

@@ -93,7 +93,7 @@ select pg_temp.login('bbbbbbbb-0000-4000-8000-000000000002');
 
 select ok((select count(*) from public.products) >= 5, 'Users can read products');
 select ok((select count(*) from public.retailer_skus) >= 10, 'Users can read retailer SKUs');
-select ok((select count(*) from public.retailers) = 6, 'Users can read retailers');
+select ok((select count(*) from public.retailers) = 7, 'Users can read retailers');
 
 select throws_ok(
   $$ insert into public.products (category_id, name, product_type) values ('pokemon_tcg', 'Hacked', 'etb') $$,

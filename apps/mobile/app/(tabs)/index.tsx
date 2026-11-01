@@ -1,14 +1,49 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { CountdownRing } from '@/components/CountdownRing';
 import { Icon } from '@/components/Icon';
+import type { StockPoint } from '@/components/Sparkline';
 import { Button, EmptyState, Panel, Screen, T } from '@/components/ui';
-import { colors, radius, space } from '@/lib/theme';
+import { WatchCard } from '@/components/WatchCard';
+import { WatchRow } from '@/components/WatchRow';
+import { useNow } from '@/hooks/useNow';
+import type { WatchOverview, WatchStatus } from '@/lib/api';
+import { retailerNames, timeAgo } from '@/lib/format';
+import { summarize } from '@/lib/radar';
+import { openRetailer } from '@/lib/openRetailer';
+import { useDeleteWatch, useNextEvent, useUpdateWatch, useWatches } from '@/lib/queries';
+import { colors, fonts, radius, space } from '@/lib/theme';
 
-/** Radar (home). Phase 0 shell; live sections land in DROP-23 and DROP-40. */
+type Filter = 'all' | WatchStatus;
+
 export default function Radar() {
+  const now = useNow();
+  const { data: watches = [], isLoading, isRefetching, refetch, isError } = useWatches();
+  const { data: nextEvent } = useNextEvent();
+  const update = useUpdateWatch();
+  const remove = useDeleteWatch();
+  const [filter, setFilter] = useState<Filter>('all');
+
+  const s = useMemo(() => summarize(watches), [watches]);
+  const filtered =
+    filter === 'all' ? watches : watches.filter((w) => w.status === filter && !w.paused);
+  const live = filtered.filter((w) => w.status === 'live' && !w.paused);
+  const rest = filtered.filter((w) => !(w.status === 'live' && !w.paused));
+  const checkedRecently = s.lastChecked && now - new Date(s.lastChecked).getTime() < 5 * 60_000;
+
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={() => void refetch()}
+            tintColor={colors.accent}
+          />
+        }
+      >
         <View style={styles.header}>
           <View>
             <T variant="display">RADAR</T>
@@ -17,9 +52,13 @@ export default function Radar() {
             </T>
           </View>
           <View style={styles.headerIcons}>
-            <View style={styles.iconBtn}>
+            <Pressable
+              accessibilityLabel="Add watch"
+              style={styles.iconBtn}
+              onPress={() => router.push('/add-watch')}
+            >
               <Icon name="search" color={colors.ink} size={18} />
-            </View>
+            </Pressable>
             <View style={styles.iconBtn}>
               <Icon name="bell" color={colors.ink} size={18} />
             </View>
@@ -27,32 +66,208 @@ export default function Radar() {
         </View>
 
         <View style={styles.sys} testID="system-strip">
-          <View style={[styles.dot, { backgroundColor: colors.muted }]} />
+          <View
+            style={[styles.dot, { backgroundColor: checkedRecently ? colors.live : colors.muted }]}
+          />
+          <T
+            variant="mono"
+            style={{
+              color: checkedRecently ? colors.live : colors.muted,
+              fontFamily: fonts.monoSemi,
+            }}
+          >
+            {checkedRecently ? 'POLLER ONLINE' : 'POLLER IDLE'}
+          </T>
           <T variant="mono" style={{ color: colors.muted }}>
-            POLLER NOT CONNECTED
+            · last check {timeAgo(s.lastChecked, now)}
           </T>
         </View>
 
-        <Panel title="Your watches">
-          <EmptyState
-            title="Nothing on radar yet"
-            body="Add a product and DropHawk will watch every retailer that carries it."
-            action={
-              <Button
-                testID="radar-add-watch"
-                label="Add a watch"
-                onPress={() => router.push('/add-watch')}
-              />
-            }
+        <View style={styles.kpis}>
+          <Kpi
+            testID="kpi-live"
+            value={s.live}
+            label="Live now"
+            color={colors.live}
+            active={filter === 'live'}
+            onPress={() => setFilter(filter === 'live' ? 'all' : 'live')}
           />
-        </Panel>
+          <Kpi
+            testID="kpi-watching"
+            value={s.monitoring}
+            label="Watching"
+            color={colors.watch}
+            active={filter === 'monitoring'}
+            onPress={() => setFilter(filter === 'monitoring' ? 'all' : 'monitoring')}
+          />
+          <Kpi
+            testID="kpi-sold-out"
+            value={s.soldOut}
+            label="Sold out"
+            color={colors.dead}
+            active={filter === 'sold_out'}
+            onPress={() => setFilter(filter === 'sold_out' ? 'all' : 'sold_out')}
+          />
+          <Kpi
+            testID="kpi-total"
+            value={s.total}
+            label="Watches"
+            color={colors.accent}
+            active={filter === 'all'}
+            onPress={() => setFilter('all')}
+          />
+        </View>
+
+        {nextEvent ? (
+          <Panel
+            title="Next window"
+            right={
+              <Pressable onPress={() => router.push('/calendar')}>
+                <T variant="mono" style={{ color: colors.accent }}>
+                  CALENDAR →
+                </T>
+              </Pressable>
+            }
+          >
+            <View style={styles.next}>
+              <CountdownRing
+                secondsLeft={(new Date(nextEvent.starts_at).getTime() - now) / 1000}
+                testID="next-window-ring"
+              />
+              <View style={{ flex: 1, gap: 4 }}>
+                <T style={{ fontFamily: fonts.bodySemi }}>{nextEvent.title}</T>
+                <T
+                  variant="mono"
+                  style={{
+                    color: nextEvent.status === 'confirmed' ? colors.live : colors.warn,
+                    fontSize: 10,
+                  }}
+                >
+                  {nextEvent.status.toUpperCase()}
+                  {nextEvent.retailer_id
+                    ? ` · ${retailerNames[nextEvent.retailer_id].toUpperCase()}`
+                    : ''}
+                </T>
+              </View>
+            </View>
+          </Panel>
+        ) : null}
+
+        {isError && watches.length === 0 ? (
+          <Panel>
+            <EmptyState
+              title="Can't reach DropHawk"
+              body="Check your connection. Your watches will appear here once we reconnect."
+            />
+          </Panel>
+        ) : !isLoading && watches.length === 0 ? (
+          <Panel title="Your watches">
+            <EmptyState
+              title="Nothing on radar yet"
+              body="Add a product and DropHawk will watch every retailer that carries it."
+              action={
+                <Button
+                  testID="radar-add-watch"
+                  label="Add a watch"
+                  onPress={() => router.push('/add-watch')}
+                />
+              }
+            />
+          </Panel>
+        ) : (
+          <>
+            {live.length > 0 ? (
+              <Panel
+                title={`Live now · ${live.length}`}
+                right={
+                  <T variant="mono" style={{ color: colors.live }}>
+                    ACT FAST
+                  </T>
+                }
+              >
+                <View style={{ gap: space.sm }}>
+                  {live.map((w) => (
+                    <WatchCard
+                      key={w.watch_id}
+                      watch={w}
+                      now={now}
+                      history={historyFromRetailers(w)}
+                      onPress={() => router.push(`/watch/${w.watch_id}`)}
+                      onGo={(r) => openRetailer(r)}
+                      onPause={() =>
+                        update.mutate({ id: w.watch_id, patch: { paused: !w.paused } })
+                      }
+                      onEdit={() => router.push(`/watch/${w.watch_id}`)}
+                      onDelete={() => remove.mutate(w.watch_id)}
+                    />
+                  ))}
+                </View>
+              </Panel>
+            ) : null}
+            {rest.length > 0 ? (
+              <Panel title={`Monitoring · ${rest.length}`}>
+                <View>
+                  {rest.map((w) => (
+                    <WatchRow
+                      key={w.watch_id}
+                      watch={w}
+                      now={now}
+                      onPress={() => router.push(`/watch/${w.watch_id}`)}
+                    />
+                  ))}
+                </View>
+              </Panel>
+            ) : null}
+          </>
+        )}
       </ScrollView>
     </Screen>
   );
 }
 
+/** Until restock history lands (DROP-49), show the current live period only. */
+function historyFromRetailers(w: WatchOverview): StockPoint[] {
+  return w.retailers
+    .filter((r) => r.state === 'IN_STOCK' && r.last_checked_at)
+    .map((r) => ({ at: new Date(r.last_checked_at!).getTime(), inStock: true }));
+}
+
+function Kpi({
+  value,
+  label,
+  color,
+  active,
+  onPress,
+  testID,
+}: {
+  value: number;
+  label: string;
+  color: string;
+  active: boolean;
+  onPress: () => void;
+  testID: string;
+}) {
+  return (
+    <Pressable
+      testID={testID}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{ selected: active }}
+      style={[styles.kpi, active && { borderColor: color }]}
+    >
+      <View style={[styles.kpiStripe, { backgroundColor: color }]} />
+      <T style={{ fontFamily: fonts.display, fontSize: 24, color, fontVariant: ['tabular-nums'] }}>
+        {value}
+      </T>
+      <T variant="mono" style={{ color: colors.muted, fontSize: 9, letterSpacing: 1 }}>
+        {label.toUpperCase()}
+      </T>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  content: { padding: space.lg, gap: space.md },
+  content: { padding: space.lg, gap: space.md, paddingBottom: 48 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   headerIcons: { flexDirection: 'row', gap: space.sm },
   iconBtn: {
@@ -77,4 +292,16 @@ const styles = StyleSheet.create({
     paddingVertical: space.sm,
   },
   dot: { width: 8, height: 8, borderRadius: 4 },
+  kpis: { flexDirection: 'row', gap: 6 },
+  kpi: {
+    flex: 1,
+    backgroundColor: colors.panel,
+    borderColor: colors.line,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: 8,
+    overflow: 'hidden',
+  },
+  kpiStripe: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 3 },
+  next: { flexDirection: 'row', alignItems: 'center', gap: space.md },
 });
