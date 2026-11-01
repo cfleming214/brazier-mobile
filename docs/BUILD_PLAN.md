@@ -15,8 +15,8 @@ This plan turns `PLAN.md` (the 4-week Expo + Supabase MVP) and `FEATURES.md` (th
 | Mobile | Expo (**latest stable SDK at scaffold time**; `PLAN.md` says SDK 51, which is outdated by now) + Expo Router + TypeScript | Same stack as `PLAN.md`. |
 | Backend | Supabase (Postgres, Auth, RLS, Realtime, Edge Functions) **plus one long-running TypeScript worker service** (Fly.io or Railway) | Edge Functions have execution-time limits and are a poor fit for a continuous poller. Use **Postgres queues (`pgmq`)** in place of Kafka until volume justifies Kafka. |
 | Detection target | 30 s to 5 min adaptive polling, **burst to ~5 s** inside a confirmed drop window, only on retailers whose policy allows it | The 250 ms burst, rotating residential egress and 2-of-3 quorum in `FEATURES.md` are v2 work, and they need a per-retailer legal/ToS review first. |
-| Checkout | **Assisted checkout only** for v1: deep link into the retailer app or cart, plus autofill profiles in an in-app browser | The Armed Checkout Bot (FEATURES §4) carries the most legal, PCI and ToS risk. It gets its own gated phase (§9). |
-| Policy | Every retailer adapter ships with a `RetailerPolicy` object: max request rate, allowed endpoints, whether automation is allowed, and a `robots.txt` snapshot | Turns the compliance promise in `FEATURES.md` into code that tests can check. |
+| Checkout | **Automated checkout bot in the MVP** (FEATURES §4), with a **mocked payment vault** behind a production-shaped interface. On any CAPTCHA, queue or human-verification challenge the bot pauses and hands the live session to the user; it does not solve or bypass them. Assisted checkout (deep link + autofill) remains the fallback. | Delivers the core "act fastest" promise while keeping real card data out of scope until a real vault provider and PCI review. |
+| Policy | Every retailer adapter ships with a `RetailerPolicy` object: max request rate, allowed endpoints, whether automation is allowed, and an enabled switch. **Retailer terms do not gate the MVP**; a terms review (DROP-54) happens before public launch. | Keeps rate limits and kill switches in code from day one. |
 
 ---
 
@@ -218,9 +218,19 @@ Each phase ends with a demo and its E2E suite green in CI.
 - Comp and profit tracker from the TCGCSV and eBay APIs (FEATURES §8).
 - Hit Rate Analytics weekly digest.
 
+### Automated checkout (MVP, Jira epic DROP-70)
+- Payment vault interface with a mock provider (test tokens only; production refuses to boot with the mock)
+- Retailer account linking with an encrypted session vault and session health checks
+- Checkout state machine (`CART → AUTH → SHIP → PAY → REVIEW → SUBMIT`), ephemeral browser runner, flows for Best Buy, Walmart, Target and GameStop
+- Challenge detection with a "Your turn" handoff to the user (no CAPTCHA solving or queue bypass), Arm UI, Live Attempt Feed, and fake-retailer E2E scenarios
+
+### Squad Mode (Jira epic DROP-71, after Phase 5 sightings and reputation)
+- Squads with shared watchlists, squad drop channel and sighting sharing, leaderboard and Discord/webhook relay
+
 ### Later (gated)
-- **Armed Checkout Bot** (FEATURES §4): only after a per-retailer ToS and legal review, PCI scoping with a tokenizing payment vault, and a hard rule of no CAPTCHA or queue bypass. Off for any retailer whose policy disallows automation.
-- Multi-profile manager, Squad Mode, Inventory Vault, Kafka migration, prediction model.
+- Real payment vault provider and PCI scope review (replaces the mock)
+- Retailer terms review before public launch (DROP-54)
+- Multi-profile manager, Inventory Vault, Kafka migration, prediction model.
 - **New categories:** add a `categories` row, a catalog seeder, category-specific ghost filters, calendar sources, and retailer adapters if any are new. Expected order: Funko and other collectibles (same retailers), then GPUs/consoles (Best Buy and Walmart adapters reused), then sneakers (new retailers and raffles).
 
 ---
