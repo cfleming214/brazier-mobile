@@ -8,6 +8,7 @@
     "test": "vitest run --passWithNoTests",
     "catalog:sets": "tsx src/cli.ts catalog:sets",
     "catalog:sealed": "tsx src/cli.ts catalog:sealed",
+    "canary": "tsx src/cli.ts canary",
     "start": "tsx src/main.ts"
   },
   "dependencies": {

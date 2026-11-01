@@ -1,6 +1,8 @@
 name: Mobile E2E
 
-# Runs the Maestro suite against an EAS `e2e` build on an Android emulator.
+# Runs the Maestro suite against EAS `e2e` builds on an Android emulator and an iOS simulator,
+# plus the pipeline latency test. Screenshots, videos and JUnit reports are uploaded on every run.
+# Flaky tests are fixed, never quarantined or retried away.
 # Requires the EXPO_TOKEN repository secret and a linked EAS project (apps/mobile/app.json).
 on:
   workflow_dispatch:
@@ -25,7 +27,11 @@ jobs:
         with:
           version: 2.122.0
       - run: supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,realtime,storage-api,postgres-meta
-      - run: docker compose -f e2e/docker-compose.yml up -d --build --wait
+      - name: Start test doubles and worker
+        run: |
+          echo "SERVICE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '"')" >> "$GITHUB_ENV"
+          export SUPABASE_SERVICE_ROLE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '"')
+          docker compose -f e2e/docker-compose.yml up -d --build --wait
       - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
@@ -49,11 +55,95 @@ jobs:
           arch: x86_64
           script: |
             adb install app-e2e.apk
-            maestro test e2e/maestro/flows -e EMAIL=e2e-${{ github.run_id }}@test.local --format junit --output maestro-report.xml
+            maestro test e2e/maestro/flows -e EMAIL=e2e-${{ github.run_id }}@test.local -e SERVICE_KEY="$SERVICE_KEY" --format junit --output maestro-report.xml --test-output-dir maestro-output
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: maestro-report
+          name: maestro-android
           path: |
             maestro-report.xml
+            maestro-output/**
+            ~/.maestro/tests/**
+
+  # DROP-62: restock → push latency over 50 flips against the full stack; fails if p95 > 3 s.
+  latency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.0
+      - run: supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,realtime,storage-api,postgres-meta
+      - name: Start test doubles and worker
+        run: |
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '"')" >> "$GITHUB_ENV"
+          export SUPABASE_SERVICE_ROLE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '"')
+          docker compose -f e2e/docker-compose.yml up -d --build --wait
+      - run: node e2e/scripts/latency.mjs --flips 50 --budget 3000
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-latency
+          path: e2e/artifacts/latency.json
+
+  # DROP-63: the same Maestro suite on an iOS simulator (macOS runner).
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Start Docker (Colima)
+        run: |
+          brew install docker docker-compose colima
+          colima start --cpu 4 --memory 8
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.0
+      - run: supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,realtime,storage-api,postgres-meta
+      - name: Start test doubles and worker
+        run: |
+          echo "SERVICE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '"')" >> "$GITHUB_ENV"
+          export SUPABASE_SERVICE_ROLE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '"')
+          docker compose -f e2e/docker-compose.yml up -d --build --wait
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Build e2e simulator app
+        working-directory: apps/mobile
+        run: |
+          echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=$(supabase status -o env | grep '^ANON_KEY=' | cut -d= -f2- | tr -d '"')" >> .env.local
+          echo "EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321" >> .env.local
+          eas build --profile e2e --platform ios --local --non-interactive --output ../../app-e2e.tar.gz
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Boot simulator and run suite
+        run: |
+          xcrun simctl boot "iPhone 16" || true
+          mkdir -p app && tar -xzf app-e2e.tar.gz -C app
+          xcrun simctl install booted app/*.app
+          maestro test e2e/maestro/flows -e EMAIL=ios-${{ github.run_id }}@test.local -e SERVICE_KEY="$SERVICE_KEY" --exclude-tags android-only \
+            --format junit --output maestro-report.xml --test-output-dir maestro-output
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-ios
+          path: |
+            maestro-report.xml
+            maestro-output/**
             ~/.maestro/tests/**
