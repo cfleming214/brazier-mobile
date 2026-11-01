@@ -176,6 +176,12 @@ Screens (from `PLAN.md`), adjusted for Pokémon:
 
 **Design direction (chosen):** the command-center Radar in `mockups/home-radar.html`. Dark console, amber for controls, green/blue/red for in stock / monitoring / sold out, mono type for telemetry. Order on the home screen: system strip, KPI tiles, retailer adapter health, next drop window, Live Now cards, Monitoring rows, event stream. The add-watch button sits in the centre of the tab bar. `home-styles.html` and `home-status.html` are alternatives we passed on, kept for reference.
 
+**Notifications (beyond restock alerts):**
+- *Drop updates* (DROP-86): new drop for a followed set, rumored → confirmed, date moved or cancelled, preorder open, T-10 window, new retailer listing, price change, restock pattern change.
+- *Bot status* (DROP-87): armed/disarmed, readiness lost (session expired, payment missing; repeated at T-30), retailer queue or adapter degraded, attempt started, Your turn, Ready to buy, stopped, expired, order confirmed. Attempt updates collapse into one notification that updates in place.
+- *Settings* (DROP-88): per-category toggles (restock, bot status, drop updates, reminders, community), per-watch overrides, quiet hours that never silence Ready to buy / Your turn / restock unless opted in, and a daily digest option for drop updates.
+- *Inbox* (DROP-89): the Radar bell opens a history of every notification, kept even when push is off.
+
 Push: Expo Push with `priority: high` and an iOS `interruptionLevel` of `time-sensitive`. **Critical alerts** need an Apple entitlement request, so v1 runs without them. A notification category with a "Go to Checkout" action deep-links via Expo Router (`drophawk://watch/:id?go=1`).
 
 ---
