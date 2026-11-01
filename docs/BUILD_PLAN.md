@@ -179,6 +179,7 @@ Screens (from `PLAN.md`), adjusted for Pokémon:
 **Notifications (beyond restock alerts):**
 - *Drop updates* (DROP-86): new drop for a followed set, rumored → confirmed, date moved or cancelled, preorder open, T-10 window, new retailer listing, price change, restock pattern change.
 - *Bot status* (DROP-87): armed/disarmed, readiness lost (session expired, payment missing; repeated at T-30), retailer queue or adapter degraded, attempt started, Your turn, Ready to buy, stopped, expired, order confirmed. Attempt updates collapse into one notification that updates in place.
+- *Retailer protection changes* (DROP-91): queue on/off, new CAPTCHA or verification, sign-in required, purchase limits, raffle/app-only/in-store-only switches. Confirmed on 2+ checks, sent to users watching or armed at that retailer, shown on the Radar adapter cell (QUEUE, VERIFY, LIMIT 1, APP ONLY). Detection only; the bot still hands challenges to the user.
 - *Settings* (DROP-88): per-category toggles (restock, bot status, drop updates, reminders, community), per-watch overrides, quiet hours that never silence Ready to buy / Your turn / restock unless opted in, and a daily digest option for drop updates.
 - *Inbox* (DROP-89): the Radar bell opens a history of every notification, kept even when push is off.
 
