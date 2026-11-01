@@ -30,6 +30,8 @@ const Env = z.object({
     ),
   /** Shared secret for the inbound newsletter webhook (POST /inbound/email). */
   INBOUND_SECRET: z.string().optional(),
+  /** Worker error reporting (DROP-53); unset disables Sentry. */
+  SENTRY_DSN: z.string().url().optional(),
   METRICS_PORT: z.coerce.number().int().positive().default(8787),
 });
 

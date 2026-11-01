@@ -13,15 +13,16 @@
   },
   "dependencies": {
     "@drophawk/shared": "workspace:*",
+    "@sentry/node": "^10.78.0",
     "@supabase/supabase-js": "^2.118.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "typescript": "~5.7.2",
-    "vitest": "^2.1.8",
+    "@drophawk/fake-push": "workspace:*",
+    "@drophawk/fake-retailer": "workspace:*",
     "@types/node": "^22.10.0",
     "tsx": "^4.19.2",
-    "@drophawk/fake-retailer": "workspace:*",
-    "@drophawk/fake-push": "workspace:*"
+    "typescript": "~5.7.2",
+    "vitest": "^2.1.8"
   }
 }

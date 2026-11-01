@@ -10,6 +10,7 @@ import { BlockedError } from './adapters/protections';
 import { decide, DEFAULT_DETECTOR, type DetectorOptions } from './detector';
 import type { RetailerGovernor } from './governor';
 import { Metrics } from './metrics';
+import { newTraceId, reportError, traceLog } from './monitoring';
 import type { Notifier } from './notifier';
 import { describeProtection, ProtectionTracker, type ProtectionChange } from './protection';
 import { matchWatch, type WatchRule } from './rules';
@@ -69,6 +70,8 @@ export class Poller {
   readonly metrics: Metrics;
   readonly protections: ProtectionTracker;
   private firstSeen = new Map<string, number>();
+  /** trace_id per SKU from the first read of a restock until its alerts are sent. */
+  private traces = new Map<string, string>();
   private health = new Map<
     RetailerSlug,
     { status: string; error: string | null; backoffUntil: string | null }
@@ -161,6 +164,7 @@ export class Poller {
             checked += chunk.length;
           } catch (e) {
             const blocked = e instanceof BlockedError;
+            if (!blocked) reportError(e, { retailer });
             gov.breaker.failure(blocked);
             this.metrics.recordCheck(retailer, false, this.now() - started, chunk.length);
             this.setHealth(
@@ -298,7 +302,16 @@ export class Poller {
 
     await this.applyProtections(sku, r.protections ?? []);
 
-    if (decision.needsConfirmation) this.firstSeen.set(sku.id, Date.parse(r.observedAt));
+    if (decision.needsConfirmation) {
+      this.firstSeen.set(sku.id, Date.parse(r.observedAt));
+      const traceId = newTraceId();
+      this.traces.set(sku.id, traceId);
+      traceLog(traceId, 'observed', {
+        retailer: sku.retailer_id,
+        sku: sku.retailer_sku,
+        state: r.state,
+      });
+    }
     if (!decision.event) return;
 
     const { data: ev, error: evErr } = await this.d.db
@@ -344,6 +357,13 @@ export class Poller {
     await this.activity(users, sku, 'in_stock', `${store} ${r.state} ${price} confirmed 2/2`);
     const observed = this.firstSeen.get(sku.id) ?? Date.parse(r.observedAt);
     this.firstSeen.delete(sku.id);
+    const traceId = this.traces.get(sku.id) ?? newTraceId();
+    this.traces.delete(sku.id);
+    traceLog(traceId, 'confirmed', {
+      retailer: sku.retailer_id,
+      sku: sku.retailer_sku,
+      stockEventId: ev.id,
+    });
 
     for (const w of watchers) {
       const m = matchWatch(w, r);
@@ -369,6 +389,7 @@ export class Poller {
           retailer: sku.retailer_id,
           url: sku.url,
           stockEventId: ev.id,
+          traceId,
         },
         timeSensitive: true,
         collapseKey: `restock:${w.watch_id}`,
@@ -380,6 +401,7 @@ export class Poller {
         .insert({ watch_id: w.watch_id, user_id: w.user_id, stock_event_id: ev.id });
       if (res.pushed > 0) {
         this.metrics.recordLatency(this.now() - observed);
+        traceLog(traceId, 'pushed', { watchId: w.watch_id, ms: this.now() - observed });
         await this.activity(
           [w.user_id],
           sku,

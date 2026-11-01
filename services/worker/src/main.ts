@@ -9,9 +9,11 @@ import { Poller } from './poller';
 import { createPushClient } from './push';
 import { createJobs } from './jobs';
 import { handleLead, parseInboundEmail } from './leads';
+import { initSentry, reportError } from './monitoring';
 
 async function main() {
   const config = loadConfig();
+  initSentry(config.SENTRY_DSN, process.env.GIT_SHA);
   const db = createServiceClient(config);
   const { data: retailers, error } = await db.from('retailers').select('id, policy');
   if (error) throw error;
@@ -90,6 +92,7 @@ async function main() {
       }
     } catch (e) {
       console.error('tick failed', e);
+      reportError(e, { where: 'tick' });
     }
     await new Promise((r) => setTimeout(r, Math.max(50, config.TICK_MS - (Date.now() - started))));
   }
@@ -100,5 +103,6 @@ async function main() {
 
 main().catch((e) => {
   console.error(e);
+  reportError(e, { where: 'main' });
   process.exit(1);
 });

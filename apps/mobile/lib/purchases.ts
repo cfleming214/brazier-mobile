@@ -44,8 +44,8 @@ export interface PaywallOffer {
 
 /** Fallback copy when RevenueCat isn't configured (dev builds, web) so the paywall still renders. */
 export const FALLBACK_OFFERS: PaywallOffer[] = [
-  { id: 'pro_monthly', title: 'Pro · Monthly', price: '$4.99', period: 'monthly', pkg: null },
-  { id: 'pro_annual', title: 'Pro · Annual', price: '$39.99', period: 'annual', pkg: null },
+  { id: 'pro_monthly', title: 'Pro · Monthly', price: '$6.99', period: 'monthly', pkg: null },
+  { id: 'pro_annual', title: 'Pro · Annual', price: '$49.99', period: 'annual', pkg: null },
 ];
 
 export async function loadOffers(): Promise<PaywallOffer[]> {

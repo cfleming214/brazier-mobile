@@ -154,6 +154,8 @@ describe.skipIf(!hasDb)('worker pipeline', () => {
       watchId: watch!.id,
       retailer: 'target',
     });
+    // One trace_id follows the restock from first read to push (DROP-53).
+    expect(String(push.messages[0]!.data?.traceId)).toMatch(/^[0-9a-f]{32}$/);
 
     const id = await skuId('target', '90000001');
     const { data: events } = await db

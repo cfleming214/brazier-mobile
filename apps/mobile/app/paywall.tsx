@@ -20,6 +20,7 @@ const PERKS = [
   'Fastest polling tier on hot drops',
   'Calendar reminders for every release',
   'Restock history and typical-window stats',
+  'Unlimited checkout profiles',
 ];
 
 /** Paywall (DROP-52). Shown from Profile, or when the free 3-watch limit blocks a new watch. */
@@ -108,6 +109,11 @@ export default function Paywall() {
           <T testID="paywall-limit" style={{ color: colors.warn }}>
             The free plan watches up to {FREE_WATCH_LIMIT} products. Upgrade to add more, or pause a
             watch to make room.
+          </T>
+        ) : null}
+        {reason === 'profiles' ? (
+          <T style={{ color: colors.warn }}>
+            The free plan saves one checkout profile. Pro saves as many as you need.
           </T>
         ) : null}
         <Panel>

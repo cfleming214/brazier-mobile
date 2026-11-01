@@ -7,7 +7,7 @@ import {
   useDeleteCheckoutProfile,
   useSaveCheckoutProfile,
 } from '@/hooks/useCheckoutProfiles';
-import { CheckoutProfile, newProfileId } from '@/lib/checkoutProfile';
+import { CheckoutProfile, newProfileId, ProfileLimitError } from '@/lib/checkoutProfile';
 import { colors, fonts, radius, space } from '@/lib/theme';
 
 type Draft = Record<keyof Omit<CheckoutProfile, 'id'>, string> & { id: string };
@@ -64,6 +64,7 @@ export default function CheckoutProfiles() {
       setErrors({});
     } catch (e) {
       setErrors({ form: e instanceof Error ? e.message : 'Could not save.' });
+      if (e instanceof ProfileLimitError) router.push('/paywall?reason=profiles');
     }
   }
 

@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteProfile,
   loadProfiles,
+  PROFILE_LIMIT,
   saveProfile,
   type CheckoutProfile,
 } from '@/lib/checkoutProfile';
-import { accountKeys } from '@/lib/queries';
+import { accountKeys, useMyProfile } from '@/lib/queries';
 
 /**
  * Device-only data: never persisted by the query cache persister (see queryClient.tsx),
@@ -22,8 +23,10 @@ export function useCheckoutProfiles() {
 
 export function useSaveCheckoutProfile() {
   const qc = useQueryClient();
+  const { data: me } = useMyProfile();
+  const limit = (me?.plan ?? 'free') === 'free' ? PROFILE_LIMIT.free : PROFILE_LIMIT.pro;
   return useMutation({
-    mutationFn: (p: CheckoutProfile) => saveProfile(p),
+    mutationFn: (p: CheckoutProfile) => saveProfile(p, limit),
     onSuccess: () => qc.invalidateQueries({ queryKey: accountKeys.checkoutProfiles }),
   });
 }

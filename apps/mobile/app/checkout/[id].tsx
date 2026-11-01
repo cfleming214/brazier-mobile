@@ -10,7 +10,8 @@ import { copyFields } from '@/lib/checkoutProfile';
 import { retailerNames } from '@/lib/format';
 import { captureError, track } from '@/lib/monitoring';
 import { openRetailer } from '@/lib/openRetailer';
-import { useWatch } from '@/lib/queries';
+import { useNow } from '@/hooks/useNow';
+import { useStockEvents, useWatch } from '@/lib/queries';
 import { colors, fonts, radius, space } from '@/lib/theme';
 
 /**
@@ -23,6 +24,9 @@ export default function CheckoutSheet() {
   const { data: profiles = [] } = useCheckoutProfiles();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const now = useNow();
+  const { data: events = [] } = useStockEvents(w?.product_id);
+  const liveSince = [...events].reverse().find((e) => e.new_state === 'IN_STOCK')?.observed_at;
 
   useEffect(() => {
     track('checkout_sheet_opened');
@@ -64,6 +68,11 @@ export default function CheckoutSheet() {
         {w ? (
           <T testID="checkout-product" style={{ fontFamily: fonts.bodySemi, fontSize: 16 }}>
             {w.product_name}
+          </T>
+        ) : null}
+        {liveSince && live.length > 0 ? (
+          <T testID="checkout-elapsed" variant="mono" style={{ color: colors.live }}>
+            IN STOCK FOR {formatElapsed(now - Date.parse(liveSince))}
           </T>
         ) : null}
 
@@ -147,6 +156,11 @@ export default function CheckoutSheet() {
       </ScrollView>
     </Screen>
   );
+}
+
+function formatElapsed(ms: number) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
 const styles = StyleSheet.create({

@@ -4,6 +4,8 @@ import {
   copyFields,
   deleteProfile,
   loadProfiles,
+  PROFILE_LIMIT,
+  ProfileLimitError,
   saveProfile,
 } from '@/lib/checkoutProfile';
 
@@ -40,7 +42,7 @@ describe('checkout profiles (device-only)', () => {
     await saveProfile(base);
     await saveProfile({ ...base, label: 'Work' });
     expect((await loadProfiles()).map((p) => p.label)).toEqual(['Work']);
-    await saveProfile({ ...base, id: 'p2' });
+    await saveProfile({ ...base, id: 'p2' }, PROFILE_LIMIT.pro);
     await deleteProfile('p1');
     expect((await loadProfiles()).map((p) => p.id)).toEqual(['p2']);
     await clearProfiles();
@@ -54,9 +56,14 @@ describe('checkout profiles (device-only)', () => {
     expect(saved).not.toHaveProperty('cardNumber');
   });
 
-  it('caps the number of profiles', async () => {
-    for (let i = 0; i < 5; i++) await saveProfile({ ...base, id: `p${i}` });
-    await expect(saveProfile({ ...base, id: 'p9' })).rejects.toThrow(/up to 5/);
+  it('allows one profile on Free and many on Pro', async () => {
+    await saveProfile(base);
+    await expect(saveProfile({ ...base, id: 'p2' })).rejects.toBeInstanceOf(ProfileLimitError);
+    for (let i = 2; i <= PROFILE_LIMIT.pro; i++)
+      await saveProfile({ ...base, id: `p${i}` }, PROFILE_LIMIT.pro);
+    await expect(saveProfile({ ...base, id: 'p99' }, PROFILE_LIMIT.pro)).rejects.toThrow(
+      /up to 25/,
+    );
   });
 
   it('ignores corrupt storage', async () => {

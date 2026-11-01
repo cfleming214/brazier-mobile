@@ -29,7 +29,8 @@ export const CheckoutProfile = z.object({
 export type CheckoutProfile = z.infer<typeof CheckoutProfile>;
 
 const KEY = 'drophawk.checkoutProfiles.v1';
-const MAX_PROFILES = 5;
+/** Free plan: one profile. Pro: effectively unlimited (a sanity cap keeps secure storage small). */
+export const PROFILE_LIMIT = { free: 1, pro: 25 } as const;
 
 export async function loadProfiles(): Promise<CheckoutProfile[]> {
   const raw = await SecureStore.getItemAsync(KEY);
@@ -48,16 +49,28 @@ async function persist(profiles: CheckoutProfile[]) {
   });
 }
 
-export async function saveProfile(input: unknown): Promise<CheckoutProfile> {
+export async function saveProfile(
+  input: unknown,
+  maxProfiles: number = PROFILE_LIMIT.free,
+): Promise<CheckoutProfile> {
   const profile = CheckoutProfile.parse(input);
   const profiles = await loadProfiles();
   const idx = profiles.findIndex((p) => p.id === profile.id);
   if (idx >= 0) profiles[idx] = profile;
-  else if (profiles.length >= MAX_PROFILES)
-    throw new Error(`You can save up to ${MAX_PROFILES} profiles.`);
+  else if (profiles.length >= maxProfiles) throw new ProfileLimitError(maxProfiles);
   else profiles.push(profile);
   await persist(profiles);
   return profile;
+}
+
+export class ProfileLimitError extends Error {
+  constructor(readonly limit: number) {
+    super(
+      limit === PROFILE_LIMIT.free
+        ? 'The free plan saves one checkout profile. Upgrade to Pro for more.'
+        : `You can save up to ${limit} profiles.`,
+    );
+  }
 }
 
 export async function deleteProfile(id: string) {
