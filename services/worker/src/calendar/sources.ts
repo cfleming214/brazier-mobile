@@ -143,33 +143,29 @@ export async function discoverListings(
       for (const l of listings) {
         const m = bestMatch({ title: l.title, upc: l.upc }, catalog);
         if (m.productId) {
-          const { error } = await db
-            .from('retailer_skus')
-            .upsert(
-              {
-                product_id: m.productId,
-                retailer_id: l.ref.retailer,
-                retailer_sku: l.ref.sku,
-                url: l.ref.url ?? null,
-              },
-              { onConflict: 'retailer_id,retailer_sku', ignoreDuplicates: true },
-            );
+          const { error } = await db.from('retailer_skus').upsert(
+            {
+              product_id: m.productId,
+              retailer_id: l.ref.retailer,
+              retailer_sku: l.ref.sku,
+              url: l.ref.url ?? null,
+            },
+            { onConflict: 'retailer_id,retailer_sku', ignoreDuplicates: true },
+          );
           if (!error) linked++;
         } else if (/pok[eé]mon/i.test(l.title)) {
-          await db
-            .from('catalog_review_queue')
-            .upsert(
-              {
-                kind: 'listing',
-                retailer_id: l.ref.retailer,
-                retailer_sku: l.ref.sku,
-                url: l.ref.url ?? null,
-                upc: l.upc,
-                title: l.title,
-                match_score: m.score,
-              },
-              { ignoreDuplicates: true },
-            );
+          await db.from('catalog_review_queue').upsert(
+            {
+              kind: 'listing',
+              retailer_id: l.ref.retailer,
+              retailer_sku: l.ref.sku,
+              url: l.ref.url ?? null,
+              upc: l.upc,
+              title: l.title,
+              match_score: m.score,
+            },
+            { ignoreDuplicates: true },
+          );
           queued++;
         }
       }

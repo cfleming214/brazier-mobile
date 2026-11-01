@@ -83,15 +83,13 @@ export async function handleLead(
       if (lead.retailerHint) q = q.eq('retailer_id', lead.retailerHint);
       const { data: skus } = await q;
       for (const s of skus ?? []) matched.push(s.id);
-      await db
-        .from('restock_leads')
-        .insert({
-          source,
-          retailer_id: lead.retailerHint,
-          product_id: m.productId,
-          excerpt: lead.excerpt,
-          kind: lead.kind,
-        });
+      await db.from('restock_leads').insert({
+        source,
+        retailer_id: lead.retailerHint,
+        product_id: m.productId,
+        excerpt: lead.excerpt,
+        kind: lead.kind,
+      });
     }
   }
   if (matched.length)

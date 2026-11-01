@@ -44,13 +44,11 @@ describe.skipIf(!hasDb)('calendar pipeline against local Supabase', () => {
     await db
       .from('push_tokens')
       .insert({ user_id: user, expo_token: 'ExponentPushToken[cal]', platform: 'android' });
-    await db
-      .from('watches')
-      .insert({
-        user_id: user,
-        product_id: '11111111-1111-4111-8111-111111111105',
-        retailer_ids: ['walmart'],
-      });
+    await db.from('watches').insert({
+      user_id: user,
+      product_id: '11111111-1111-4111-8111-111111111105',
+      retailer_ids: ['walmart'],
+    });
   });
 
   it('holds rumors for review, then confirms, moves and notifies when an official source arrives', async () => {
