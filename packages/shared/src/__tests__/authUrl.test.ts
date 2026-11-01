@@ -14,12 +14,17 @@ describe('parseAuthCallback', () => {
     ).toEqual({ kind: 'tokens', accessToken: 'AT', refreshToken: 'RT' });
   });
   it('reads tokens when both query and fragment exist', () => {
-    expect(parseAuthCallback('exp://192.168.1.2:8081/--/auth-callback?x=1#access_token=A&refresh_token=R'))
-      .toEqual({ kind: 'tokens', accessToken: 'A', refreshToken: 'R' });
+    expect(
+      parseAuthCallback(
+        'exp://192.168.1.2:8081/--/auth-callback?x=1#access_token=A&refresh_token=R',
+      ),
+    ).toEqual({ kind: 'tokens', accessToken: 'A', refreshToken: 'R' });
   });
   it('surfaces errors', () => {
     expect(
-      parseAuthCallback('drophawk://auth-callback#error=access_denied&error_description=Email+link+is+invalid'),
+      parseAuthCallback(
+        'drophawk://auth-callback#error=access_denied&error_description=Email+link+is+invalid',
+      ),
     ).toEqual({ kind: 'error', message: 'Email link is invalid' });
   });
   it('reports a missing token', () => {

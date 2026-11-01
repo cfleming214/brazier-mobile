@@ -81,8 +81,8 @@ export default function SignIn() {
         ) : (
           <View style={styles.form}>
             <T variant="muted">
-              We sent a link and a 6-digit code to {email.trim()}. Tap the link on this phone, or enter
-              the code.
+              We sent a link and a 6-digit code to {email.trim()}. Tap the link on this phone, or
+              enter the code.
             </T>
             <T variant="label">Code</T>
             <TextInput

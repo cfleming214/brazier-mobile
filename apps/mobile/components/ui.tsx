@@ -85,20 +85,21 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={variant === 'primary' ? colors.accentInk : colors.accent} />
       ) : (
-        <T
-          style={[
-            styles.buttonLabel,
-            variant === 'ghost' && { color: colors.accent },
-          ]}
-        >
-          {label}
-        </T>
+        <T style={[styles.buttonLabel, variant === 'ghost' && { color: colors.accent }]}>{label}</T>
       )}
     </Pressable>
   );
 }
 
-export function EmptyState({ title, body, action }: { title: string; body: string; action?: ReactNode }) {
+export function EmptyState({
+  title,
+  body,
+  action,
+}: {
+  title: string;
+  body: string;
+  action?: ReactNode;
+}) {
   return (
     <View style={styles.empty}>
       <T variant="title" style={{ textAlign: 'center' }}>

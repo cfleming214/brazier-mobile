@@ -38,7 +38,11 @@ export default function Radar() {
             title="Nothing on radar yet"
             body="Add a product and DropHawk will watch every retailer that carries it."
             action={
-              <Button testID="radar-add-watch" label="Add a watch" onPress={() => router.push('/add-watch')} />
+              <Button
+                testID="radar-add-watch"
+                label="Add a watch"
+                onPress={() => router.push('/add-watch')}
+              />
             }
           />
         </Panel>
