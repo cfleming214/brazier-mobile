@@ -1,0 +1,5 @@
+mockups/
+pnpm-lock.yaml
+*.md
+apps/mobile/ios
+apps/mobile/android

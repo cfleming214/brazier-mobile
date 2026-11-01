@@ -1,0 +1,83 @@
+import { ChakraPetch_600SemiBold, ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
+import { IBMPlexMono_400Regular, IBMPlexMono_600SemiBold } from '@expo-google-fonts/ibm-plex-mono';
+import {
+  IBMPlexSans_400Regular,
+  IBMPlexSans_500Medium,
+  IBMPlexSans_600SemiBold,
+} from '@expo-google-fonts/ibm-plex-sans';
+import { useFonts } from 'expo-font';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
+import { AuthProvider, useAuth } from '@/lib/auth';
+import { colors } from '@/lib/theme';
+
+export { ErrorBoundary } from 'expo-router';
+
+SplashScreen.preventAutoHideAsync();
+
+const navTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: colors.field,
+    card: colors.panel,
+    border: colors.line,
+    primary: colors.accent,
+    text: colors.ink,
+  },
+};
+
+export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    ChakraPetch_600SemiBold,
+    ChakraPetch_700Bold,
+    IBMPlexSans_400Regular,
+    IBMPlexSans_500Medium,
+    IBMPlexSans_600SemiBold,
+    IBMPlexMono_400Regular,
+    IBMPlexMono_600SemiBold,
+  });
+
+  useEffect(() => {
+    if (fontError) throw fontError;
+  }, [fontError]);
+
+  if (!fontsLoaded) return null;
+
+  return (
+    <AuthProvider>
+      <ThemeProvider value={navTheme}>
+        <StatusBar style="light" />
+        <RootNavigator />
+      </ThemeProvider>
+    </AuthProvider>
+  );
+}
+
+function RootNavigator() {
+  const { session, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading) SplashScreen.hideAsync();
+  }, [loading]);
+
+  if (loading) return null;
+
+  const signedIn = session != null;
+  return (
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.field } }}>
+      <Stack.Protected guard={signedIn}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="add-watch" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="watch/[id]" />
+      </Stack.Protected>
+      <Stack.Protected guard={!signedIn}>
+        <Stack.Screen name="sign-in" />
+      </Stack.Protected>
+      <Stack.Screen name="auth-callback" />
+    </Stack>
+  );
+}
