@@ -33,7 +33,7 @@ Promote a tested update to production without rebuilding:
 2. App Store Connect: create the app, put its id in `eas.json → submit.*.ios.ascAppId`.
 3. Play Console: create the app, upload the first AAB by hand, save a service account key to
    `apps/mobile/secrets/play-service-account.json` (git-ignored).
-4. EAS secrets per environment: `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`,
+4. EAS environment variables (`eas env:create`, see `docs/SETUP_GUIDE.md`): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`,
    `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY`,
    plus `SENTRY_AUTH_TOKEN` for source-map upload.
 5. RevenueCat: products `pro_monthly` / `pro_annual` attached to entitlement `pro`; webhook to

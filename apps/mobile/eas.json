@@ -16,7 +16,8 @@
       "env": {
         "APP_VARIANT": "development",
         "EXPO_PUBLIC_APP_ENV": "development"
-      }
+      },
+      "environment": "development"
     },
     "e2e": {
       "extends": "base",
@@ -40,7 +41,8 @@
       "channel": "preview",
       "env": {
         "EXPO_PUBLIC_APP_ENV": "preview"
-      }
+      },
+      "environment": "preview"
     },
     "production": {
       "extends": "base",
@@ -48,7 +50,8 @@
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_APP_ENV": "production"
-      }
+      },
+      "environment": "production"
     },
     "beta": {
       "extends": "base",
@@ -56,7 +59,8 @@
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_APP_ENV": "beta"
-      }
+      },
+      "environment": "production"
     }
   },
   "submit": {
