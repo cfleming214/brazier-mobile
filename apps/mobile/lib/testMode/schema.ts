@@ -2,7 +2,8 @@
  * On-device SQLite schema for test mode.
  *
  * Mirrors the Supabase catalog tables (supabase/migrations): categories, retailers, products,
- * retailer_skus, stock_events and adapter_health, with the same column names, defaults and checks.
+ * retailer_skus, stock_events, adapter_health, calendar_events and calendar_follows, with the same
+ * column names, defaults and checks.
  * Postgres types map to SQLite as:
  *   uuid, text, date, timestamptz  -> TEXT (timestamps are ISO-8601 strings)
  *   jsonb, text[]                  -> TEXT holding JSON
@@ -11,7 +12,7 @@
  *   real                           -> REAL
  * When a migration changes one of these tables, update this file and bump SCHEMA_VERSION.
  */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 const now = `(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`;
 
@@ -43,6 +44,7 @@ create table products (
   release_date text,
   is_exclusive integer not null default 0 check (is_exclusive in (0, 1)),
   exclusive_retailer_id text references retailers (id),
+  is_upcoming integer not null default 0 check (is_upcoming in (0, 1)),
   search_text text not null default '',
   created_at text not null default ${now},
   updated_at text not null default ${now}
@@ -95,6 +97,38 @@ create table adapter_health (
   updated_at text not null default ${now}
 );
 
+create table calendar_events (
+  id text primary key,
+  product_id text references products (id) on delete set null,
+  set_name text,
+  title text not null,
+  event_type text not null
+    check (event_type in ('set_release', 'preorder_open', 'retailer_street_date', 'prerelease', 'restock_window', 'pc_drop')),
+  retailer_id text references retailers (id),
+  starts_at text not null,
+  timezone text not null default 'America/New_York',
+  status text not null default 'rumored' check (status in ('rumored', 'confirmed', 'cancelled')),
+  confidence real not null default 0.5 check (confidence between 0 and 1),
+  source_refs text not null default '[]' check (json_valid(source_refs)),
+  sponsored integer not null default 0 check (sponsored in (0, 1)),
+  published integer not null default 0 check (published in (0, 1)),
+  is_estimate integer not null default 0 check (is_estimate in (0, 1)),
+  review_status text not null default 'auto' check (review_status in ('auto', 'pending', 'approved', 'rejected')),
+  cancelled_at text,
+  created_at text not null default ${now},
+  updated_at text not null default ${now}
+);
+
+-- user_id has no auth.users to reference on device; test data uses one local user.
+create table calendar_follows (
+  user_id text not null,
+  event_id text not null references calendar_events (id) on delete cascade,
+  remind_minutes_before integer not null default 15 check (remind_minutes_before between 0 and 10080),
+  created_at text not null default ${now},
+  primary key (user_id, event_id)
+);
+
 create index retailer_skus_product_idx on retailer_skus (product_id);
 create index stock_events_sku_idx on stock_events (retailer_sku_id, observed_at);
+create index calendar_events_starts_idx on calendar_events (starts_at);
 `;

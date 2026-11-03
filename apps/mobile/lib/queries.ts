@@ -9,7 +9,7 @@ export const keys = {
   // Catalog keys end with the data source so live and test results are cached separately.
   search: (q: string, source: DataSource = 'live') => ['search', q, source] as const,
   product: (id: string, source: DataSource = 'live') => ['product', id, source] as const,
-  nextEvent: ['calendar', 'next'] as const,
+  nextEvent: (source: DataSource = 'live') => ['calendar', 'next', source] as const,
   stockEvents: (productId: string, source: DataSource = 'live') =>
     ['stock-events', productId, source] as const,
 };
@@ -35,7 +35,7 @@ export const useProduct = (id: string | null) =>
   });
 
 export const useNextEvent = () =>
-  useQuery({ queryKey: keys.nextEvent, queryFn: api.nextCalendarEvent, staleTime: 60_000 });
+  useQuery({ queryKey: keys.nextEvent(useDataSource()), queryFn: api.nextCalendarEvent, staleTime: 60_000 });
 
 export const useStockEvents = (productId: string | undefined) =>
   useQuery({

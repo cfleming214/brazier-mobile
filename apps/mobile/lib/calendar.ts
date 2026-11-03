@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 import { env } from './env';
 import { supabase } from './supabase';
+import { testCatalog } from './testMode/catalog';
+import { currentDataSource, useDataSource } from './testMode/settings';
 
 export interface AgendaEvent {
   id: string;
@@ -71,8 +73,9 @@ export function countdownLabel(startsAt: string, now: number): string {
 
 export const useAgenda = () =>
   useQuery({
-    queryKey: ['calendar', 'agenda'],
+    queryKey: ['calendar', 'agenda', useDataSource()],
     queryFn: async () => {
+      if ((await currentDataSource()) === 'test') return testCatalog.agenda();
       const { data, error } = await supabase
         .from('calendar_agenda')
         .select('*')
@@ -89,15 +92,20 @@ const reminderKey = (eventId: string) => `reminder:${eventId}`;
 
 /** Follow an event (server push on changes + server reminder) and schedule a local reminder. */
 export async function setReminder(e: AgendaEvent, minutesBefore: number) {
-  const { data: u } = await supabase.auth.getUser();
-  if (!u.user) throw new Error('Sign in required');
-  const { error } = await supabase
-    .from('calendar_follows')
-    .upsert(
-      { user_id: u.user.id, event_id: e.id, remind_minutes_before: minutesBefore },
-      { onConflict: 'user_id,event_id' },
-    );
-  if (error) throw error;
+  if ((await currentDataSource()) === 'test') {
+    // Test drops only exist on device: follow locally, no sign-in or server push.
+    await testCatalog.setReminder(e.id, minutesBefore);
+  } else {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) throw new Error('Sign in required');
+    const { error } = await supabase
+      .from('calendar_follows')
+      .upsert(
+        { user_id: u.user.id, event_id: e.id, remind_minutes_before: minutesBefore },
+        { onConflict: 'user_id,event_id' },
+      );
+    if (error) throw error;
+  }
   await cancelLocalReminder(e.id);
   const at = new Date(Date.parse(e.starts_at) - minutesBefore * 60_000);
   if (at.getTime() > Date.now()) {
@@ -125,7 +133,8 @@ async function cancelLocalReminder(eventId: string) {
 }
 
 export async function clearReminder(eventId: string) {
-  await supabase.from('calendar_follows').delete().eq('event_id', eventId);
+  if ((await currentDataSource()) === 'test') await testCatalog.clearReminder(eventId);
+  else await supabase.from('calendar_follows').delete().eq('event_id', eventId);
   await cancelLocalReminder(eventId);
 }
 

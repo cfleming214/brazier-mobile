@@ -35,6 +35,8 @@ export type Product = {
   image_url: string;
   release_date: string | null;
   exclusive_retailer_id: TestRetailerId | null;
+  /** Announced but not released yet; these get the test drop schedule (lib/testMode/schedule.ts). */
+  is_upcoming: boolean;
 };
 export type Listing = {
   id: string;
@@ -87,7 +89,10 @@ const BBY = 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products';
 
 /** [sku, url, price in cents or null] per retailer. */
 type Offer = [sku: string, url: string, priceCents: number | null];
-type Raw = Omit<Product, 'id' | 'category_id'> & { offers: Partial<Record<TestRetailerId, Offer>> };
+type Raw = Omit<Product, 'id' | 'category_id' | 'is_upcoming'> & {
+  is_upcoming?: boolean;
+  offers: Partial<Record<TestRetailerId, Offer>>;
+};
 
 const RAW: Raw[] = [
   {
@@ -266,6 +271,37 @@ const RAW: Raw[] = [
       pokemoncenter: ['290-85695', 'https://www.pokemoncenter.com/product/290-85695/pokemon-trading-card-game-battle-academy-armarouge-ex-pikachu-ex-and-darkrai-ex', 2499],
     },
   },
+
+  // Upcoming: Delta Reign (ME06), US release 2026-11-06. MSRPs are retailer list prices.
+  {
+    name: 'Pokémon TCG: Mega Evolution—Delta Reign Elite Trainer Box',
+    set_name: 'Delta Reign', product_type: 'etb', msrp_cents: 4999, upc: '196214165809', release_date: '2026-11-06',
+    image_url: `${BBY}/2d0535bc-6189-49a0-98e1-73f8fc135f98.png`, exclusive_retailer_id: null, is_upcoming: true,
+    offers: {
+      bestbuy: ['6689672', 'https://www.bestbuy.com/product/pokemon-trading-card-game-mega-evolution-delta-reign-elite-trainer-box/JJG2TL8QGY', 4999],
+      walmart: ['21142702057', 'https://www.walmart.com/ip/21142702057', 11477],
+      amazon: ['B0HG3MQDWP', 'https://www.amazon.com/dp/B0HG3MQDWP', null],
+    },
+  },
+  {
+    name: 'Pokémon TCG: Mega Evolution—Delta Reign Booster Display Box (36 Packs)',
+    set_name: 'Delta Reign', product_type: 'booster_box', msrp_cents: 16164, upc: '196214165854', release_date: '2026-11-06',
+    image_url: `${BBY}/fbef3916-1f3f-41ad-8fa5-16c047addee4.jpg`, exclusive_retailer_id: null, is_upcoming: true,
+    offers: {
+      bestbuy: ['6689677', 'https://www.bestbuy.com/product/pokemon-trading-card-game-mega-evolution-delta-reign-booster-box-36-packs/JJG2TL8QYX', 16099],
+      amazon: ['B0HGTBCCXX', 'https://www.amazon.com/dp/B0HGTBCCXX', 25394],
+      pokemoncenter: ['10-10446-120', 'https://www.pokemoncenter.com/product/10-10446-120/pokemon-tcg-mega-evolution-delta-reign-booster-display-box-36-packs', 16164],
+    },
+  },
+  {
+    name: 'Pokémon TCG: Mega Evolution—Delta Reign Booster Bundle',
+    set_name: 'Delta Reign', product_type: 'booster_bundle', msrp_cents: 2694, upc: '196214165823', release_date: '2026-11-06',
+    image_url: `${BBY}/acc7b8d8-f828-4240-89ce-984013b33f21.jpg`, exclusive_retailer_id: null, is_upcoming: true,
+    offers: {
+      bestbuy: ['6689678', 'https://www.bestbuy.com/product/pokemon-trading-card-game-mega-evolution-delta-reign-booster-bundle/JJG2TL8QGF', 2694],
+      amazon: ['B0HG3RVZLW', 'https://www.amazon.com/dp/B0HG3RVZLW', null],
+    },
+  },
 ];
 
 const pad = (n: number, width: number) => String(n).padStart(width, '0');
@@ -274,6 +310,7 @@ const listingId = (n: number) => `33333333-3333-4333-8333-${pad(n, 12)}`;
 
 export const PRODUCTS: Product[] = RAW.map(({ offers: _offers, ...p }, i) => ({
   ...p,
+  is_upcoming: p.is_upcoming ?? false,
   id: productId(i),
   category_id: 'pokemon_tcg',
 }));
@@ -282,8 +319,18 @@ export const PRODUCTS: Product[] = RAW.map(({ offers: _offers, ...p }, i) => ({
 const CHECKED_AT = Date.parse('2026-11-02T12:00:00Z');
 const RETAILER_ORDER: TestRetailerId[] = ['bestbuy', 'walmart', 'amazon', 'pokemoncenter'];
 
-/** Synthetic stock: a stable mix of in-stock and sold-out listings with varied quantities. */
-function syntheticStock(productIndex: number, retailerIndex: number) {
+/**
+ * Synthetic stock: a stable mix of in-stock and sold-out listings with varied quantities.
+ * Upcoming products are on preorder everywhere they're listed.
+ */
+function syntheticStock(productIndex: number, retailerIndex: number, upcoming: boolean) {
+  if (upcoming) {
+    return {
+      last_state: 'PREORDER' as StockState,
+      quantity_available: 10 + ((productIndex * 13 + retailerIndex * 5) % 90),
+      last_checked_at: new Date(CHECKED_AT - (productIndex + retailerIndex) * 60_000).toISOString(),
+    };
+  }
   const roll = (productIndex * 7 + retailerIndex * 3) % 10;
   // Pokémon Center sells out fastest.
   const inStock = retailerIndex === 3 ? roll < 3 : roll < 6;
@@ -309,7 +356,7 @@ export const LISTINGS: Listing[] = RAW.flatMap((raw, p) =>
         url,
         last_price_cents,
         marketplace_only: last_price_cents > raw.msrp_cents,
-        ...syntheticStock(p, r),
+        ...syntheticStock(p, r, raw.is_upcoming ?? false),
       },
     ];
   }),

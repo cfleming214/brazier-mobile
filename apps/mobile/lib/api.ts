@@ -219,6 +219,7 @@ export async function deleteWatch(id: string) {
 }
 
 export async function nextCalendarEvent(): Promise<CalendarEventRow | null> {
+  if ((await currentDataSource()) === 'test') return testCatalog.nextCalendarEvent();
   const rows = check(
     await supabase
       .from('calendar_events')

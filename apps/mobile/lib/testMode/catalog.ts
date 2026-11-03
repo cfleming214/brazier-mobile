@@ -5,7 +5,8 @@
  */
 import type { RetailerSlug } from '@brazier/shared';
 import type { SQLiteDatabase } from 'expo-sqlite';
-import type { ProductDetail, ProductSearchResult, StockEventRow } from '../api';
+import type { CalendarEventRow, ProductDetail, ProductSearchResult, StockEventRow } from '../api';
+import type { AgendaEvent } from '../calendar';
 import type { AdapterHealth } from '../telemetry';
 import { openTestDb } from './db';
 
@@ -115,6 +116,63 @@ export async function adapterHealthIn(db: SQLiteDatabase): Promise<AdapterHealth
   return rows.map((r) => ({ ...r, active_protections: JSON.parse(r.active_protections) as string[] }));
 }
 
+/** The single on-device user that test-data reminders belong to. */
+export const LOCAL_USER = 'local';
+
+type AgendaRow = Omit<AgendaEvent, 'is_estimate' | 'sponsored' | 'source_refs'> & {
+  is_estimate: number;
+  sponsored: number;
+  source_refs: string;
+};
+
+/** Same rows as the calendar_agenda view: published, not cancelled, from a day ago onwards. */
+export async function agendaIn(db: SQLiteDatabase, now = new Date()): Promise<AgendaEvent[]> {
+  const rows = await db.getAllAsync<AgendaRow>(
+    `select e.id, e.title, e.event_type, e.retailer_id, e.starts_at, e.timezone, e.status, e.confidence,
+            e.is_estimate, e.sponsored, e.source_refs, e.product_id, e.set_name,
+            p.name as product_name,
+            (select cf.remind_minutes_before from calendar_follows cf
+              where cf.event_id = e.id and cf.user_id = ?) as my_reminder
+       from calendar_events e
+       left join products p on p.id = e.product_id
+      where e.published = 1 and e.status != 'cancelled' and e.starts_at > ?
+      order by e.starts_at
+      limit 200`,
+    [LOCAL_USER, new Date(now.getTime() - 86_400_000).toISOString()],
+  );
+  return rows.map((r) => ({
+    ...r,
+    is_estimate: r.is_estimate === 1,
+    sponsored: r.sponsored === 1,
+    source_refs: JSON.parse(r.source_refs) as AgendaEvent['source_refs'],
+  }));
+}
+
+export async function nextCalendarEventIn(
+  db: SQLiteDatabase,
+  now = new Date(),
+): Promise<CalendarEventRow | null> {
+  return db.getFirstAsync<CalendarEventRow>(
+    `select id, title, event_type, retailer_id, starts_at, timezone, status, product_id
+       from calendar_events
+      where starts_at >= ? and status != 'cancelled'
+      order by starts_at limit 1`,
+    [now.toISOString()],
+  );
+}
+
+export async function setReminderIn(db: SQLiteDatabase, eventId: string, minutesBefore: number) {
+  await db.runAsync(
+    `insert into calendar_follows (user_id, event_id, remind_minutes_before) values (?, ?, ?)
+     on conflict (user_id, event_id) do update set remind_minutes_before = excluded.remind_minutes_before`,
+    [LOCAL_USER, eventId, minutesBefore],
+  );
+}
+
+export async function clearReminderIn(db: SQLiteDatabase, eventId: string) {
+  await db.runAsync('delete from calendar_follows where user_id = ? and event_id = ?', [LOCAL_USER, eventId]);
+}
+
 export const testCatalog = {
   searchProducts: async (q: string) => searchProductsIn(await openTestDb(), q),
   getProduct: async (id: string) => getProductIn(await openTestDb(), id),
@@ -123,4 +181,9 @@ export const testCatalog = {
   findProductByUpc: async (upc: string) => findProductByUpcIn(await openTestDb(), upc),
   productStockEvents: async (productId: string) => productStockEventsIn(await openTestDb(), productId),
   adapterHealth: async () => adapterHealthIn(await openTestDb()),
+  agenda: async () => agendaIn(await openTestDb()),
+  nextCalendarEvent: async () => nextCalendarEventIn(await openTestDb()),
+  setReminder: async (eventId: string, minutes: number) =>
+    setReminderIn(await openTestDb(), eventId, minutes),
+  clearReminder: async (eventId: string) => clearReminderIn(await openTestDb(), eventId),
 };

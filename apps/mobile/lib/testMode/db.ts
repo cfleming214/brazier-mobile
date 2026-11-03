@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { CATEGORIES, LISTINGS, PRODUCTS, RETAILERS, type Listing, type Product } from './dataset';
+import { refreshDropSchedule } from './schedule';
 import { SCHEMA_SQL, SCHEMA_VERSION } from './schema';
 
 export const TEST_DB_NAME = 'brazier-test-mode.db';
@@ -18,6 +19,7 @@ export function openTestDb(): Promise<SQLiteDatabase> {
     const SQLite = await import('expo-sqlite');
     const db = await SQLite.openDatabaseAsync(TEST_DB_NAME);
     await migrate(db);
+    await refreshDropSchedule(db);
     return db;
   })().catch((e) => {
     opening = null;
@@ -34,7 +36,7 @@ async function migrate(db: SQLiteDatabase) {
   await rebuild(db);
 }
 
-const TABLES = ['adapter_health', 'stock_events', 'retailer_skus', 'products', 'retailers', 'categories'];
+const TABLES = ['calendar_follows', 'calendar_events', 'adapter_health', 'stock_events', 'retailer_skus', 'products', 'retailers', 'categories'];
 
 /** Drop everything and reload the bundled dataset. */
 export async function rebuild(db: SQLiteDatabase) {
@@ -42,6 +44,7 @@ export async function rebuild(db: SQLiteDatabase) {
     await db.execAsync(TABLES.map((t) => `drop table if exists ${t};`).join('\n'));
     await db.execAsync(SCHEMA_SQL);
     await seed(db);
+    await refreshDropSchedule(db);
     await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION}`);
   });
 }
@@ -65,12 +68,12 @@ async function seed(db: SQLiteDatabase) {
   for (const p of PRODUCTS) {
     await db.runAsync(
       `insert into products (id, category_id, name, set_name, product_type, upc, msrp_cents,
-         image_url, release_date, is_exclusive, exclusive_retailer_id, search_text)
-       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         image_url, release_date, is_exclusive, exclusive_retailer_id, is_upcoming, search_text)
+       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         p.id, p.category_id, p.name, p.set_name, p.product_type, p.upc, p.msrp_cents,
         p.image_url, p.release_date, p.exclusive_retailer_id ? 1 : 0, p.exclusive_retailer_id,
-        searchText(p),
+        p.is_upcoming ? 1 : 0, searchText(p),
       ],
     );
   }

@@ -1,4 +1,4 @@
--- Retailer profile details and per-retailer inventory counts.
+-- Retailer profile details, per-retailer inventory counts and upcoming products.
 -- The mobile app's on-device test-mode database (apps/mobile/lib/testMode/schema.ts)
 -- mirrors these tables, so keep the two in step.
 
@@ -19,3 +19,6 @@ update public.retailers set website_url = case id
   when 'tcgplayer' then 'https://www.tcgplayer.com'
   when 'amazon' then 'https://www.amazon.com'
 end;
+
+-- Announced products that haven't been released yet (preorders, upcoming drops).
+alter table public.products add column is_upcoming boolean not null default false;
