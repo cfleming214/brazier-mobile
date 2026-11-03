@@ -1,4 +1,4 @@
-# DropHawk Build Plan: Pokémon TCG First
+# Brazier Build Plan: Pokémon TCG First
 
 > Status: proposal, not yet started · Scope: **Pokémon TCG sealed product, US retailers** · Sources: `PLAN.md`, `FEATURES.md`
 
@@ -183,7 +183,7 @@ Screens (from `PLAN.md`), adjusted for Pokémon:
 - *Settings* (DROP-88): per-category toggles (restock, bot status, drop updates, reminders, community), per-watch overrides, quiet hours that never silence Ready to buy / Your turn / restock unless opted in, and a daily digest option for drop updates.
 - *Inbox* (DROP-89): the Radar bell opens a history of every notification, kept even when push is off.
 
-Push: Expo Push with `priority: high` and an iOS `interruptionLevel` of `time-sensitive`. **Critical alerts** need an Apple entitlement request, so v1 runs without them. A notification category with a "Go to Checkout" action deep-links via Expo Router (`drophawk://watch/:id?go=1`).
+Push: Expo Push with `priority: high` and an iOS `interruptionLevel` of `time-sensitive`. **Critical alerts** need an Apple entitlement request, so v1 runs without them. A notification category with a "Go to Checkout" action deep-links via Expo Router (`brazier://watch/:id?go=1`).
 
 ---
 
@@ -245,7 +245,7 @@ Each phase ends with a demo and its E2E suite green in CI.
 
 ## 9. Non-functional requirements
 
-- **Compliance:** a policy object per retailer, a request budget enforced in code, a user-agent that identifies DropHawk, no evasion of bot protection, and an off switch per retailer (`retailers.policy.enabled`).
+- **Compliance:** a policy object per retailer, a request budget enforced in code, a user-agent that identifies Brazier, no evasion of bot protection, and an off switch per retailer (`retailers.policy.enabled`).
 - **Reliability:** idempotent jobs (keyed by `retailer_sku_id + observed_at bucket`), dead-letter queues, and an adapter health dashboard with alerts when an adapter's success rate drops.
 - **Security:** checkout profiles stay on the device, the service-role key lives only in the worker and Edge Functions, RLS tests run in CI, and a secrets scan runs in CI.
 - **Observability:** structured logs plus OpenTelemetry traces that carry one `trace_id` from poll → detect → notify; Sentry on mobile and worker.

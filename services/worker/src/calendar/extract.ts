@@ -1,4 +1,4 @@
-import type { CalendarEventType } from '@drophawk/shared';
+import type { CalendarEventType } from '@brazier/shared';
 
 const MONTHS: Record<string, number> = {
   jan: 0,

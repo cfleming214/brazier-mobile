@@ -1,4 +1,4 @@
-import type { RetailerPolicy } from '@drophawk/shared';
+import type { RetailerPolicy } from '@brazier/shared';
 
 /** Token bucket: at most `perMinute` requests per rolling minute, smoothly refilled. */
 export class TokenBucket {

@@ -28,13 +28,13 @@ describe('affiliate tagging', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { withAffiliate } = require('@/lib/openRetailer') as typeof import('@/lib/openRetailer');
   it('adds the Amazon associate tag and leaves other retailers alone', () => {
-    expect(withAffiliate('https://www.amazon.com/dp/B0X', 'drophawk-20')).toBe(
-      'https://www.amazon.com/dp/B0X?tag=drophawk-20',
+    expect(withAffiliate('https://www.amazon.com/dp/B0X', 'brazier-20')).toBe(
+      'https://www.amazon.com/dp/B0X?tag=brazier-20',
     );
-    expect(withAffiliate('https://www.amazon.com/dp/B0X?tag=other', 'drophawk-20')).toContain(
+    expect(withAffiliate('https://www.amazon.com/dp/B0X?tag=other', 'brazier-20')).toContain(
       'tag=other',
     );
-    expect(withAffiliate('https://www.target.com/p/-/A-1', 'drophawk-20')).toBe(
+    expect(withAffiliate('https://www.target.com/p/-/A-1', 'brazier-20')).toBe(
       'https://www.target.com/p/-/A-1',
     );
     expect(withAffiliate('https://www.amazon.com/dp/B0X', undefined)).toBe(

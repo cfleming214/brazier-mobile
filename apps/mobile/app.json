@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "DropHawk",
-    "slug": "drophawk",
+    "name": "Brazier",
+    "slug": "brazier",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "drophawk",
+    "scheme": "brazier",
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.drophawk.app",
+      "bundleIdentifier": "com.brazier.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -22,7 +22,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.drophawk.app"
+      "package": "com.brazier.app"
     },
     "web": {
       "bundler": "metro",
@@ -55,11 +55,17 @@
     "backgroundColor": "#070b10",
     "extra": {
       "eas": {
-        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
+        "projectId": "d98a95e3-aea2-4024-a8cc-0fc797f92d6b"
+      },
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
       }
     },
     "runtimeVersion": {
       "policy": "fingerprint"
-    }
+    },
+    "owner": "simple-design"
   }
 }

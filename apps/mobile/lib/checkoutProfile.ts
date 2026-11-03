@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 /**
  * Checkout profiles live only on this device (iOS Keychain / Android Keystore via expo-secure-store).
- * They are never sent to DropHawk servers. Card numbers are deliberately NOT stored here: payment
+ * They are never sent to Brazier servers. Card numbers are deliberately NOT stored here: payment
  * stays with the retailer account, Apple Pay or Google Pay. Profiles hold the details people type
  * at checkout so the Checkout Sheet can offer one-tap copy chips.
  */
@@ -28,7 +28,7 @@ export const CheckoutProfile = z.object({
 });
 export type CheckoutProfile = z.infer<typeof CheckoutProfile>;
 
-const KEY = 'drophawk.checkoutProfiles.v1';
+const KEY = 'brazier.checkoutProfiles.v1';
 /** Free plan: one profile. Pro: effectively unlimited (a sanity cap keeps secure storage small). */
 export const PROFILE_LIMIT = { free: 1, pro: 25 } as const;
 

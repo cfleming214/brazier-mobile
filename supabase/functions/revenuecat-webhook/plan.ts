@@ -1,4 +1,4 @@
-// Pure mapping from a RevenueCat webhook event to a DropHawk plan. Unit-tested from the worker suite.
+// Pure mapping from a RevenueCat webhook event to a Brazier plan. Unit-tested from the worker suite.
 export interface RevenueCatEvent {
   type: string;
   app_user_id: string;

@@ -1,4 +1,4 @@
-import type { AvailabilityResult, StockState } from '@drophawk/shared';
+import type { AvailabilityResult, StockState } from '@brazier/shared';
 
 export interface SkuSnapshot {
   last_state: StockState;

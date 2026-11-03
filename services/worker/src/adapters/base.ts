@@ -1,4 +1,4 @@
-import type { AvailabilityResult, RetailerSkuRef, StockState } from '@drophawk/shared';
+import type { AvailabilityResult, RetailerSkuRef, StockState } from '@brazier/shared';
 import { BlockedError, detectProtections } from './protections';
 
 export interface AdapterContext {

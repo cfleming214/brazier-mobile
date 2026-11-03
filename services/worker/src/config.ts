@@ -6,7 +6,7 @@ const Env = z.object({
   POKEMONTCG_API_KEY: z.string().optional(),
   POKEMONTCG_BASE_URL: z.string().url().default('https://api.pokemontcg.io/v2'),
   TCGCSV_BASE_URL: z.string().url().default('https://tcgcsv.com/tcgplayer'),
-  USER_AGENT: z.string().default('DropHawk/0.1 (+https://drophawk.app/bot)'),
+  USER_AGENT: z.string().default('Brazier/0.1 (+https://brazier.app/bot)'),
   BESTBUY_API_KEY: z.string().optional(),
   WALMART_CONSUMER_ID: z.string().optional(),
   WALMART_PRIVATE_KEY: z.string().optional(),

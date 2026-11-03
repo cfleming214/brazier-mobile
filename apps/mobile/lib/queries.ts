@@ -1,4 +1,4 @@
-import type { CreateWatchInput } from '@drophawk/shared';
+import type { CreateWatchInput } from '@brazier/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as api from './api';
 

@@ -4,7 +4,7 @@ import {
   type ProductType,
   type RetailerSlug,
   type StockState,
-} from '@drophawk/shared';
+} from '@brazier/shared';
 import { supabase } from './supabase';
 
 export interface ProductSearchResult {

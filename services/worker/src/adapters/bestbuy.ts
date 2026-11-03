@@ -3,8 +3,8 @@ import type {
   RetailerAdapter,
   RetailerPolicy,
   RetailerSkuRef,
-} from '@drophawk/shared';
-import { parseRetailerUrl } from '@drophawk/shared';
+} from '@brazier/shared';
+import { parseRetailerUrl } from '@brazier/shared';
 import { getText, result, type AdapterContext } from './base';
 
 /** Best Buy Products API product (fields requested via `show=`). */

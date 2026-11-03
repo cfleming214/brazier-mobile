@@ -1,8 +1,8 @@
 # Features
 
-**DropHawk** — *Track the drop. Win the checkout. Never refresh again.*
+**Brazier** — *Track the drop. Win the checkout. Never refresh again.*
 
-DropHawk is a mobile command center for collectors and resellers chasing limited-stock inventory: Pokémon TCG Elite Trainer Boxes, Funko convention exclusives, RTX GPU restocks, and sneaker drops. The product is built around three promises: **know first** (sub-second stock detection), **act fastest** (armed checkout automation), and **know why you won or lost** (full attempt forensics).
+Brazier is a mobile command center for collectors and resellers chasing limited-stock inventory: Pokémon TCG Elite Trainer Boxes, Funko convention exclusives, RTX GPU restocks, and sneaker drops. The product is built around three promises: **know first** (sub-second stock detection), **act fastest** (armed checkout automation), and **know why you won or lost** (full attempt forensics).
 
 ---
 
@@ -10,7 +10,7 @@ DropHawk is a mobile command center for collectors and resellers chasing limited
 
 ### 1. Universal Watchlist Builder
 
-Users add a tracked item three ways: pasting any retailer product URL, scanning a UPC/EAN barcode with the camera, or searching DropHawk's unified catalog where a single canonical product fans out to every retailer SKU that carries it. Adding "Pokémon Scarlet & Violet — Prismatic Evolutions ETB" once automatically arms watchers at Target, Walmart, Best Buy, GameStop, Costco, Pokémon Center, Troll and Toad, TCGplayer, and Card Kingdom without the user hunting down nine separate links.
+Users add a tracked item three ways: pasting any retailer product URL, scanning a UPC/EAN barcode with the camera, or searching Brazier's unified catalog where a single canonical product fans out to every retailer SKU that carries it. Adding "Pokémon Scarlet & Violet — Prismatic Evolutions ETB" once automatically arms watchers at Target, Walmart, Best Buy, GameStop, Costco, Pokémon Center, Troll and Toad, TCGplayer, and Card Kingdom without the user hunting down nine separate links.
 
 **User benefit:** One tap replaces the 20 browser tabs and 9 bookmark folders a serious collector currently babysits, and it guarantees the user never misses the one retailer they forgot to check.
 
@@ -26,7 +26,7 @@ A distributed polling fleet checks every tracked SKU on an adaptive interval —
 
 ### 3. Priority Push Alerts with Store-Level Targeting
 
-Alerts deliver as high-priority, time-critical push notifications that bypass Focus modes and Do Not Disturb, carrying the retailer, price, stock depth, and a one-tap **Go** button that deep-links straight into the retailer app's cart or launches DropHawk's in-app checkout. Users filter by price ceiling, condition, retailer, bundle vs. single, and — for in-store pickup — a radius around their location so a Costco Kirkland warehouse alert never wakes up a user in Tampa.
+Alerts deliver as high-priority, time-critical push notifications that bypass Focus modes and Do Not Disturb, carrying the retailer, price, stock depth, and a one-tap **Go** button that deep-links straight into the retailer app's cart or launches Brazier's in-app checkout. Users filter by price ceiling, condition, retailer, bundle vs. single, and — for in-store pickup — a radius around their location so a Costco Kirkland warehouse alert never wakes up a user in Tampa.
 
 **User benefit:** Signal, not noise — the user gets woken at 3:04am only for drops they actually want and can actually reach, with the purchase path already one thumb-press away.
 
@@ -34,7 +34,7 @@ Alerts deliver as high-priority, time-critical push notifications that bypass Fo
 
 ### 4. Armed Checkout Bot
 
-For any watchlist item, the user can "arm" a checkout profile: shipping address, billing method, quantity, max price, and a hard stop-loss. When that SKU goes live, DropHawk executes the full purchase flow — add to cart, apply the saved address and payment, submit the order — against the user's own authenticated retailer session, and either completes the order or hands off to the user at the exact step that needs a human.
+For any watchlist item, the user can "arm" a checkout profile: shipping address, billing method, quantity, max price, and a hard stop-loss. When that SKU goes live, Brazier executes the full purchase flow — add to cart, apply the saved address and payment, submit the order — against the user's own authenticated retailer session, and either completes the order or hands off to the user at the exact step that needs a human.
 
 **User benefit:** The user wins drops that happen while they're asleep, driving, or in a meeting, without ever having stored a credit card in a sketchy Discord bot.
 
@@ -78,7 +78,7 @@ Every tracked product shows live retail price alongside recent sold comps from e
 
 ### 9. Inventory & Order Vault
 
-Successful DropHawk orders flow automatically into a personal inventory ledger with cost basis, order number, retailer, arrival status, and tracking. Users mark items as kept, listed, or sold, and the app rolls up spend, realized profit, and a year-end CSV/Schedule-C-friendly export.
+Successful Brazier orders flow automatically into a personal inventory ledger with cost basis, order number, retailer, arrival status, and tracking. Users mark items as kept, listed, or sold, and the app rolls up spend, realized profit, and a year-end CSV/Schedule-C-friendly export.
 
 **User benefit:** Replaces the spreadsheet every reseller swears they'll keep updated, and turns tax season from an archaeology project into a one-tap export.
 
@@ -97,5 +97,5 @@ Users create or join squads — a local collecting group, a store team, a paid c
 ## v2 Roadmap
 
 - **Desktop Companion & Browser Extension** — A macOS/Windows client and Chrome/Safari extension that shares the mobile session, offers native multi-tab cart racing, and lets the checkout state machine run locally on the user's own connection for lower latency and tighter retailer-session fidelity.
-- **DropHawk Pulse (Predictive Drop API + Public Signal Marketplace)** — Open the restock prediction model and event stream as a rate-limited API for Discord communities and third-party tools, plus a vetted marketplace where trusted sighting providers can monetize verified early signals with revenue share.
+- **Brazier Pulse (Predictive Drop API + Public Signal Marketplace)** — Open the restock prediction model and event stream as a rate-limited API for Discord communities and third-party tools, plus a vetted marketplace where trusted sighting providers can monetize verified early signals with revenue share.
 - **International & Marketplace Expansion** — Add Amazon, Pop Mart, Argos, Smyths, EB Games AU, Toys"R"Us Canada, and JP retailers (Pokémon Center JP, Amiami, Surugaya) with multi-currency comps, proxy-shipping integration, and region-aware tax/duty math in the profit calculator.

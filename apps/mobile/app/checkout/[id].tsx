@@ -1,4 +1,4 @@
-import { formatCents, type RetailerSlug } from '@drophawk/shared';
+import { formatCents, type RetailerSlug } from '@brazier/shared';
 import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';

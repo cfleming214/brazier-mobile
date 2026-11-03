@@ -6,7 +6,7 @@
  * with a JSON report the GitHub workflow turns into an `adapter-broken` issue. A rate limit or
  * challenge is reported as "blocked", not retried.
  */
-import type { RetailerAdapter, RetailerSlug } from '@drophawk/shared';
+import type { RetailerAdapter, RetailerSlug } from '@brazier/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { BlockedError } from './adapters/protections';
 import { parseFeed } from './calendar/extract';

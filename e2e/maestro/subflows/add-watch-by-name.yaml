@@ -1,5 +1,5 @@
 # Adds a watch for the first catalog result matching NAME, then returns to Radar.
-appId: com.drophawk.app
+appId: com.brazier.app
 ---
 - tapOn:
     id: 'tab-add'

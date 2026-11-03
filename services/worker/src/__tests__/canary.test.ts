@@ -1,4 +1,4 @@
-import type { RetailerAdapter } from '@drophawk/shared';
+import type { RetailerAdapter } from '@brazier/shared';
 import { describe, expect, it } from 'vitest';
 import { BlockedError } from '../adapters/protections';
 import { checkAdapter, checkFeed, isFailure, issueBody } from '../canary';

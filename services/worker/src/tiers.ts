@@ -1,4 +1,4 @@
-import type { RetailerPolicy } from '@drophawk/shared';
+import type { RetailerPolicy } from '@brazier/shared';
 
 export type PollTier = 'cold' | 'normal' | 'hot' | 'burst';
 

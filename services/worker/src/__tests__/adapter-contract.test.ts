@@ -5,7 +5,7 @@
  *  - a valid StockState, integer-or-null price, ISO timestamp, boolean flags
  *  - unknown products come back as DELISTED (never a crash, never IN_STOCK)
  *  - 429/403 surface as BlockedError so the governor backs off (never retried in-adapter)
- *  - only the retailer's own host is contacted, with the identifying DropHawk user agent
+ *  - only the retailer's own host is contacted, with the identifying Brazier user agent
  *  - parseUrl only accepts the adapter's own retailer
  */
 import { generateKeyPairSync } from 'node:crypto';
@@ -17,13 +17,13 @@ import {
   type RetailerPolicy,
   type RetailerSkuRef,
   type RetailerSlug,
-} from '@drophawk/shared';
+} from '@brazier/shared';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BlockedError } from '../adapters/protections';
 import { buildAdapters, POLLED_RETAILERS } from '../adapters/registry';
 import type { Config } from '../config';
 
-const UA = 'DropHawk/0.1 (+https://drophawk.app/bot)';
+const UA = 'Brazier/0.1 (+https://brazier.app/bot)';
 const page = (name: string) => readFileSync(join(__dirname, 'fixtures/pages', name), 'utf8');
 const pem = generateKeyPairSync('rsa', { modulusLength: 2048 })
   .privateKey.export({ type: 'pkcs8', format: 'pem' })
@@ -45,7 +45,7 @@ const config = {
   WALMART_KEY_VERSION: '1',
   AMAZON_ACCESS_KEY: 'AKIA_TEST',
   AMAZON_SECRET_KEY: 'secret',
-  AMAZON_PARTNER_TAG: 'drophawk-20',
+  AMAZON_PARTNER_TAG: 'brazier-20',
 } as Config;
 
 const HOSTS: Record<RetailerSlug, RegExp> = {

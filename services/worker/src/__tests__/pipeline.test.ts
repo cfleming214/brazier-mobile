@@ -1,7 +1,7 @@
 import type { AddressInfo } from 'node:net';
-import type { RetailerSlug } from '@drophawk/shared';
-import { createFakePush } from '@drophawk/fake-push';
-import { createFakeRetailer } from '@drophawk/fake-retailer';
+import type { RetailerSlug } from '@brazier/shared';
+import { createFakePush } from '@brazier/fake-push';
+import { createFakeRetailer } from '@brazier/fake-retailer';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { fakeAdapter } from '../adapters/fake';
 import { RetailerGovernor } from '../governor';
@@ -89,7 +89,7 @@ describe.skipIf(!hasDb)('worker pipeline', () => {
     await new Promise<void>((r) => push.server.listen(0, r));
     retailerUrl = `http://127.0.0.1:${(retailer.server.address() as AddressInfo).port}`;
     pushUrl = `http://127.0.0.1:${(push.server.address() as AddressInfo).port}`;
-    const ctx = { userAgent: 'DropHawk-test', fetch, now: () => new Date(now()) };
+    const ctx = { userAgent: 'Brazier-test', fetch, now: () => new Date(now()) };
     const adapters = new Map(
       slugs.map((s) => [s, fakeAdapter(s, policy, ctx, retailerUrl)] as const),
     );

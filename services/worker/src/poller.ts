@@ -3,8 +3,8 @@ import type {
   RetailerAdapter,
   RetailerSlug,
   StockState,
-} from '@drophawk/shared';
-import { formatCents } from '@drophawk/shared';
+} from '@brazier/shared';
+import { formatCents } from '@brazier/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { BlockedError } from './adapters/protections';
 import { decide, DEFAULT_DETECTOR, type DetectorOptions } from './detector';

@@ -32,7 +32,7 @@ importers:
 
   apps/mobile:
     dependencies:
-      '@drophawk/shared':
+      '@brazier/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@expo-google-fonts/chakra-petch':
@@ -183,7 +183,7 @@ importers:
 
   e2e/fake-retailer:
     dependencies:
-      '@drophawk/shared':
+      '@brazier/shared':
         specifier: workspace:*
         version: link:../../packages/shared
     devDependencies:
@@ -215,7 +215,7 @@ importers:
 
   services/worker:
     dependencies:
-      '@drophawk/shared':
+      '@brazier/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@sentry/node':
@@ -228,10 +228,10 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
-      '@drophawk/fake-push':
+      '@brazier/fake-push':
         specifier: workspace:*
         version: link:../../e2e/fake-push
-      '@drophawk/fake-retailer':
+      '@brazier/fake-retailer':
         specifier: workspace:*
         version: link:../../e2e/fake-retailer
       '@types/node':

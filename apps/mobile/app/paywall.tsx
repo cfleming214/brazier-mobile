@@ -94,7 +94,7 @@ export default function Paywall() {
     <Screen>
       <ScrollView contentContainerStyle={styles.body}>
         <View style={styles.header}>
-          <T variant="display">DROPHAWK PRO</T>
+          <T variant="display">BRAZIER PRO</T>
           <Pressable
             accessibilityRole="button"
             testID="close-paywall"

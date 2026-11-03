@@ -1,4 +1,4 @@
-import { formatCents } from '@drophawk/shared';
+import { formatCents } from '@brazier/shared';
 import { useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Swipeable, { type SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';

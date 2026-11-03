@@ -55,7 +55,7 @@ export default function SignIn() {
       >
         <View style={{ gap: space.sm }}>
           <T variant="display" style={{ fontSize: 30 }}>
-            DROPHAWK
+            BRAZIER
           </T>
           <T variant="muted">Track the drop. Win the checkout.</T>
         </View>

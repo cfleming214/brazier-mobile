@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import type { CalendarEventType, RetailerSlug } from '@drophawk/shared';
-import { bestMatch, normalizeTitle, type MatchCandidate } from '@drophawk/shared';
+import type { CalendarEventType, RetailerSlug } from '@brazier/shared';
+import { bestMatch, normalizeTitle, type MatchCandidate } from '@brazier/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { detectEventType, easternMidnight, extractDates } from './extract';
 

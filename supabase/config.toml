@@ -2,7 +2,7 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "drophawk-mobile"
+project_id = "brazier-mobile"
 
 [api]
 enabled = true
@@ -157,11 +157,11 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "drophawk://"
+site_url = "brazier://"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["drophawk://auth-callback", "exp://**", "http://localhost:8081/**"]
+additional_redirect_urls = ["brazier://auth-callback", "exp://**", "http://localhost:8081/**"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -256,11 +256,11 @@ otp_expiry = 3600
 # content_path = "./supabase/templates/password_changed_notification.html"
 
 [auth.email.template.magic_link]
-subject = "Your DropHawk sign-in link"
+subject = "Your Brazier sign-in link"
 content_path = "./supabase/templates/magic_link.html"
 
 [auth.email.template.confirmation]
-subject = "Your DropHawk sign-in link"
+subject = "Your Brazier sign-in link"
 content_path = "./supabase/templates/magic_link.html"
 
 [auth.sms]

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { RetailerSlug } from '@drophawk/shared';
+import type { RetailerSlug } from '@brazier/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 import { env } from './env';

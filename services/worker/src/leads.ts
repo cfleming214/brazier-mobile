@@ -1,4 +1,4 @@
-import { bestMatch, parseRetailerUrl, type RetailerSkuRef } from '@drophawk/shared';
+import { bestMatch, parseRetailerUrl, type RetailerSkuRef } from '@brazier/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { loadCatalog } from './calendar/pipeline';
 

@@ -4,7 +4,7 @@ import type {
   RetailerPolicy,
   RetailerSlug,
   StockState,
-} from '@drophawk/shared';
+} from '@brazier/shared';
 import { getText, result, type AdapterContext } from './base';
 
 /** Talks to e2e/fake-retailer. Used for every retailer when FAKE_RETAILER_URL is set. */

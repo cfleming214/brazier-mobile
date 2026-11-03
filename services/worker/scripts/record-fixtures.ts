@@ -1,17 +1,17 @@
 /**
  * Re-record adapter fixtures from live sources, politely (DROP-57).
  *
- *   pnpm --filter @drophawk/worker exec tsx scripts/record-fixtures.ts bestbuy:6624827 walmart:5236617690
+ *   pnpm --filter @brazier/worker exec tsx scripts/record-fixtures.ts bestbuy:6624827 walmart:5236617690
  *   ... --pages target:93954435      (page retailers are opt-in and checked against robots.txt)
  *
- * Rules: one request at a time, at least 10 s apart, the identifying DropHawk user agent, official
+ * Rules: one request at a time, at least 10 s apart, the identifying Brazier user agent, official
  * APIs by default, robots.txt honoured for pages, and a 429/403/queue/challenge stops the run —
  * it is never retried or worked around. Output goes to src/__tests__/fixtures/recorded/ for review;
  * copy what you need into the api/ or pages/ fixtures and update manifest.json.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { RetailerPolicy, RetailerSlug } from '@drophawk/shared';
+import type { RetailerPolicy, RetailerSlug } from '@brazier/shared';
 import { BlockedError } from '../src/adapters/protections';
 import { buildAdapters, POLLED_RETAILERS } from '../src/adapters/registry';
 import { loadConfig } from '../src/config';
@@ -42,7 +42,7 @@ async function robotsAllows(url: URL, ua: string): Promise<boolean> {
     const line = raw.split('#')[0]!.trim();
     const [k, ...v] = line.split(':');
     const value = v.join(':').trim();
-    if (/^user-agent$/i.test(k ?? '')) applies = value === '*' || /drophawk/i.test(value);
+    if (/^user-agent$/i.test(k ?? '')) applies = value === '*' || /brazier/i.test(value);
     else if (applies && /^disallow$/i.test(k ?? '') && value) disallowed.push(value);
   }
   return !disallowed.some((p) => url.pathname.startsWith(p));

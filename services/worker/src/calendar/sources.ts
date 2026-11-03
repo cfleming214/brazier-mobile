@@ -1,5 +1,5 @@
-import type { RetailerAdapter, RetailerSlug } from '@drophawk/shared';
-import { bestMatch } from '@drophawk/shared';
+import type { RetailerAdapter, RetailerSlug } from '@brazier/shared';
+import { bestMatch } from '@brazier/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FetchJson } from '../http';
 import { easternMidnight, parseFeed } from './extract';
@@ -75,7 +75,7 @@ export async function preorderItems(db: SupabaseClient, now = new Date()): Promi
       };
     }[]
   ).map((e) => ({
-    source: 'drophawk-poll',
+    source: 'brazier-poll',
     externalId: `preorder:${e.id}`,
     trust: 'retailer' as const,
     title: `Preorder open: ${e.retailer_skus.products.name}`,

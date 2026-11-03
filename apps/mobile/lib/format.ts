@@ -1,4 +1,4 @@
-import type { RetailerSlug } from '@drophawk/shared';
+import type { RetailerSlug } from '@brazier/shared';
 import { colors } from './theme';
 
 export const retailerNames: Record<RetailerSlug, string> = {

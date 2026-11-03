@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import type { RetailerPolicy, RetailerSlug } from '@drophawk/shared';
+import type { RetailerPolicy, RetailerSlug } from '@brazier/shared';
 import { buildAdapters } from './adapters/registry';
 import { loadConfig } from './config';
 import { createServiceClient } from './db';

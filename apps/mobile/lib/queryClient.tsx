@@ -35,7 +35,7 @@ export function shouldPersistQuery(q: {
 
 const persister = createAsyncStoragePersister({
   storage: AsyncStorage,
-  key: 'drophawk-query-cache',
+  key: 'brazier-query-cache',
 });
 
 export function QueryProvider({ children }: { children: ReactNode }) {

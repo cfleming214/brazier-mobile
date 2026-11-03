@@ -36,7 +36,7 @@ export default function Profile() {
     try {
       const data = await exportMyData();
       track('data_exported');
-      await Share.share({ title: 'DropHawk data export', message: JSON.stringify(data, null, 2) });
+      await Share.share({ title: 'Brazier data export', message: JSON.stringify(data, null, 2) });
     } catch (e) {
       captureError(e, { where: 'export' });
       Alert.alert('Export failed', 'Try again in a moment.');
@@ -158,7 +158,7 @@ export default function Profile() {
 
         <Button testID="sign-out" label="Sign out" variant="ghost" onPress={() => signOut()} />
         <T variant="mono" style={{ color: colors.muted, textAlign: 'center' }}>
-          DropHawk v{Constants.expoConfig?.version ?? '0.1'}
+          Brazier v{Constants.expoConfig?.version ?? '0.1'}
         </T>
       </ScrollView>
     </Screen>

@@ -134,7 +134,7 @@ export async function runRestockStats(
     if (estimateWindow(s)) {
       const date = nextWeekday(s.typical_dow!, now);
       estimates.push({
-        source: 'drophawk-history',
+        source: 'brazier-history',
         externalId: `history:${skuId}:${date}`,
         trust: 'history',
         title: `Likely restock: ${v.productName}`,

@@ -1,4 +1,4 @@
-import { parseAuthCallback } from '@drophawk/shared';
+import { parseAuthCallback } from '@brazier/shared';
 import type { Session } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';

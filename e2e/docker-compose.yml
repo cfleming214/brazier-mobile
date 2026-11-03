@@ -1,5 +1,5 @@
 # Test doubles for integration and E2E runs. Supabase itself runs via `supabase start`.
-name: drophawk-e2e
+name: brazier-e2e
 services:
   fake-retailer:
     build:

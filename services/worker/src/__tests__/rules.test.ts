@@ -1,4 +1,4 @@
-import type { AvailabilityResult } from '@drophawk/shared';
+import type { AvailabilityResult } from '@brazier/shared';
 import { describe, expect, it } from 'vitest';
 import { decideDelivery, DEFAULT_PREFS, inQuietHours, matchWatch, type WatchRule } from '../rules';
 import { budgetAllows, computeTier } from '../tiers';

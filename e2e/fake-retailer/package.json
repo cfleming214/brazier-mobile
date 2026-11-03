@@ -1,5 +1,5 @@
 {
-  "name": "@drophawk/fake-retailer",
+  "name": "@brazier/fake-retailer",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@drophawk/shared": "workspace:*"
+    "@brazier/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

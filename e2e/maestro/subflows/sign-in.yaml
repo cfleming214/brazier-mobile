@@ -1,5 +1,5 @@
 # Signs in a fresh user with the emailed code. Callers pass EMAIL.
-appId: com.drophawk.app
+appId: com.brazier.app
 ---
 - launchApp:
     clearState: true

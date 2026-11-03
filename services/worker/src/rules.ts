@@ -1,4 +1,4 @@
-import type { AvailabilityResult } from '@drophawk/shared';
+import type { AvailabilityResult } from '@brazier/shared';
 
 export interface WatchRule {
   watch_id: string;

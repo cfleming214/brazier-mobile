@@ -5,7 +5,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { RetailerSkuRef, RetailerSlug } from '@drophawk/shared';
+import type { RetailerSkuRef, RetailerSlug } from '@brazier/shared';
 import { describe, expect, it } from 'vitest';
 import { mapAmazon, type PaapiItem } from '../adapters/amazon';
 import { mapBestBuy } from '../adapters/bestbuy';

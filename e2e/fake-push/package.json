@@ -1,5 +1,5 @@
 {
-  "name": "@drophawk/fake-push",
+  "name": "@brazier/fake-push",
   "version": "0.0.0",
   "private": true,
   "type": "module",

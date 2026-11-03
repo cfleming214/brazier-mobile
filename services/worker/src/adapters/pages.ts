@@ -3,8 +3,8 @@ import type {
   RetailerPolicy,
   RetailerSkuRef,
   RetailerSlug,
-} from '@drophawk/shared';
-import { parseRetailerUrl } from '@drophawk/shared';
+} from '@brazier/shared';
+import { parseRetailerUrl } from '@brazier/shared';
 import { getText, result, type AdapterContext } from './base';
 import { parseJsonLdProduct } from './jsonld';
 import { detectProtections } from './protections';

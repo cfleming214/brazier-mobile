@@ -1,5 +1,5 @@
 {
-  "name": "@drophawk/worker",
+  "name": "@brazier/worker",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,14 +12,14 @@
     "start": "tsx src/main.ts"
   },
   "dependencies": {
-    "@drophawk/shared": "workspace:*",
+    "@brazier/shared": "workspace:*",
     "@sentry/node": "^10.78.0",
     "@supabase/supabase-js": "^2.118.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@drophawk/fake-push": "workspace:*",
-    "@drophawk/fake-retailer": "workspace:*",
+    "@brazier/fake-push": "workspace:*",
+    "@brazier/fake-retailer": "workspace:*",
     "@types/node": "^22.10.0",
     "tsx": "^4.19.2",
     "typescript": "~5.7.2",

@@ -3,7 +3,7 @@ import { T } from '@/components/ui';
 import type { WatchOverview } from '@/lib/api';
 import { pollTierLabel, retailerCodes, timeAgo } from '@/lib/format';
 import { colors, fonts, space } from '@/lib/theme';
-import { formatCents } from '@drophawk/shared';
+import { formatCents } from '@brazier/shared';
 
 /** Compact monitoring row: state, retailers, poll tier, filters, last checked. */
 export function WatchRow({

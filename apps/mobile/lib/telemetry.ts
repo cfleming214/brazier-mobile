@@ -1,4 +1,4 @@
-import type { RetailerSlug } from '@drophawk/shared';
+import type { RetailerSlug } from '@brazier/shared';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from './supabase';

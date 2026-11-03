@@ -1,7 +1,7 @@
 import { importSets } from './catalog/pokemontcg';
 import { importSealed } from './catalog/tcgcsv';
 import { writeFileSync } from 'node:fs';
-import type { RetailerPolicy, RetailerSlug } from '@drophawk/shared';
+import type { RetailerPolicy, RetailerSlug } from '@brazier/shared';
 import { buildAdapters, POLLED_RETAILERS } from './adapters/registry';
 import {
   checkAdapter,

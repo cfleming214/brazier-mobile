@@ -1,5 +1,5 @@
 # DROP-59 scenario 3: Best Buy and Target product URLs resolve to the same canonical product.
-appId: com.drophawk.app
+appId: com.brazier.app
 tags: [watches]
 ---
 - runFlow:

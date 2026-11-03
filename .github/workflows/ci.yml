@@ -48,7 +48,7 @@ jobs:
       - name: Worker integration tests (catalog import, poll -> detect -> notify, latency)
         run: |
           eval "$(supabase status -o env | grep -E '^(SERVICE_ROLE_KEY|API_URL)=')"
-          SUPABASE_URL=$API_URL SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY pnpm --filter @drophawk/worker test
+          SUPABASE_URL=$API_URL SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY pnpm --filter @brazier/worker test
 
   e2e-services:
     name: Test doubles build and pass their tests

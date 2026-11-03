@@ -1,9 +1,9 @@
 {
-  "name": "@drophawk/mobile",
+  "name": "@brazier/mobile",
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
-    "@drophawk/shared": "workspace:*",
+    "@brazier/shared": "workspace:*",
     "@expo-google-fonts/chakra-petch": "^0.4.1",
     "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
     "@expo-google-fonts/ibm-plex-sans": "^0.4.1",
@@ -57,7 +57,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "export:web": "expo export --platform web",
-    "test": "jest"
+    "test": "jest",
+    "lint": "expo lint"
   },
   "private": true,
   "jest": {
@@ -69,7 +70,7 @@
       "**/__tests__/**/*.test.ts?(x)"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|react-native-svg|@drophawk/.*|@supabase/.*))"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|react-native-svg|@brazier/.*|@supabase/.*))"
     ]
   }
 }

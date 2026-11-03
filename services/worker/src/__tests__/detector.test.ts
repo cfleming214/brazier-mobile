@@ -1,4 +1,4 @@
-import type { AvailabilityResult, StockState } from '@drophawk/shared';
+import type { AvailabilityResult, StockState } from '@brazier/shared';
 import { describe, expect, it } from 'vitest';
 import { decide, type SkuSnapshot } from '../detector';
 

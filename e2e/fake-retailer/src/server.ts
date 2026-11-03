@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { readFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { dirname, join, normalize, resolve } from 'node:path';
-import { RetailerSlug, StockState } from '@drophawk/shared';
+import { RetailerSlug, StockState } from '@brazier/shared';
 
 /**
  * Fake retailer for integration and E2E tests (BUILD_PLAN section 10.2).

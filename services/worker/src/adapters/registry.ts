@@ -1,4 +1,4 @@
-import type { RetailerAdapter, RetailerPolicy, RetailerSlug } from '@drophawk/shared';
+import type { RetailerAdapter, RetailerPolicy, RetailerSlug } from '@brazier/shared';
 import type { Config } from '../config';
 import { amazonAdapter } from './amazon';
 import type { AdapterContext } from './base';

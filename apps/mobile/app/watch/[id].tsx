@@ -1,4 +1,4 @@
-import { formatCents, parsePriceToCents, type RetailerSlug } from '@drophawk/shared';
+import { formatCents, parsePriceToCents, type RetailerSlug } from '@brazier/shared';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -29,7 +29,7 @@ const stateColor: Record<string, string> = {
   UNKNOWN: colors.muted,
 };
 
-/** Watch Detail. Deep-link target: drophawk://watch/:id (and ?go=1 from the alert action). */
+/** Watch Detail. Deep-link target: brazier://watch/:id (and ?go=1 from the alert action). */
 export default function WatchDetail() {
   const { id, go } = useLocalSearchParams<{ id: string; go?: string }>();
   const now = useNow();
@@ -163,7 +163,7 @@ export default function WatchDetail() {
             <Sparkline points={history} now={now} height={40} />
           ) : (
             <T variant="muted">
-              No restocks recorded yet. History builds as DropHawk watches this product.
+              No restocks recorded yet. History builds as Brazier watches this product.
             </T>
           )}
         </Panel>

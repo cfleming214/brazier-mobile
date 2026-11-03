@@ -1,7 +1,7 @@
 # DROP-60 scenarios 4 and 11: restock → push recorded → inbox → cold-start deep link → Checkout Sheet.
 # Emulators can't receive real APNs/FCM pushes from the fake push server, so delivery is asserted
 # against fake-push and the in-app inbox, and the tap is simulated with the alert's deep link.
-appId: com.drophawk.app
+appId: com.brazier.app
 tags: [alerts]
 ---
 - runScript:
@@ -33,7 +33,7 @@ tags: [alerts]
     file: ../scripts/control.js
     env: { ACTION: latestWatch, EMAIL: '${EMAIL}', SERVICE_KEY: '${SERVICE_KEY}' }
 - stopApp
-- openLink: 'drophawk://watch/${output.watchId}?go=1'
+- openLink: 'brazier://watch/${output.watchId}?go=1'
 - extendedWaitUntil:
     visible:
       id: 'checkout-go-bestbuy'

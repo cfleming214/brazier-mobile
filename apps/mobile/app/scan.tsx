@@ -38,13 +38,13 @@ export default function Scan() {
             Camera access needed
           </T>
           <T variant="muted" style={{ textAlign: 'center' }}>
-            DropHawk uses the camera only to read barcodes. You can also search or paste a product
+            Brazier uses the camera only to read barcodes. You can also search or paste a product
             link instead.
           </T>
           {permission.canAskAgain ? (
             <Button label="Allow camera" onPress={requestPermission} />
           ) : (
-            <T variant="muted">Turn on camera access for DropHawk in Settings.</T>
+            <T variant="muted">Turn on camera access for Brazier in Settings.</T>
           )}
           <Button label="Search instead" variant="ghost" onPress={() => router.back()} />
         </View>

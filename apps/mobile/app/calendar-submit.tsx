@@ -1,4 +1,4 @@
-import type { RetailerSlug } from '@drophawk/shared';
+import type { RetailerSlug } from '@brazier/shared';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';

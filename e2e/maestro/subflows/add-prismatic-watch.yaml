@@ -1,5 +1,5 @@
 # Adds a watch for Prismatic Evolutions ETB from catalog search with all carried retailers armed.
-appId: com.drophawk.app
+appId: com.brazier.app
 ---
 - tapOn:
     id: 'tab-add'

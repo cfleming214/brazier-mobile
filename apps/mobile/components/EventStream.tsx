@@ -23,7 +23,7 @@ const clock = (iso: string) => {
 /** Raw poll, detect, suppress and push events, newest first (DROP-40). */
 export function EventStream({ events }: { events: ActivityEvent[] }) {
   if (events.length === 0)
-    return <T variant="muted">Events appear here as DropHawk checks your watches.</T>;
+    return <T variant="muted">Events appear here as Brazier checks your watches.</T>;
   return (
     <View testID="event-stream">
       {events.slice(0, 12).map((e) => (

@@ -1,4 +1,4 @@
-import type { RetailerAdapter } from '@drophawk/shared';
+import type { RetailerAdapter } from '@brazier/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { importSets } from './catalog/pokemontcg';
 import { notifyChanges, runCalendarClock, sendDigests } from './calendar/notify';

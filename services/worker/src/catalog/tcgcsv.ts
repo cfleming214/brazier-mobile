@@ -3,7 +3,7 @@ import {
   detectProductType,
   type MatchCandidate,
   type ProductType,
-} from '@drophawk/shared';
+} from '@brazier/shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FetchJson } from '../http';
 

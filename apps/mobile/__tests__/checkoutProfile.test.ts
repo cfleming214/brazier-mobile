@@ -67,7 +67,7 @@ describe('checkout profiles (device-only)', () => {
   });
 
   it('ignores corrupt storage', async () => {
-    await SecureStore.setItemAsync('drophawk.checkoutProfiles.v1', '{not json');
+    await SecureStore.setItemAsync('brazier.checkoutProfiles.v1', '{not json');
     expect(await loadProfiles()).toEqual([]);
   });
 

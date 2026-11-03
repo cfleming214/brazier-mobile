@@ -208,7 +208,7 @@ export default function Radar() {
         {isError && watches.length === 0 ? (
           <Panel>
             <EmptyState
-              title="Can't reach DropHawk"
+              title="Can't reach Brazier"
               body="Check your connection. Your watches will appear here once we reconnect."
             />
           </Panel>
@@ -216,7 +216,7 @@ export default function Radar() {
           <Panel title="Your watches">
             <EmptyState
               title="Nothing on radar yet"
-              body="Add a product and DropHawk will watch every retailer that carries it."
+              body="Add a product and Brazier will watch every retailer that carries it."
               action={
                 <Button
                   testID="radar-add-watch"

@@ -32,9 +32,9 @@ export function AlertPermissionGate({ compact = false }: { compact?: boolean }) 
       <T style={{ color: colors.warn, fontWeight: '600' }}>Alerts are off</T>
       {!compact ? (
         <T variant="muted">
-          DropHawk can't tell you when something restocks.{' '}
+          Brazier can't tell you when something restocks.{' '}
           {status === 'denied'
-            ? 'Turn on notifications for DropHawk in Settings.'
+            ? 'Turn on notifications for Brazier in Settings.'
             : 'Allow notifications to get restock alerts.'}
         </T>
       ) : null}

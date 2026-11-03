@@ -1,4 +1,4 @@
-import type { StockState } from '@drophawk/shared';
+import type { StockState } from '@brazier/shared';
 
 export interface JsonLdOffer {
   state: StockState;

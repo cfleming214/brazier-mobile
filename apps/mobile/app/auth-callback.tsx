@@ -6,7 +6,7 @@ import { Button, Screen, T } from '@/components/ui';
 import { completeSignInFromUrl } from '@/lib/auth';
 import { colors, space } from '@/lib/theme';
 
-/** Landing route for the magic link (drophawk://auth-callback). */
+/** Landing route for the magic link (brazier://auth-callback). */
 export default function AuthCallback() {
   const url = Linking.useLinkingURL();
   const [error, setError] = useState<string | null>(null);
