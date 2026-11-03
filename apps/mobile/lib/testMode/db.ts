@@ -34,7 +34,7 @@ async function migrate(db: SQLiteDatabase) {
   await rebuild(db);
 }
 
-const TABLES = ['stock_events', 'retailer_skus', 'products', 'retailers', 'categories'];
+const TABLES = ['adapter_health', 'stock_events', 'retailer_skus', 'products', 'retailers', 'categories'];
 
 /** Drop everything and reload the bundled dataset. */
 export async function rebuild(db: SQLiteDatabase) {
@@ -54,6 +54,12 @@ async function seed(db: SQLiteDatabase) {
     await db.runAsync(
       'insert into retailers (id, name, policy, website_url) values (?, ?, ?, ?)',
       [r.id, r.name, JSON.stringify(r.policy), r.website_url],
+    );
+    // Synthetic health: every test retailer is tracked, so all report healthy.
+    await db.runAsync(
+      `insert into adapter_health (retailer_id, status, latency_ms, success_rate, checks_per_min)
+       values (?, 'ok', ?, ?, ?)`,
+      [r.id, r.health.latency_ms, r.health.success_rate, r.health.checks_per_min],
     );
   }
   for (const p of PRODUCTS) {

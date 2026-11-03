@@ -1,14 +1,17 @@
 import type { CreateWatchInput } from '@brazier/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as api from './api';
+import { useDataSource, type DataSource } from './testMode/settings';
 
 export const keys = {
   watches: ['watches'] as const,
   watch: (id: string) => ['watch', id] as const,
-  search: (q: string) => ['search', q] as const,
-  product: (id: string) => ['product', id] as const,
+  // Catalog keys end with the data source so live and test results are cached separately.
+  search: (q: string, source: DataSource = 'live') => ['search', q, source] as const,
+  product: (id: string, source: DataSource = 'live') => ['product', id, source] as const,
   nextEvent: ['calendar', 'next'] as const,
-  stockEvents: (productId: string) => ['stock-events', productId] as const,
+  stockEvents: (productId: string, source: DataSource = 'live') =>
+    ['stock-events', productId, source] as const,
 };
 
 export const useWatches = () =>
@@ -19,20 +22,24 @@ export const useWatch = (id: string) =>
 
 export const useProductSearch = (q: string) =>
   useQuery({
-    queryKey: keys.search(q),
+    queryKey: keys.search(q, useDataSource()),
     queryFn: () => api.searchProducts(q),
     enabled: q.trim().length >= 2,
   });
 
 export const useProduct = (id: string | null) =>
-  useQuery({ queryKey: keys.product(id ?? ''), queryFn: () => api.getProduct(id!), enabled: !!id });
+  useQuery({
+    queryKey: keys.product(id ?? '', useDataSource()),
+    queryFn: () => api.getProduct(id!),
+    enabled: !!id,
+  });
 
 export const useNextEvent = () =>
   useQuery({ queryKey: keys.nextEvent, queryFn: api.nextCalendarEvent, staleTime: 60_000 });
 
 export const useStockEvents = (productId: string | undefined) =>
   useQuery({
-    queryKey: keys.stockEvents(productId ?? ''),
+    queryKey: keys.stockEvents(productId ?? '', useDataSource()),
     queryFn: () => api.productStockEvents(productId!),
     enabled: !!productId,
     staleTime: 60_000,

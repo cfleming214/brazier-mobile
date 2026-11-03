@@ -2,16 +2,16 @@
  * On-device SQLite schema for test mode.
  *
  * Mirrors the Supabase catalog tables (supabase/migrations): categories, retailers, products,
- * retailer_skus and stock_events, with the same column names, defaults and checks.
+ * retailer_skus, stock_events and adapter_health, with the same column names, defaults and checks.
  * Postgres types map to SQLite as:
  *   uuid, text, date, timestamptz  -> TEXT (timestamps are ISO-8601 strings)
- *   jsonb                          -> TEXT holding JSON
+ *   jsonb, text[]                  -> TEXT holding JSON
  *   boolean                        -> INTEGER 0/1
  *   integer, bigint identity       -> INTEGER
  *   real                           -> REAL
  * When a migration changes one of these tables, update this file and bump SCHEMA_VERSION.
  */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 const now = `(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`;
 
@@ -80,6 +80,19 @@ create table stock_events (
   confidence real not null default 1.0 check (confidence between 0 and 1),
   suppressed_reason text,
   observed_at text not null default ${now}
+);
+
+create table adapter_health (
+  retailer_id text primary key references retailers (id),
+  status text not null default 'unknown'
+    check (status in ('ok', 'degraded', 'backoff', 'down', 'disabled', 'unknown')),
+  latency_ms integer,
+  success_rate real,
+  checks_per_min integer not null default 0,
+  last_error text,
+  backoff_until text,
+  active_protections text not null default '[]' check (json_valid(active_protections)),
+  updated_at text not null default ${now}
 );
 
 create index retailer_skus_product_idx on retailer_skus (product_id);

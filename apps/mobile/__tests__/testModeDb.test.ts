@@ -4,6 +4,14 @@
  */
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { LISTINGS, PRODUCTS, RETAILERS } from '@/lib/testMode/dataset';
+import {
+  adapterHealthIn,
+  findProductByRetailerSkuIn,
+  findProductByUpcIn,
+  getProductIn,
+  productStockEventsIn,
+  searchProductsIn,
+} from '@/lib/testMode/catalog';
 import { rebuild, searchText, summarizeTestDb } from '@/lib/testMode/db';
 
 type Params = (string | number | null)[];
@@ -79,6 +87,52 @@ describeSqlite('test-mode database', () => {
   it('can be rebuilt over an existing copy', async () => {
     await rebuild(db);
     expect((await summarizeTestDb(db)).products).toBe(20);
+  });
+
+  it('searches like search_products(): every word must match, accents folded', async () => {
+    const etbs = await searchProductsIn(db, 'pokemon ETB');
+    expect(etbs.length).toBeGreaterThan(5);
+    for (const r of etbs) expect(r.product_type).toBe('etb');
+
+    const [pf] = await searchProductsIn(db, 'phantasmal display');
+    expect(pf.name).toContain('Booster Display Box');
+    expect(pf.retailer_ids.sort()).toEqual(['bestbuy', 'pokemoncenter']);
+    expect(await searchProductsIn(db, 'Pokémon')).toHaveLength(20);
+    expect(await searchProductsIn(db, 'pokemon digimon')).toEqual([]);
+  });
+
+  it('flags exclusives in search results', async () => {
+    const [chaos] = await searchProductsIn(db, 'chaos rising');
+    expect(chaos.is_exclusive).toBe(true);
+    expect(chaos.retailer_ids).toEqual(['pokemoncenter']);
+  });
+
+  it('loads a product with its retailer listings', async () => {
+    const p = PRODUCTS[0];
+    const detail = await getProductIn(db, p.id);
+    expect(detail.name).toBe(p.name);
+    expect(detail.is_exclusive).toBe(false);
+    expect(detail.retailer_skus.map((s) => s.retailer_id)).toEqual(['bestbuy', 'walmart']);
+    await expect(getProductIn(db, 'missing')).rejects.toThrow(/not found/);
+  });
+
+  it('resolves retailer SKUs and UPCs (including EAN-13 with a leading zero)', async () => {
+    expect(await findProductByRetailerSkuIn(db, 'amazon', 'b0dn98rvzm')).toBe(PRODUCTS[1].id);
+    expect(await findProductByRetailerSkuIn(db, 'amazon', 'nope')).toBeNull();
+    expect(await findProductByUpcIn(db, '196214105133')).toBe(PRODUCTS[0].id);
+    expect(await findProductByUpcIn(db, '0196214105133')).toBe(PRODUCTS[0].id);
+    expect(await findProductByUpcIn(db, '000000000000')).toBeNull();
+  });
+
+  it('returns stock history and retailer health', async () => {
+    const events = await productStockEventsIn(db, PRODUCTS[0].id);
+    expect(events.map((e) => e.retailer_id).sort()).toEqual(['bestbuy', 'walmart']);
+    const health = await adapterHealthIn(db);
+    expect(health.map((h) => h.retailer_id)).toEqual(['amazon', 'bestbuy', 'pokemoncenter', 'walmart']);
+    for (const h of health) {
+      expect(h.status).toBe('ok');
+      expect(h.active_protections).toEqual([]);
+    }
   });
 
   it('enforces the same checks as Postgres', () => {

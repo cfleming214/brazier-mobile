@@ -21,6 +21,8 @@ export type Retailer = {
   website_url: string;
   /** Same RetailerPolicy values as supabase/seed.sql. */
   policy: Record<string, unknown>;
+  /** Synthetic adapter_health numbers. */
+  health: { latency_ms: number; success_rate: number; checks_per_min: number };
 };
 export type Product = {
   id: string;
@@ -55,24 +57,28 @@ export const RETAILERS: Retailer[] = [
     name: 'Best Buy',
     website_url: 'https://www.bestbuy.com',
     policy: { enabled: true, maxRequestsPerMinute: 120, allowedEndpoints: ['api.bestbuy.com/v1'], automationAllowed: true, backoffSeconds: 120 },
+    health: { latency_ms: 240, success_rate: 0.99, checks_per_min: 96 },
   },
   {
     id: 'walmart',
     name: 'Walmart',
     website_url: 'https://www.walmart.com',
     policy: { enabled: true, maxRequestsPerMinute: 60, allowedEndpoints: ['developer.api.walmart.com'], automationAllowed: true, backoffSeconds: 120 },
+    health: { latency_ms: 410, success_rate: 0.97, checks_per_min: 48 },
   },
   {
     id: 'amazon',
     name: 'Amazon',
     website_url: 'https://www.amazon.com',
     policy: { enabled: false, maxRequestsPerMinute: 60, allowedEndpoints: ['webservices.amazon.com'], automationAllowed: false, backoffSeconds: 120 },
+    health: { latency_ms: 320, success_rate: 0.98, checks_per_min: 40 },
   },
   {
     id: 'pokemoncenter',
     name: 'Pokémon Center',
     website_url: 'https://www.pokemoncenter.com',
     policy: { enabled: true, maxRequestsPerMinute: 6, allowedEndpoints: ['www.pokemoncenter.com/product/'], automationAllowed: true, backoffSeconds: 600 },
+    health: { latency_ms: 780, success_rate: 0.93, checks_per_min: 6 },
   },
 ];
 

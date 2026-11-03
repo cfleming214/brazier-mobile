@@ -6,6 +6,8 @@ import {
   type StockState,
 } from '@brazier/shared';
 import { supabase } from './supabase';
+import { testCatalog } from './testMode/catalog';
+import { currentDataSource } from './testMode/settings';
 
 export interface ProductSearchResult {
   id: string;
@@ -76,6 +78,7 @@ function check<T>(res: { data: T | null; error: { message: string } | null }): T
 
 export async function searchProducts(q: string): Promise<ProductSearchResult[]> {
   if (q.trim().length < 2) return [];
+  if ((await currentDataSource()) === 'test') return testCatalog.searchProducts(q);
   return check(await supabase.rpc('search_products', { q, max_results: 20 }));
 }
 
@@ -97,6 +100,7 @@ export interface ProductDetail {
 }
 
 export async function getProduct(id: string): Promise<ProductDetail> {
+  if ((await currentDataSource()) === 'test') return testCatalog.getProduct(id);
   return check<ProductDetail>(
     (await supabase
       .from('products')
@@ -126,6 +130,12 @@ export async function resolveUrl(text: string): Promise<ResolveResult> {
     return { kind: 'error', message: messages[parsed.reason] };
   }
   const { retailer, sku, url } = parsed.ref;
+  if ((await currentDataSource()) === 'test') {
+    const id = await testCatalog.findProductByRetailerSku(retailer, sku);
+    return id
+      ? { kind: 'found', productId: id, retailer }
+      : { kind: 'error', message: 'That product isn’t in the test dataset.' };
+  }
   const productId = check(
     await supabase.rpc('find_product_by_retailer_sku', { p_retailer: retailer, p_sku: sku }),
   ) as string | null;
@@ -147,6 +157,12 @@ export async function resolveUrl(text: string): Promise<ResolveResult> {
 
 /** Look up a scanned barcode, or send it to the review queue. */
 export async function resolveUpc(code: string): Promise<ResolveResult> {
+  if ((await currentDataSource()) === 'test') {
+    const id = await testCatalog.findProductByUpc(code);
+    return id
+      ? { kind: 'found', productId: id }
+      : { kind: 'error', message: 'That barcode isn’t in the test dataset.' };
+  }
   const productId = check(await supabase.rpc('find_product_by_upc', { p_upc: code })) as
     string | null;
   if (productId) return { kind: 'found', productId };
@@ -220,6 +236,7 @@ export async function productStockEvents(
   productId: string,
   days = 14,
 ): Promise<(StockEventRow & { retailer_id: RetailerSlug })[]> {
+  if ((await currentDataSource()) === 'test') return testCatalog.productStockEvents(productId);
   const since = new Date(Date.now() - days * 86_400_000).toISOString();
   const rows = check(
     await supabase
