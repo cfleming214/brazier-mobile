@@ -57,5 +57,5 @@ The Maestro flows run against an EAS `e2e` build of the app (see `apps/mobile/ea
 
 - **Supabase project**: create it, then `npx supabase link --project-ref <ref>` and `npx supabase db push`. In the dashboard, add `brazier://auth-callback` to the redirect URLs and paste `supabase/templates/magic_link.html` into the Magic Link email template so emails include the code.
 - **EAS**: `cd apps/mobile && npx eas init` replaces `REPLACE_WITH_EAS_PROJECT_ID` in `app.json`. Add an `EXPO_TOKEN` repository secret for the Mobile E2E workflow.
-- **Bundle IDs**: `com.brazier.app` is a placeholder in `app.json`; change it before registering with Apple and Google.
+- **Bundle IDs**: iOS and Android both use `com.simpledesign.brazier` (set in `apps/mobile/app.json`). It cannot change once the app is published, and the Maestro flows use it as their `appId`.
 - **CI workflows**: move `ci/github-workflows/*.yml` into `.github/workflows/` (see `ci/github-workflows/README.md`), then mark the CI jobs as required checks on `main` in GitHub settings.

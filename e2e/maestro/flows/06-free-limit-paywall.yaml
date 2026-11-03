@@ -1,7 +1,7 @@
 # DROP-61 scenario 10: a free user's 4th active watch opens the paywall.
 # The e2e build has no RevenueCat key, so the paywall shows fallback plans; sandbox purchase is
 # covered by the manual release checklist (docs/SMOKE_CHECKLIST.md).
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 tags: [paywall]
 ---
 - runFlow:

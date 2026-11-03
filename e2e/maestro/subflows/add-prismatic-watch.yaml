@@ -1,5 +1,5 @@
 # Adds a watch for Prismatic Evolutions ETB from catalog search with all carried retailers armed.
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 ---
 - tapOn:
     id: 'tab-add'

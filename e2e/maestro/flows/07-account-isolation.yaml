@@ -1,5 +1,5 @@
 # DROP-61 scenario 12: user B never sees user A's watches. API-level isolation is in pgTAP (rls.test.sql).
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 tags: [security]
 ---
 - runFlow:

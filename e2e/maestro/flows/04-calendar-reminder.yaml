@@ -1,7 +1,7 @@
 # DROP-61 scenario 7: confirmed event with countdown → set reminder → convert to watch.
 # Rumored/official merge (scenario 8) and the T-10 burst tier are asserted in the worker
 # integration suite (calendar-db.test.ts, pipeline.test.ts) where the clock can be controlled.
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 tags: [calendar]
 ---
 - runFlow:

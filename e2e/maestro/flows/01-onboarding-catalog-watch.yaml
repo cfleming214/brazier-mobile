@@ -1,5 +1,5 @@
 # DROP-59 scenarios 1–2: sign in, notifications granted, watch from catalog lands on Radar.
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 tags: [onboarding, watches]
 ---
 - runFlow:
