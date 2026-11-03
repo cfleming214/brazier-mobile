@@ -2,6 +2,8 @@ import type { RetailerSlug } from '@brazier/shared';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from './supabase';
+import { testCatalog } from './testMode/catalog';
+import { currentDataSource, useDataSource } from './testMode/settings';
 
 export interface AdapterHealth {
   retailer_id: RetailerSlug;
@@ -48,8 +50,9 @@ export const telemetryKeys = {
 
 export const useAdapterHealth = () =>
   useQuery({
-    queryKey: telemetryKeys.health,
+    queryKey: [...telemetryKeys.health, useDataSource()],
     queryFn: async () => {
+      if ((await currentDataSource()) === 'test') return testCatalog.adapterHealth();
       const { data, error } = await supabase
         .from('adapter_health')
         .select('*')

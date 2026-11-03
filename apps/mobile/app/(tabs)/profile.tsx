@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { AlertPermissionGate } from '@/components/AlertPermissionGate';
+import { TestModeToggle } from '@/components/TestModeToggle';
 import { Button, Panel, Screen, T } from '@/components/ui';
 import { useCheckoutProfiles } from '@/hooks/useCheckoutProfiles';
 import { deleteMyAccount, exportMyData, FREE_WATCH_LIMIT } from '@/lib/api';
@@ -136,6 +137,8 @@ export default function Profile() {
           variant="ghost"
           onPress={() => router.push('/settings/checkout-profiles')}
         />
+
+        <TestModeToggle />
 
         <Panel title="Your data">
           <View style={{ gap: space.sm }}>

@@ -16,6 +16,7 @@ import { isFreeLimitError, resolveUrl, type ProductSearchResult } from '@/lib/ap
 import { track } from '@/lib/monitoring';
 import { retailerNames, WATCHABLE_RETAILERS } from '@/lib/format';
 import { useCreateWatch, useProduct, useProductSearch } from '@/lib/queries';
+import { isTestDataActive } from '@/lib/testMode/settings';
 import { colors, fonts, radius, space } from '@/lib/theme';
 
 /** Add Watch: find a product (search, paste a link or scan), then choose retailers and filters. */
@@ -226,6 +227,9 @@ function Configure({
     if (radius.trim() && (!Number.isFinite(radiusKm) || radiusKm! <= 0 || radiusKm! > 500))
       return setError('Pickup radius must be between 1 and 500 km.');
     if (chosen.length === 0) return setError('Pick at least one retailer.');
+    // Watches are saved in Supabase, which doesn't have the on-device test products.
+    if (isTestDataActive())
+      return setError('Watches can’t be saved for test products yet. Turn off test data to add a watch.');
     try {
       const { id } = await create.mutateAsync({
         productId,
