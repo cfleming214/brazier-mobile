@@ -13,7 +13,8 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '@/lib/auth';
-import { QueryProvider } from '@/lib/queryClient';
+import { QueryProvider, queryClient } from '@/lib/queryClient';
+import { startTestModeController } from '@/lib/testMode/simulation';
 import { usePushSetup } from '@/hooks/usePushSetup';
 import { identify, initMonitoring, wrapRoot } from '@/lib/monitoring';
 import { configurePurchases, resetPurchases } from '@/lib/purchases';
@@ -76,6 +77,9 @@ function RootLayout() {
 
 export default wrapRoot(RootLayout);
 
+/** Queries that read the test dataset, refreshed when test mode changes it. */
+const TEST_DATA_QUERIES = new Set(['search', 'product', 'stock-events', 'calendar', 'adapter-health']);
+
 function RootNavigator() {
   const { session, loading } = useAuth();
   const userId = session?.user.id ?? null;
@@ -90,6 +94,18 @@ function RootNavigator() {
   useEffect(() => {
     if (!loading) SplashScreen.hideAsync();
   }, [loading]);
+
+  // Test mode's simulated drop runs from anywhere in the app, so start it at the root.
+  useEffect(
+    () =>
+      startTestModeController({
+        onDataChanged: () =>
+          void queryClient.invalidateQueries({
+            predicate: (q) => TEST_DATA_QUERIES.has(String(q.queryKey[0])),
+          }),
+      }),
+    [],
+  );
 
   if (loading) return null;
 

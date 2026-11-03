@@ -15,6 +15,10 @@ jest.mock('expo-notifications', () => ({
   scheduleNotificationAsync: jest.fn(async () => 'notif-1'),
   cancelScheduledNotificationAsync: jest.fn(async () => {}),
   setNotificationHandler: jest.fn(),
+  setNotificationChannelAsync: jest.fn(async () => null),
+  getPermissionsAsync: jest.fn(async () => ({ status: 'granted', granted: true })),
+  requestPermissionsAsync: jest.fn(async () => ({ status: 'granted', granted: true })),
+  AndroidImportance: { MAX: 5 },
 }));
 jest.mock('@/lib/supabase', () => ({
   supabase: { from: jest.fn(), rpc: jest.fn(), auth: { getUser: jest.fn() } },
