@@ -12,6 +12,8 @@ insert into public.retailers (id, name, policy) values
   ('tcgplayer', 'TCGplayer', '{"enabled": false, "maxRequestsPerMinute": 10, "allowedEndpoints": ["tcgcsv.com"], "automationAllowed": false, "backoffSeconds": 600}'),
   ('amazon', 'Amazon', '{"enabled": false, "maxRequestsPerMinute": 60, "allowedEndpoints": ["webservices.amazon.com"], "automationAllowed": false, "backoffSeconds": 120}');
 
+update public.retailers set website_url = 'https://www.' || id || '.com';
+
 insert into public.products (id, category_id, name, set_name, product_type, upc, msrp_cents, is_exclusive, exclusive_retailer_id) values
   ('11111111-1111-4111-8111-111111111101', 'pokemon_tcg', 'Prismatic Evolutions Elite Trainer Box', 'Prismatic Evolutions', 'etb', 'SAMPLE-UPC-0001', 5999, false, null),
   ('11111111-1111-4111-8111-111111111102', 'pokemon_tcg', 'Destined Rivals Booster Bundle', 'Destined Rivals', 'booster_bundle', 'SAMPLE-UPC-0002', 2699, false, null),
