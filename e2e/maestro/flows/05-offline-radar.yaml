@@ -1,5 +1,5 @@
 # DROP-61 scenario 9: Radar renders from the persisted query cache offline, then reconciles.
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 tags: [offline, android-only] # setAirplaneMode is Android-only in Maestro
 ---
 - runFlow:

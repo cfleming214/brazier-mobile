@@ -1,5 +1,5 @@
 # Signs in a fresh user with the emailed code. Callers pass EMAIL.
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 ---
 - launchApp:
     clearState: true

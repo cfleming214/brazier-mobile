@@ -3,7 +3,7 @@
 # off sends one "back to normal" notification. Brazier only reports these changes to users.
 # Date-moved, confirm-merge, digest, category-off and quiet-hours routing are covered by the worker
 # integration suite (calendar-db.test.ts, pipeline.test.ts, rules.test.ts).
-appId: com.brazier.app
+appId: com.simpledesign.brazier
 tags: [notifications]
 ---
 - runScript:
