@@ -21,6 +21,13 @@ import { colors } from '@/lib/theme';
 
 export { ErrorBoundary } from 'expo-router';
 
+/**
+ * Temporarily off: the app opens straight to the tabs without signing in.
+ * Anything that saves per-user data (watches, reminders, push, purchases)
+ * still needs a session. Set back to true to require sign-in again.
+ */
+const REQUIRE_SIGN_IN = false;
+
 initMonitoring();
 SplashScreen.preventAutoHideAsync();
 
@@ -94,7 +101,7 @@ function Navigator({ signedIn }: { signedIn: boolean }) {
   usePushSetup(signedIn);
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.field } }}>
-      <Stack.Protected guard={signedIn}>
+      <Stack.Protected guard={signedIn || !REQUIRE_SIGN_IN}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="add-watch" options={{ presentation: 'modal' }} />
         <Stack.Screen name="watch/[id]" />
