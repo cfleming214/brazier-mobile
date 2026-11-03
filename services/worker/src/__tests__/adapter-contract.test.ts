@@ -23,7 +23,7 @@ import { BlockedError } from '../adapters/protections';
 import { buildAdapters, POLLED_RETAILERS } from '../adapters/registry';
 import type { Config } from '../config';
 
-const UA = 'Brazier/0.1 (+https://brazier.app/bot)';
+const UA = 'Brazier/0.1 (+https://github.com/cfleming214/brazier-mobile/blob/main/BOT.md)';
 const page = (name: string) => readFileSync(join(__dirname, 'fixtures/pages', name), 'utf8');
 const pem = generateKeyPairSync('rsa', { modulusLength: 2048 })
   .privateKey.export({ type: 'pkcs8', format: 'pem' })
