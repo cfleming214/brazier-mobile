@@ -1,0 +1,50 @@
+{
+  "_source": "Hand-built in the documented Amazon PA-API 5.0 GetItems response shape. Replace with live recordings via services/worker/scripts/record-fixtures.ts once API keys are configured.",
+  "ItemsResult": {
+    "Items": [
+      {
+        "ASIN": "B0FIXTURE1",
+        "ItemInfo": { "Title": { "DisplayValue": "Pokémon TCG Prismatic Evolutions ETB" } },
+        "Offers": {
+          "Listings": [
+            {
+              "Availability": { "Type": "Now" },
+              "Price": { "Amount": 59.99 },
+              "MerchantInfo": { "Name": "Amazon.com" }
+            }
+          ]
+        }
+      },
+      {
+        "ASIN": "B0FIXTURE2",
+        "ItemInfo": { "Title": { "DisplayValue": "Pokémon TCG Destined Rivals Booster Bundle" } }
+      },
+      {
+        "ASIN": "B0FIXTURE3",
+        "ItemInfo": { "Title": { "DisplayValue": "Pokémon TCG Mega Evolution ETB" } },
+        "Offers": {
+          "Listings": [
+            {
+              "Availability": { "Type": "Preorderable" },
+              "Price": { "Amount": 59.99 },
+              "MerchantInfo": { "Name": "Amazon.com" }
+            }
+          ]
+        }
+      },
+      {
+        "ASIN": "B0FIXTURE4",
+        "ItemInfo": { "Title": { "DisplayValue": "Pokémon TCG Journey Together Booster Box" } },
+        "Offers": {
+          "Listings": [
+            {
+              "Availability": { "Type": "Now" },
+              "Price": { "Amount": 249.0 },
+              "MerchantInfo": { "Name": "TCG Resale LLC" }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

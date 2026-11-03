@@ -1,0 +1,36 @@
+# Phase 0 smoke flow: app launches and a user signs in with the emailed code.
+# Run: maestro test e2e/maestro/flows/smoke-sign-in.yaml -e EMAIL=e2e-$(date +%s)@test.local
+appId: com.brazier.app
+env:
+  MAILPIT_URL: http://localhost:54324
+---
+- launchApp:
+    clearState: true
+- assertVisible: 'BRAZIER'
+- tapOn:
+    id: 'email-input'
+- inputText: ${EMAIL}
+- tapOn:
+    id: 'send-link'
+- assertVisible:
+    id: 'code-input'
+- runScript:
+    file: ../scripts/get-otp.js
+    env:
+      EMAIL: ${EMAIL}
+      MAILPIT_URL: ${MAILPIT_URL}
+- tapOn:
+    id: 'code-input'
+- inputText: ${output.otp}
+- tapOn:
+    id: 'verify-code'
+- assertVisible: 'RADAR'
+- assertVisible:
+    id: 'system-strip'
+- tapOn:
+    id: 'tab-profile'
+- assertVisible: ${EMAIL}
+- tapOn:
+    id: 'sign-out'
+- assertVisible:
+    id: 'email-input'

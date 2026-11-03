@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.expo/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+supabase/.branches
+supabase/.temp
+apps/mobile/ios
+apps/mobile/android
+.DS_Store
+e2e/artifacts/
+services/worker/src/__tests__/fixtures/recorded/
+services/worker/canary-report.json
+services/worker/canary-issue.md

@@ -1,0 +1,49 @@
+# DROP-90 (protection changes): the fake retailer turns on a queue and a purchase limit for a
+# watched product → one notification each, Radar adapter cell shows QUEUE, and turning the queue
+# off sends one "back to normal" notification. Brazier only reports these changes to users.
+# Date-moved, confirm-merge, digest, category-off and quiet-hours routing are covered by the worker
+# integration suite (calendar-db.test.ts, pipeline.test.ts, rules.test.ts).
+appId: com.brazier.app
+tags: [notifications]
+---
+- runScript:
+    file: ../scripts/control.js
+    env: { ACTION: reset }
+- runScript:
+    file: ../scripts/control.js
+    env: { ACTION: set, RETAILER: bestbuy, SKU: '9000001', STATE: OUT_OF_STOCK }
+- runFlow:
+    file: ../subflows/sign-in.yaml
+- runFlow: ../subflows/add-prismatic-watch.yaml
+- tapOn: '← RADAR'
+- runScript:
+    file: ../scripts/control.js
+    env:
+      { ACTION: set, RETAILER: bestbuy, SKU: '9000001', STATE: OUT_OF_STOCK, PROTECTIONS: 'queue' }
+- extendedWaitUntil:
+    visible: 'QUEUE'
+    timeout: 20000
+- tapOn:
+    id: 'open-inbox'
+- extendedWaitUntil:
+    visible: 'Best Buy: queue is on'
+    timeout: 15000
+- back
+- runScript:
+    file: ../scripts/control.js
+    env:
+      {
+        ACTION: set,
+        RETAILER: bestbuy,
+        SKU: '9000001',
+        STATE: OUT_OF_STOCK,
+        PROTECTIONS: 'limit:1',
+      }
+- tapOn:
+    id: 'open-inbox'
+- extendedWaitUntil:
+    visible: 'Best Buy added a purchase limit'
+    timeout: 20000
+- extendedWaitUntil:
+    visible: 'Best Buy is back to normal'
+    timeout: 20000

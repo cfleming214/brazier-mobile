@@ -1,0 +1,21 @@
+# Adds a watch for the first catalog result matching NAME, then returns to Radar.
+appId: com.brazier.app
+---
+- tapOn:
+    id: 'tab-add'
+- tapOn:
+    id: 'search-input'
+- inputText: ${NAME}
+- extendedWaitUntil:
+    visible:
+      id: 'search-result-0'
+    timeout: 10000
+- tapOn:
+    id: 'search-result-0'
+- tapOn:
+    id: 'save-watch'
+- extendedWaitUntil:
+    visible:
+      id: 'watch-product-name'
+    timeout: 10000
+- tapOn: '← RADAR'

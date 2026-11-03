@@ -1,0 +1,49 @@
+# Test doubles for integration and E2E runs. Supabase itself runs via `supabase start`.
+name: brazier-e2e
+services:
+  fake-retailer:
+    build:
+      context: ..
+      dockerfile: e2e/fake-retailer/Dockerfile
+    ports: ['4010:4010']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4010/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      retries: 10
+  fake-push:
+    build:
+      context: ..
+      dockerfile: e2e/fake-push/Dockerfile
+    ports: ['4020:4020']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4020/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      retries: 10
+  worker:
+    build:
+      context: ..
+      dockerfile: services/worker/Dockerfile
+    depends_on:
+      fake-retailer: { condition: service_healthy }
+      fake-push: { condition: service_healthy }
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:-http://host.docker.internal:54321}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:?run `supabase status` and export SUPABASE_SERVICE_ROLE_KEY}
+      FAKE_RETAILER_URL: http://fake-retailer:4010
+      EXPO_PUSH_URL: http://fake-push:4020
+      TICK_MS: '200'
+      POLL_INTERVAL_SCALE: '0.02'
+    extra_hosts: ['host.docker.internal:host-gateway']
+    ports: ['8787:8787']

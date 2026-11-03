@@ -1,10 +1,10 @@
-# DropHawk
+# Brazier
 
 > Track the drop. Win the checkout. Never refresh again.
 
 ## Overview
 
-DropHawk is a cross-platform Expo + React Native app that monitors limited-release product drops — sneakers, GPUs, concert tickets, trading cards, console restocks — and fires a sub-second push notification the instant stock flips to available. Instead of hammering refresh on a product page, users add a watch, pick their size or variant, and let DropHawk's backend poller do the waiting.
+Brazier is a cross-platform Expo + React Native app that monitors limited-release product drops — sneakers, GPUs, concert tickets, trading cards, console restocks — and fires a sub-second push notification the instant stock flips to available. Instead of hammering refresh on a product page, users add a watch, pick their size or variant, and let Brazier's backend poller do the waiting.
 
 The core promise is speed-to-checkout. Every alert deep-links straight into the merchant's cart or product URL via an in-app browser with autofill-ready checkout profiles, so the gap between "restocked" and "order confirmed" is measured in seconds, not minutes. A community feed layers in crowd-sourced drop intel, confirmed cop receipts, and release calendars so users know what is coming before it lands.
 
@@ -21,7 +21,7 @@ This plan covers a four-week path from scaffold to TestFlight: Expo Router navig
 ## Features
 
 1. **Drop Radar** — A live dashboard of every tracked item showing current stock state, last-checked timestamp, price delta, and a pulsing indicator when a poll is in flight.
-2. **One-Tap Watch Creation** — Paste any supported product URL and DropHawk auto-parses merchant, title, image, variants, and sizes into a configurable watch in under three seconds.
+2. **One-Tap Watch Creation** — Paste any supported product URL and Brazier auto-parses merchant, title, image, variants, and sizes into a configurable watch in under three seconds.
 3. **Instant Drop Alerts** — Critical-priority push notifications with sound, haptics, and a "Go to Checkout" action button that bypasses the app shell and opens the cart URL directly.
 4. **Checkout Autofill Profiles** — Encrypted local storage (expo-secure-store) of shipping and contact details, injected into the in-app browser to shave seconds off manual form entry.
 5. **Release Calendar** — A scrollable timeline of confirmed and rumoured drops with countdown timers, timezone-aware reminders, and one-tap conversion into an active watch.
@@ -66,6 +66,6 @@ This plan covers a four-week path from scaffold to TestFlight: Expo Router navig
 
 ## Monetisation
 
-DropHawk runs a freemium subscription model. The free tier allows three active watches on a 5-minute poll interval with standard-priority alerts — enough to prove value on a single grail item. **DropHawk Pro** ($6.99/month or $49.99/year via RevenueCat) unlocks unlimited watches, 15-second polling, priority alert queue placement, unlimited checkout profiles, multi-size targeting, and the full analytics dashboard.
+Brazier runs a freemium subscription model. The free tier allows three active watches on a 5-minute poll interval with standard-priority alerts — enough to prove value on a single grail item. **Brazier Pro** ($6.99/month or $49.99/year via RevenueCat) unlocks unlimited watches, 15-second polling, priority alert queue placement, unlimited checkout profiles, multi-size targeting, and the full analytics dashboard.
 
 A **Pro+ Squad** tier ($14.99/month) adds shared watch lists for reseller groups, webhook/Discord relay for alerts, and early access to newly supported merchants. Secondary revenue comes from affiliate commissions on merchant checkout links where programs exist, and from sponsored placements in the Release Calendar — clearly labelled and never permitted in the alert stream, which stays strictly user-intent driven.

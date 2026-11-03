@@ -1,0 +1,20 @@
+# DROP-61 scenario 12: user B never sees user A's watches. API-level isolation is in pgTAP (rls.test.sql).
+appId: com.brazier.app
+tags: [security]
+---
+- runFlow:
+    file: ../subflows/sign-in.yaml
+    env: { EMAIL: 'a-${EMAIL}' }
+- runFlow: ../subflows/add-prismatic-watch.yaml
+- tapOn: '← RADAR'
+- assertVisible: 'Prismatic Evolutions Elite Trainer Box'
+- tapOn:
+    id: 'tab-profile'
+- tapOn:
+    id: 'sign-out'
+- runFlow:
+    file: ../subflows/sign-in.yaml
+    env: { EMAIL: 'b-${EMAIL}' }
+- assertNotVisible: 'Prismatic Evolutions Elite Trainer Box'
+- assertVisible:
+    id: 'radar-add-watch'

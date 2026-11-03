@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brazier Status Tracker Styles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: contact sheet of four phones, each a different status-tracker pattern with identical sample data. Neutral single theme so the options compare fairly. */
+  --page: #16181b;
+  --page-ink: #e6e8ea;
+  --page-muted: #8b9198;
+  --pick: #ffb547;
+  --font-display: "IBM Plex Sans Condensed", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Condensed", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--page-ink); font-family: var(--font-body); padding: 32px 16px 56px; }
+header.top { max-width: 1480px; margin: 0 auto 28px; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: end; justify-content: space-between; }
+header.top h1 { font-family: var(--font-display); font-weight: 700; font-size: 30px; margin: 0; text-wrap: balance; }
+header.top p { margin: 6px 0 0; color: var(--page-muted); font-size: 15px; max-width: 64ch; line-height: 1.5; }
+.legend { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--page-muted); letter-spacing: .06em; }
+.sheet { max-width: 1480px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 36px 28px; justify-content: center; }
+figure { margin: 0; width: 340px; display: grid; gap: 14px; align-content: start; }
+figcaption { display: grid; gap: 4px; min-height: 150px; align-content: start; }
+figcaption .num { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--pick); letter-spacing: .1em; }
+figcaption h2 { margin: 0; font-size: 20px; font-weight: 700; }
+figcaption p { margin: 0; color: var(--page-muted); font-size: 13.5px; line-height: 1.45; }
+figcaption .best { font-size: 12.5px; }
+figcaption .best b { color: var(--pick); font-weight: 600; }
+
+.phone { width: 340px; height: 720px; border-radius: 42px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 0 8px #050607, 0 0 0 9px #30353b, 0 30px 60px rgba(0,0,0,.5); }
+.sb { height: 44px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 12px 26px 0; font: 600 14px -apple-system, system-ui, sans-serif; }
+.isl { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 104px; height: 30px; background: #000; border-radius: 18px; z-index: 3; }
+.body { flex: 1; overflow: hidden; padding: 4px 14px 0; display: flex; flex-direction: column; gap: 10px; }
+.tabs { flex: none; height: 76px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding: 10px 8px 0; }
+.tabs span { text-align: center; font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; }
+.tabs .add { justify-self: center; width: 42px; height: 36px; display: grid; place-items: center; font-size: 22px; line-height: 1; margin-top: -4px; }
+.n { font-variant-numeric: tabular-nums; }
+
+/* ============ A. STATUS PAGE ============ */
+.a { --bg: #f6f7f9; --card: #fff; --ink: #172b4d; --muted: #6b778c; --line: #e3e6ea; --ok: #2fb67c; --part: #f2a93b; --out: #e5484d; --none: #d9dde3; --acc: #2f6fed;
+  background: var(--bg); color: var(--ink); font-family: "Public Sans", sans-serif; }
+.a .sb { color: var(--ink); }
+.a .hd { display: flex; justify-content: space-between; align-items: center; }
+.a .hd b { font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+.a .hd span { font-size: 11px; color: var(--muted); }
+.a .banner { background: var(--ok); color: #fff; border-radius: 8px; padding: 11px 12px; display: flex; gap: 10px; align-items: center; }
+.a .banner .ic { width: 22px; height: 22px; border-radius: 50%; background: #fff; color: var(--ok); display: grid; place-items: center; font-weight: 800; font-size: 13px; flex: none; }
+.a .banner b { font-size: 15px; display: block; }
+.a .banner small { font-size: 11.5px; opacity: .9; }
+.a .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.a .ch { display: flex; justify-content: space-between; padding: 9px 12px; border-bottom: 1px solid var(--line); font-size: 12px; font-weight: 700; }
+.a .ch span { color: var(--muted); font-weight: 500; }
+.a .item { padding: 9px 12px 8px; border-bottom: 1px solid var(--line); }
+.a .item:last-child { border-bottom: 0; }
+.a .item .t { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; gap: 8px; }
+.a .item .t em { font-style: normal; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.a .item .sub { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+.a .bars { display: grid; grid-template-columns: repeat(30, 1fr); gap: 1.5px; height: 20px; margin-top: 6px; }
+.a .bars i { border-radius: 1.5px; background: var(--none); }
+.a .bars i.ok { background: var(--ok); } .a .bars i.part { background: var(--part); } .a .bars i.out { background: #c9ced6; }
+.a .axis { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted); margin-top: 3px; }
+.a .sys { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; padding: 9px 12px; font-size: 12px; }
+.a .sys em { font-style: normal; font-size: 11px; font-weight: 600; text-align: right; }
+.a .tabs { background: var(--card); border-top: 1px solid var(--line); color: var(--muted); font-weight: 600; }
+.a .tabs .on { color: var(--acc); }
+.a .tabs .add { background: var(--acc); color: #fff; border-radius: 10px; }
+
+/* ============ B. DEPARTURE BOARD ============ */
+.b { --bg: #0c0d0f; --row: #15171a; --ink: #f2f2f2; --amb: #ffcc33; --muted: #8a8f96; --ok: #3ee07f; --bad: #ff5b5b; --soon: #ffcc33; --line: #24272b;
+  background: var(--bg); color: var(--ink); font-family: "JetBrains Mono", monospace; }
+.b .sb { color: #fff; }
+.b .hd { display: flex; justify-content: space-between; align-items: end; border-bottom: 2px solid var(--amb); padding-bottom: 6px; }
+.b .hd b { font: 700 22px "IBM Plex Sans Condensed", sans-serif; letter-spacing: .06em; color: var(--amb); }
+.b .hd span { font-size: 18px; font-weight: 700; }
+.b .hd small { display: block; font-size: 9px; color: var(--muted); letter-spacing: .1em; text-align: right; }
+.b .cols, .b .r { display: grid; grid-template-columns: 1fr 34px 76px; gap: 6px; align-items: center; }
+.b .cols { font-size: 8.5px; color: var(--muted); letter-spacing: .12em; padding: 0 6px; }
+.b .board { display: grid; gap: 3px; }
+.b .r { background: var(--row); padding: 7px 6px; font-size: 11px; }
+.b .r .nm { font-weight: 500; line-height: 1.2; text-transform: uppercase; letter-spacing: .02em; }
+.b .r .nm small { display: block; color: var(--muted); font-size: 9px; text-transform: none; margin-top: 1px; }
+.b .flap { display: inline-flex; gap: 1px; }
+.b .flap i { font-style: normal; background: #000; padding: 2px 1.5px; border-radius: 2px; font-size: 10.5px; font-weight: 700; position: relative; min-width: 8px; text-align: center; }
+.b .flap i::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255,255,255,.08); }
+.b .gate { font-weight: 700; color: var(--amb); }
+.b .st { font-weight: 700; font-size: 10px; text-align: right; letter-spacing: .04em; }
+.b .st.ok { color: var(--ok); } .b .st.soon { color: var(--soon); } .b .st.bad { color: var(--bad); } .b .st.mu { color: var(--muted); }
+.b .r.live { box-shadow: inset 3px 0 0 var(--ok); }
+.b .r.live .st { animation: bl 1s steps(2) infinite; }
+@keyframes bl { 50% { opacity: .35; } }
+.b .msg { border: 1px solid var(--amb); color: var(--amb); font-size: 10.5px; padding: 6px 8px; overflow: hidden; white-space: nowrap; }
+.b .msg span { display: inline-block; animation: scroll 16s linear infinite; }
+@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+.b .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; font-size: 9px; color: var(--muted); letter-spacing: .1em; }
+.b .sum div { background: var(--row); padding: 6px 8px; }
+.b .sum b { display: block; font-size: 18px; color: var(--ink); }
+.b .tabs { border-top: 1px solid var(--line); color: var(--muted); }
+.b .tabs .on { color: var(--amb); }
+.b .tabs .add { background: var(--amb); color: #000; font-weight: 700; }
+
+/* ============ C. DELIVERY TRACKER ============ */
+.c { --bg: #ffffff; --soft: #f2f5f9; --ink: #101828; --muted: #667085; --line: #e4e7ec; --acc: #5b4cf0; --ok: #12b76a; --warn: #f79009;
+  background: var(--bg); color: var(--ink); font-family: "Public Sans", sans-serif; }
+.c .sb { color: var(--ink); }
+.c .hd b { font-size: 24px; font-weight: 800; letter-spacing: -.02em; display: block; }
+.c .hd span { font-size: 12px; color: var(--muted); }
+.c .chips { display: flex; gap: 6px; }
+.c .chips span { font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 99px; background: var(--soft); color: var(--muted); }
+.c .chips span.on { background: var(--ink); color: #fff; }
+.c .hero { border-radius: 14px; background: var(--soft); padding: 12px; display: grid; gap: 10px; }
+.c .hero .top { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.c .hero h4 { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.25; }
+.c .hero .meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.c .badge { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 99px; white-space: nowrap; background: #d1fadf; color: #027a48; }
+.c .steps { display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
+.c .steps::before { content: ""; position: absolute; top: 9px; left: 10%; right: 10%; height: 3px; background: var(--line); border-radius: 2px; }
+.c .steps::after { content: ""; position: absolute; top: 9px; left: 10%; width: 40%; height: 3px; background: var(--ok); border-radius: 2px; }
+.c .step { display: grid; justify-items: center; gap: 4px; font-size: 9.5px; color: var(--muted); position: relative; z-index: 1; text-align: center; }
+.c .step i { width: 21px; height: 21px; border-radius: 50%; background: #fff; border: 3px solid var(--line); display: grid; place-items: center; font-style: normal; font-size: 10px; color: #fff; font-weight: 800; }
+.c .step.done i { background: var(--ok); border-color: var(--ok); }
+.c .step.now i { background: #fff; border-color: var(--ok); box-shadow: 0 0 0 4px #d1fadf; }
+.c .step.now { color: var(--ink); font-weight: 700; }
+.c .hero .act { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--muted); }
+.c .go { background: var(--acc); color: #fff; font-weight: 700; font-size: 13px; padding: 8px 16px; border-radius: 10px; border: 0; }
+.c .sec { font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; }
+.c .sec span { color: var(--acc); font-weight: 600; }
+.c .li { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.c .li .ico { width: 34px; height: 34px; border-radius: 10px; background: var(--soft); display: grid; place-items: center; font-size: 9px; font-weight: 800; color: var(--muted); }
+.c .li b { font-size: 13px; font-weight: 600; display: block; line-height: 1.2; }
+.c .li small { font-size: 11px; color: var(--muted); }
+.c .mini { display: flex; gap: 3px; margin-top: 4px; }
+.c .mini i { width: 14px; height: 4px; border-radius: 2px; background: var(--line); }
+.c .mini i.d { background: var(--ok); } .c .mini i.w { background: var(--warn); }
+.c .li em { font-style: normal; font-size: 11px; font-weight: 600; text-align: right; white-space: nowrap; }
+.c .tabs { border-top: 1px solid var(--line); color: var(--muted); font-weight: 600; }
+.c .tabs .on { color: var(--acc); }
+.c .tabs .add { background: var(--acc); color: #fff; border-radius: 12px; }
+
+/* ============ D. HEARTBEAT MONITOR ============ */
+.d { --bg: #0f1419; --card: #161d24; --ink: #e4ebf1; --muted: #7c8a97; --line: #232d37; --ok: #4ade80; --down: #f87171; --pend: #fbbf24; --idle: #2a3540; --acc: #60a5fa;
+  background: var(--bg); color: var(--ink); font-family: "Public Sans", sans-serif; }
+.d .sb { color: var(--ink); }
+.d .hd { display: flex; justify-content: space-between; align-items: center; }
+.d .hd b { font-size: 20px; font-weight: 800; }
+.d .hd span { font: 500 10.5px "JetBrains Mono", monospace; color: var(--ok); background: rgba(74,222,128,.1); padding: 3px 7px; border-radius: 99px; }
+.d .ov { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.d .ov div { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.d .ov b { display: block; font-size: 20px; font-weight: 800; line-height: 1; }
+.d .ov span { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.d .mon { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; display: grid; gap: 6px; }
+.d .mon .t { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.d .mon .nm { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px; line-height: 1.2; }
+.d .mon .nm small { display: block; font-size: 10.5px; color: var(--muted); font-weight: 400; }
+.d .pct { font: 600 10.5px "JetBrains Mono", monospace; padding: 2px 6px; border-radius: 99px; white-space: nowrap; }
+.d .pct.ok { background: var(--ok); color: #052e14; } .d .pct.down { background: var(--idle); color: var(--muted); } .d .pct.pend { background: var(--pend); color: #3b2900; }
+.d .hb { display: flex; gap: 2px; height: 18px; }
+.d .hb i { flex: 1; border-radius: 3px; background: var(--idle); }
+.d .hb i.ok { background: var(--ok); opacity: 1; } .d .hb i.pend { background: var(--pend); opacity: 1; }
+.d .hb i.last { box-shadow: 0 0 0 1.5px var(--bg), 0 0 0 3px currentColor; }
+.d .hb.new i:last-child { animation: pop .6s ease-out; }
+@keyframes pop { from { transform: scaleY(.3); } to { transform: scaleY(1); } }
+.d .mon .ft { display: flex; justify-content: space-between; font: 10px "JetBrains Mono", monospace; color: var(--muted); }
+.d .mon.up { border-color: rgba(74,222,128,.45); }
+.d .go { font: 700 11px "Public Sans", sans-serif; background: var(--ok); color: #052e14; padding: 4px 10px; border-radius: 6px; }
+.d .tabs { border-top: 1px solid var(--line); color: var(--muted); font-weight: 600; background: var(--card); }
+.d .tabs .on { color: var(--acc); }
+.d .tabs .add { background: var(--acc); color: #04121f; border-radius: 10px; }
+
+.foot { max-width: 1480px; margin: 36px auto 0; color: var(--page-muted); font-size: 13px; text-align: center; }
+@media (max-width: 400px) { figure, .phone { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Status tracker styles for Radar</h1>
+    <p>Four takes on a status-tracker home screen. Each one turns every watch into something you check at a glance: a status page row, a departure board line, a delivery timeline or an uptime monitor. Same sample data in all four.</p>
+  </div>
+  <div class="legend">SAMPLE DATA · 3:04 AM ET</div>
+</header>
+
+<main class="sheet">
+
+<!-- A. STATUS PAGE -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION A</span>
+    <h2>Status Page</h2>
+    <p>Like a service status page. A banner sums up what's happening, then each watch gets a 30-day bar where green days had stock and grey days didn't.</p>
+    <span class="best"><b>Best for:</b> instant familiarity and seeing restock history at a glance.</span>
+  </figcaption>
+  <div class="phone a">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><b>Brazier Status</b><span>Updated <span data-ago>4</span>s ago</span></div>
+      <div class="banner"><span class="ic">!</span><div><b>2 items in stock now</b><small>Prismatic Evolutions ETB at Target, Destined Rivals Bundle at Best Buy</small></div></div>
+      <div class="card">
+        <div class="ch">Your watches <span>30-day stock history</span></div>
+        <div class="item"><div class="t">Prismatic Evolutions ETB<em style="color:var(--ok)">● In stock</em></div><div class="sub">Target · $59.99 · live <span data-up="47">0:47</span></div><div class="bars" data-bars="ok"></div></div>
+        <div class="item"><div class="t">Destined Rivals Bundle<em style="color:var(--ok)">● In stock</em></div><div class="sub">Best Buy · $26.99</div><div class="bars" data-bars="ok2"></div></div>
+        <div class="item"><div class="t">Mega Evolution ETB (PC)<em style="color:var(--part)">● Window in <span data-cd>8:42</span></em></div><div class="sub">Pokémon Center · preorder 3:13 AM ET</div><div class="bars" data-bars="part"></div></div>
+        <div class="item"><div class="t">Phantasmal Flames Box<em style="color:var(--out)">● Sold out</em></div><div class="sub">5 retailers · checked 12s ago</div><div class="bars" data-bars="out"></div>
+          <div class="axis"><span>30 days ago</span><span>Today</span></div></div>
+      </div>
+      <div class="card">
+        <div class="ch">Retailer monitoring <span>5 of 6 operational</span></div>
+        <div class="sys"><span>Best Buy · Target · Walmart · GameStop</span><em style="color:var(--ok)">Operational</em><span>Pokémon Center</span><em style="color:var(--part)">Degraded</em></div>
+      </div>
+    </div>
+    <div class="tabs"><span class="on">Status</span><span>Calendar</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+<!-- B. DEPARTURE BOARD -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION B</span>
+    <h2>Departure Board</h2>
+    <p>An airport departures board. Each watch is a line, the retailer is the gate, and the status reads <i>In stock</i>, <i>Window soon</i>, <i>Watching</i> or <i>Sold out</i>.</p>
+    <span class="best"><b>Best for:</b> time-driven drops. Everyone already knows how to read it.</span>
+  </figcaption>
+  <div class="phone b">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><b>DROPS</b><div><span class="n" id="clock">03:04:12</span><small>EASTERN</small></div></div>
+      <div class="sum n"><div><b style="color:var(--ok)">2</b>IN STOCK</div><div><b style="color:var(--amb)">1</b>WINDOW SOON</div><div><b>11</b>WATCHING</div></div>
+      <div class="cols"><span>ITEM</span><span>GATE</span><span style="text-align:right">STATUS</span></div>
+      <div class="board">
+        <div class="r live"><div class="nm">Prismatic Evo ETB<small>$59.99 · live <span data-up="47">0:47</span></small></div><span class="gate">TGT</span><span class="st ok">IN STOCK</span></div>
+        <div class="r live"><div class="nm">Destined Rivals BNDL<small>$26.99 · live <span data-up="133">2:13</span></small></div><span class="gate">BBY</span><span class="st ok">IN STOCK</span></div>
+        <div class="r"><div class="nm">Mega Evo ETB PC<small>Preorder · 03:13</small></div><span class="gate">PKC</span><span class="st soon">IN <span data-cd>8:42</span></span></div>
+        <div class="r"><div class="nm">Phantasmal Fl. Box<small>5 retailers · 30s checks</small></div><span class="gate">ALL</span><span class="st mu">WATCHING</span></div>
+        <div class="r"><div class="nm">Journey Together ETB<small>Pickup ≤ 25 km</small></div><span class="gate">TGT</span><span class="st mu">WATCHING</span></div>
+        <div class="r"><div class="nm">Prismatic Evo SPC<small>Est. Thu 03:00</small></div><span class="gate">WMT</span><span class="st mu">EST THU</span></div>
+        <div class="r"><div class="nm">Surging Sparks BNDL<small>Sold out 02:58 · 6m live</small></div><span class="gate">GME</span><span class="st bad">SOLD OUT</span></div>
+        <div class="r"><div class="nm">151 Poster Collection<small>Sold out yesterday</small></div><span class="gate">TGT</span><span class="st bad">SOLD OUT</span></div>
+      </div>
+      <div class="msg"><span>POKÉMON CENTER IS RATE-LIMITING · CHECKS SLOWED TO 2 MIN · BURST RESUMES AT 03:03 FOR MEGA EVOLUTION PREORDER</span></div>
+    </div>
+    <div class="tabs"><span class="on">Board</span><span>Cal</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+<!-- C. DELIVERY TRACKER -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION C</span>
+    <h2>Drop Tracker</h2>
+    <p>Like a package tracking timeline. Every watch moves through stages: <i>Watching → Window → In stock → In cart → Ordered</i>, so you always know the next step.</p>
+    <span class="best"><b>Best for:</b> walking users from alert to checkout. Ties into the Inventory Vault later.</span>
+  </figcaption>
+  <div class="phone c">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><b>Your drops</b><span>14 tracked · 2 need action</span></div>
+      <div class="chips"><span class="on">Needs action 2</span><span>Watching 9</span><span>Done 3</span></div>
+      <div class="hero">
+        <div class="top"><div><h4>Prismatic Evolutions Elite Trainer Box</h4><div class="meta">Target · $59.99 · ship + pickup</div></div><span class="badge">In stock</span></div>
+        <div class="steps">
+          <div class="step done"><i>✓</i>Watching</div>
+          <div class="step done"><i>✓</i>Window</div>
+          <div class="step now"><i></i>In stock</div>
+          <div class="step"><i></i>In cart</div>
+          <div class="step"><i></i>Ordered</div>
+        </div>
+        <div class="act"><span>Live <b class="n" data-up="47">0:47</b> · sells out in ~6 min</span><button class="go">Go to cart</button></div>
+      </div>
+      <div class="sec">Up next <span>See all</span></div>
+      <div class="li"><span class="ico">BBY</span><div><b>Destined Rivals Bundle</b><small>In stock · $26.99</small><div class="mini"><i class="d"></i><i class="d"></i><i class="d"></i><i></i><i></i></div></div><em style="color:var(--ok)">Act now</em></div>
+      <div class="li"><span class="ico">PKC</span><div><b>Mega Evolution ETB (PC)</b><small>Preorder window 3:13 AM</small><div class="mini"><i class="d"></i><i class="w"></i><i></i><i></i><i></i></div></div><em style="color:var(--warn)" class="n">in <span data-cd>8:42</span></em></div>
+      <div class="li"><span class="ico">ALL</span><div><b>Phantasmal Flames Box</b><small>5 retailers · checked 12s ago</small><div class="mini"><i class="d"></i><i></i><i></i><i></i><i></i></div></div><em style="color:var(--muted)">Watching</em></div>
+      <div class="li"><span class="ico">GME</span><div><b>Surging Sparks Bundle</b><small>Ordered · arrives Wed</small><div class="mini"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i></div></div><em style="color:var(--acc)">Ordered</em></div>
+    </div>
+    <div class="tabs"><span class="on">Drops</span><span>Calendar</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+<!-- D. HEARTBEAT MONITOR -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION D</span>
+    <h2>Heartbeat Monitor</h2>
+    <p>Like an uptime monitor. Each watch shows a strip of its most recent checks, and a new beat appears every few seconds. Green means in stock, amber means a drop window is close.</p>
+    <span class="best"><b>Best for:</b> proving the app is always checking. Users can see it working.</span>
+  </figcaption>
+  <div class="phone d">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><b>Monitors</b><span>● 412 checks/min</span></div>
+      <div class="ov n">
+        <div><b style="color:var(--ok)">2</b><span>Up</span></div>
+        <div><b style="color:var(--muted)">11</b><span>Out</span></div>
+        <div><b style="color:var(--pend)">1</b><span>Pending</span></div>
+        <div><b>1.8s</b><span>Alert p95</span></div>
+      </div>
+      <div class="mon up"><div class="t"><span class="nm"><span>Prismatic Evolutions ETB<small>Target · $59.99 · every 15s</small></span></span><span class="go">GO</span></div><div class="hb" data-hb="up1"></div><div class="ft"><span>up <span data-up="47">0:47</span></span><span>stock 30d: 8%</span></div></div>
+      <div class="mon up"><div class="t"><span class="nm"><span>Destined Rivals Bundle<small>Best Buy · $26.99 · every 15s</small></span></span><span class="go">GO</span></div><div class="hb" data-hb="up2"></div><div class="ft"><span>up <span data-up="133">2:13</span></span><span>stock 30d: 11%</span></div></div>
+      <div class="mon"><div class="t"><span class="nm"><span>Mega Evolution ETB (PC)<small>Pokémon Center · every 5s</small></span></span><span class="pct pend">PENDING</span></div><div class="hb" data-hb="pend"></div><div class="ft"><span>window in <span data-cd>8:42</span></span><span>rate-limited 2×</span></div></div>
+      <div class="mon"><div class="t"><span class="nm"><span>Phantasmal Flames Box<small>5 retailers · every 30s</small></span></span><span class="pct down">OOS</span></div><div class="hb" data-hb="down"></div><div class="ft"><span>down 9d 4h</span><span>stock 30d: 2%</span></div></div>
+    </div>
+    <div class="tabs"><span class="on">Monitors</span><span>Cal</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+</main>
+<p class="foot">Pick a letter, or mix them (for example, the Departure Board list with Heartbeat strips inside each row).</p>
+
+<script>
+(function () {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Status page 30-day bars
+  const patterns = {
+    ok:   '..o....o..o.....o...p...o...oo',
+    ok2:  '...o......o..p......o.....o..o',
+    part: '-----------.......o.....p.....',
+    out:  '......o.............o.........',
+  };
+  document.querySelectorAll('[data-bars]').forEach(el => {
+    el.innerHTML = [...patterns[el.dataset.bars]].map(ch =>
+      `<i class="${ch === 'o' ? 'ok' : ch === 'p' ? 'part' : ch === '.' ? 'out' : ''}"></i>`).join('');
+  });
+
+  // Heartbeat strips
+  const hb = {
+    up1:  '                    ......................ooooo',
+    up2:  '                    ..............ooooooooooooo',
+    pend: '                    ...p..p..........p.....ppp.',
+    down: '                    ...............................',
+  };
+  const strips = {};
+  document.querySelectorAll('[data-hb]').forEach(el => {
+    const k = el.dataset.hb;
+    strips[k] = [...hb[k].trim()].slice(-30);
+    render(el, strips[k]);
+  });
+  function render(el, arr) {
+    el.innerHTML = arr.map((ch, i) => `<i class="${ch === 'o' ? 'ok' : ch === 'p' ? 'pend' : ''}${i === arr.length - 1 ? ' last' : ''}" style="color:${ch === 'o' ? '#4ade80' : ch === 'p' ? '#fbbf24' : '#3b4a58'}"></i>`).join('');
+  }
+  function beat() {
+    document.querySelectorAll('[data-hb]').forEach(el => {
+      const k = el.dataset.hb, arr = strips[k];
+      const next = k.startsWith('up') ? 'o' : k === 'pend' ? (Math.random() < .3 ? 'p' : '.') : '.';
+      arr.push(next); arr.shift();
+      el.classList.remove('new'); void el.offsetWidth; el.classList.add('new');
+      render(el, arr);
+    });
+  }
+
+  // Shared timers
+  let cd = 522, clock = new Date(2026, 10, 1, 3, 4, 12), ago = 4;
+  const fmt = v => `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`;
+  function tick() {
+    cd = Math.max(0, cd - 1);
+    document.querySelectorAll('[data-cd]').forEach(e => e.textContent = fmt(cd));
+    document.querySelectorAll('[data-up]').forEach(e => { const v = +e.dataset.up + 1; e.dataset.up = v; e.textContent = fmt(v); });
+    clock = new Date(clock.getTime() + 1000);
+    document.getElementById('clock').textContent = clock.toTimeString().slice(0, 8);
+    ago = ago >= 9 ? 1 : ago + 1;
+    document.querySelectorAll('[data-ago]').forEach(e => e.textContent = ago);
+  }
+  if (!reduce) { setInterval(tick, 1000); setInterval(beat, 2500); }
+})();
+</script>
+</body>
+</html>

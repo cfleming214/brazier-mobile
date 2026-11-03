@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brazier Radar Style Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: a contact sheet. Five phones in a wrapping row, each a self-contained visual system with the same Radar content. Single neutral theme so the options compare fairly. */
+  --page: #16181b;
+  --page-ink: #e6e8ea;
+  --page-muted: #8b9198;
+  --page-line: #2a2e33;
+  --pick: #ffb547;
+  --font-display: "IBM Plex Sans Condensed", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Condensed", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--page-ink); font-family: var(--font-body); padding: 32px 16px 56px; }
+header.top { max-width: 1240px; margin: 0 auto 28px; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: end; justify-content: space-between; }
+header.top h1 { font-family: var(--font-display); font-weight: 700; font-size: 30px; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+header.top p { margin: 6px 0 0; color: var(--page-muted); font-size: 15px; max-width: 62ch; line-height: 1.5; }
+.legend { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--page-muted); letter-spacing: .06em; }
+.sheet { max-width: 1240px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 36px 28px; justify-content: center; }
+figure { margin: 0; width: 340px; display: grid; gap: 14px; }
+figcaption { display: grid; gap: 4px; }
+figcaption .num { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--pick); letter-spacing: .1em; }
+figcaption h2 { margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+figcaption p { margin: 0; color: var(--page-muted); font-size: 13.5px; line-height: 1.45; }
+figcaption .best { font-size: 12.5px; color: var(--page-ink); }
+figcaption .best b { color: var(--pick); font-weight: 600; }
+
+.phone { width: 340px; height: 720px; border-radius: 42px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 0 8px #050607, 0 0 0 9px #30353b, 0 30px 60px rgba(0,0,0,.5); }
+.sb { height: 44px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 12px 26px 0; font: 600 14px -apple-system, system-ui, sans-serif; }
+.isl { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 104px; height: 30px; background: #000; border-radius: 18px; z-index: 3; }
+.body { flex: 1; overflow: hidden; padding: 4px 14px 0; display: flex; flex-direction: column; gap: 10px; }
+.tabs { flex: none; height: 76px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding: 10px 8px 0; }
+.tabs span { text-align: center; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.tabs .add { justify-self: center; width: 42px; height: 36px; display: grid; place-items: center; font-size: 22px; line-height: 1; margin-top: -4px; }
+.n { font-variant-numeric: tabular-nums; }
+
+/* ============ 1. FLIGHT DECK ============ */
+.s1 { --bg: #eef1f4; --panel: #ffffff; --ink: #0d1218; --muted: #5d6874; --line: #d3d9df; --acc: #ff5a1f; --ok: #0f9d58; --mon: #1d6fd8; --bad: #d93025;
+  background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans Condensed", sans-serif; }
+.s1 .sb { color: var(--ink); }
+.s1 .hd { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+.s1 .hd b { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+.s1 .hd span { font: 500 10px "IBM Plex Mono", monospace; color: var(--muted); letter-spacing: .08em; }
+.s1 .annun { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
+.s1 .annun div { font: 600 9.5px "IBM Plex Mono", monospace; text-align: center; padding: 5px 0; border-radius: 2px; background: #dff3e7; color: var(--ok); border: 1px solid #b7e1c7; }
+.s1 .annun .w { background: #fff1e9; color: var(--acc); border-color: #ffc9b0; }
+.s1 .annun .x { background: #eceff2; color: #9aa4ae; border-color: var(--line); }
+.s1 .kp { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--panel); border: 1px solid var(--line); }
+.s1 .kp div { padding: 8px 8px 7px; border-left: 1px solid var(--line); }
+.s1 .kp div:first-child { border-left: 0; }
+.s1 .kp b { display: block; font-size: 24px; font-weight: 600; line-height: 1; }
+.s1 .kp span { font: 500 8.5px "IBM Plex Mono", monospace; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+.s1 .lbl { font: 600 10px "IBM Plex Mono", monospace; letter-spacing: .14em; color: var(--muted); display: flex; justify-content: space-between; margin-bottom: -4px; }
+.s1 .lbl a { color: var(--mon); text-decoration: none; }
+.s1 .nx { background: var(--ink); color: #fff; padding: 10px 12px; display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
+.s1 .nx .t { font: 600 26px "IBM Plex Mono", monospace; color: var(--acc); }
+.s1 .nx p { margin: 0; font-size: 12.5px; line-height: 1.3; }
+.s1 .nx small { font: 500 9.5px "IBM Plex Mono", monospace; color: #9fb0c0; letter-spacing: .06em; }
+.s1 .live { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--ok); padding: 10px 11px; display: grid; gap: 8px; }
+.s1 .live .r1 { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
+.s1 .live h4 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.25; }
+.s1 .live .meta { font: 500 9.5px "IBM Plex Mono", monospace; color: var(--muted); margin-top: 2px; }
+.s1 .pill { font: 600 9px "IBM Plex Mono", monospace; letter-spacing: .08em; background: var(--ok); color: #fff; padding: 3px 6px; white-space: nowrap; }
+.s1 .live .r2 { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 8px; align-items: end; font: 500 9px "IBM Plex Mono", monospace; color: var(--muted); }
+.s1 .live .r2 b { display: block; font-size: 13px; color: var(--ink); font-weight: 600; }
+.s1 .go { background: var(--acc); color: #fff; font: 700 12px "IBM Plex Sans Condensed", sans-serif; letter-spacing: .1em; padding: 8px 14px; border: 0; }
+.s1 table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); font-size: 12px; }
+.s1 th { font: 600 8.5px "IBM Plex Mono", monospace; letter-spacing: .1em; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); background: #f6f8fa; }
+.s1 td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.s1 td.m { font: 500 10px "IBM Plex Mono", monospace; color: var(--muted); white-space: nowrap; }
+.s1 td .st { font: 600 9.5px "IBM Plex Mono", monospace; }
+.s1 .tabs { background: var(--panel); border-top: 2px solid var(--ink); color: var(--muted); font-family: "IBM Plex Mono", monospace; }
+.s1 .tabs .on { color: var(--ink); font-weight: 600; }
+.s1 .tabs .add { background: var(--acc); color: #fff; border-radius: 2px; }
+
+/* ============ 2. TRADING DESK ============ */
+.s2 { --bg: #000000; --ink: #e8e8e8; --muted: #8a8a8a; --hdr: #ff9e1b; --up: #3ddc84; --dn: #ff4d4d; --amb: #ffd23f; --line: #262626;
+  background: var(--bg); color: var(--ink); font-family: "Roboto Mono", monospace; font-size: 11px; }
+.s2 .sb { color: #fff; }
+.s2 .body { padding: 2px 8px 0; gap: 6px; }
+.s2 .bar { background: var(--hdr); color: #000; font-weight: 700; display: flex; justify-content: space-between; padding: 3px 6px; font-size: 11px; letter-spacing: .04em; }
+.s2 .ticker { overflow: hidden; white-space: nowrap; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3px 0; font-size: 10px; }
+.s2 .ticker .tt { display: inline-block; animation: tick 22s linear infinite; }
+.s2 .ticker span { margin-right: 18px; }
+@keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.s2 .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.s2 .grid4 div { background: #0a0a0a; padding: 5px 6px; }
+.s2 .grid4 b { display: block; font-size: 18px; font-weight: 700; }
+.s2 .grid4 span { color: var(--muted); font-size: 8.5px; letter-spacing: .08em; }
+.s2 .sec { color: var(--hdr); font-weight: 700; font-size: 10px; letter-spacing: .08em; display: flex; justify-content: space-between; border-bottom: 1px solid var(--hdr); padding-bottom: 2px; }
+.s2 .sec em { color: var(--muted); font-style: normal; font-weight: 400; }
+.s2 table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+.s2 th { color: var(--muted); font-weight: 400; text-align: right; padding: 2px 3px; font-size: 9px; }
+.s2 th:first-child, .s2 td:first-child { text-align: left; }
+.s2 td { padding: 4px 3px; text-align: right; border-bottom: 1px dotted #1d1d1d; white-space: nowrap; }
+.s2 tr.hot td { background: #062a15; }
+.s2 tr.hot td:first-child { box-shadow: inset 3px 0 0 var(--up); padding-left: 6px; }
+.s2 .up { color: var(--up); } .s2 .dn { color: var(--dn); } .s2 .am { color: var(--amb); } .s2 .mu { color: var(--muted); }
+.s2 .chart { border: 1px solid var(--line); height: 70px; position: relative; }
+.s2 .chart svg { width: 100%; height: 100%; display: block; }
+.s2 .cmd { border: 1px solid var(--hdr); padding: 4px 6px; color: var(--hdr); display: flex; gap: 6px; }
+.s2 .cmd i { width: 7px; background: var(--hdr); animation: bl 1s steps(2) infinite; }
+@keyframes bl { 50% { opacity: 0; } }
+.s2 .fk { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+.s2 .fk span { background: #1a1a1a; border-top: 2px solid var(--hdr); text-align: center; padding: 4px 0; font-size: 9px; }
+.s2 .fk span.g { background: var(--up); color: #000; border-color: var(--up); font-weight: 700; }
+.s2 .tabs { border-top: 1px solid var(--hdr); color: var(--muted); }
+.s2 .tabs .on { color: var(--hdr); }
+.s2 .tabs .add { background: var(--hdr); color: #000; font-weight: 700; }
+
+/* ============ 3. TACTICAL HUD ============ */
+.s3 { --bg: #06121c; --ink: #cfefff; --muted: #5f8aa3; --cy: #39d5ff; --ok: #4dffb8; --bad: #ff4f6d; --warn: #ffc24d; --line: rgba(57,213,255,.25);
+  background: radial-gradient(400px 300px at 50% 0%, #0b2a3d, var(--bg)); color: var(--ink); font-family: "Rajdhani", sans-serif; }
+.s3 .sb { color: var(--ink); }
+.s3::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(57,213,255,.035) 0 1px, transparent 1px 3px); }
+.s3 .cut { --c: 10px; clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c)); background: rgba(57,213,255,.06); border: 1px solid var(--line); position: relative; }
+.s3 .hd { display: flex; justify-content: space-between; align-items: center; }
+.s3 .hd b { font-size: 24px; letter-spacing: .3em; font-weight: 700; color: var(--cy); text-shadow: 0 0 10px rgba(57,213,255,.6); }
+.s3 .hd span { font: 11px "Share Tech Mono", monospace; color: var(--ok); }
+.s3 .reticle { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: center; padding: 10px; }
+.s3 .reticle svg { display: block; }
+.s3 .reticle .lab { font: 10px "Share Tech Mono", monospace; color: var(--muted); letter-spacing: .1em; }
+.s3 .reticle .tgt { font-size: 15px; font-weight: 600; line-height: 1.2; margin: 3px 0 6px; }
+.s3 .reticle .tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.s3 .tag { font: 9.5px "Share Tech Mono", monospace; border: 1px solid currentColor; padding: 1px 5px; }
+.s3 .kp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.s3 .kp div { padding: 6px 8px; text-align: center; }
+.s3 .kp b { display: block; font-size: 24px; font-weight: 700; line-height: 1; }
+.s3 .kp span { font: 9px "Share Tech Mono", monospace; color: var(--muted); letter-spacing: .1em; }
+.s3 .sec { font: 11px "Share Tech Mono", monospace; color: var(--cy); letter-spacing: .2em; display: flex; align-items: center; gap: 8px; }
+.s3 .sec::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+.s3 .lock { padding: 10px 12px; border-color: rgba(77,255,184,.5); background: rgba(77,255,184,.07); }
+.s3 .lock h4 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.15; }
+.s3 .lock .row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font: 11px "Share Tech Mono", monospace; color: var(--muted); }
+.s3 .lock .row b { color: var(--ink); font-weight: 400; font-size: 13px; }
+.s3 .lock .lk { position: absolute; top: 8px; right: 10px; font: 10px "Share Tech Mono", monospace; color: var(--ok); animation: bl 1s steps(2) infinite; }
+.s3 .go { background: var(--ok); color: #03140d; font: 700 13px "Rajdhani", sans-serif; letter-spacing: .25em; padding: 6px 14px; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+.s3 .trk { display: grid; gap: 4px; }
+.s3 .trk div { display: grid; grid-template-columns: 1fr auto; padding: 6px 10px; font-size: 14px; font-weight: 500; }
+.s3 .trk small { display: block; font: 10px "Share Tech Mono", monospace; color: var(--muted); }
+.s3 .trk em { font: normal 11px "Share Tech Mono", monospace; text-align: right; }
+.s3 .tabs { border-top: 1px solid var(--line); color: var(--muted); font-family: "Share Tech Mono", monospace; background: rgba(6,18,28,.9); }
+.s3 .tabs .on { color: var(--cy); text-shadow: 0 0 8px var(--cy); }
+.s3 .tabs .add { border: 1px solid var(--cy); color: var(--cy); clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+
+/* ============ 4. RADAR SCOPE ============ */
+.s4 { --bg: #041210; --ink: #c9fff0; --muted: #4f8f80; --ph: #2ef2c0; --hot: #ffe066; --line: rgba(46,242,192,.22);
+  background: var(--bg); color: var(--ink); font-family: "Share Tech Mono", monospace; }
+.s4 .sb { color: var(--ink); }
+.s4 .hd { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: .1em; }
+.s4 .hd b { color: var(--ph); font-weight: 400; }
+.s4 .scope { position: relative; width: 256px; height: 256px; margin: 0 auto; }
+.s4 canvas { display: block; }
+.s4 .blipl { position: absolute; font-size: 9.5px; color: var(--ink); white-space: nowrap; pointer-events: none; }
+.s4 .blipl.hot { color: var(--hot); }
+.s4 .rl { position: absolute; font-size: 9px; color: var(--muted); }
+.s4 .read { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); }
+.s4 .read div { padding: 5px 6px; border-left: 1px solid var(--line); }
+.s4 .read div:first-child { border-left: 0; }
+.s4 .read b { display: block; font-size: 18px; font-weight: 400; color: var(--ph); }
+.s4 .read span { font-size: 8.5px; color: var(--muted); letter-spacing: .08em; }
+.s4 .contact { border: 1px solid var(--hot); padding: 8px 10px; display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; background: rgba(255,224,102,.06); }
+.s4 .contact small { color: var(--hot); font-size: 9.5px; letter-spacing: .12em; }
+.s4 .contact p { margin: 2px 0 0; font-family: "Archivo", sans-serif; font-weight: 600; font-size: 13.5px; line-height: 1.2; }
+.s4 .contact em { font-style: normal; font-size: 10px; color: var(--muted); }
+.s4 .go { border: 1px solid var(--hot); color: var(--hot); padding: 8px 12px; font-size: 12px; letter-spacing: .15em; }
+.s4 .list { font-size: 10.5px; display: grid; gap: 3px; }
+.s4 .list div { display: grid; grid-template-columns: 14px 1fr auto; gap: 6px; }
+.s4 .list div i { color: var(--ph); font-style: normal; }
+.s4 .list div em { color: var(--muted); font-style: normal; }
+.s4 .tabs { border-top: 1px solid var(--line); color: var(--muted); }
+.s4 .tabs .on { color: var(--ph); }
+.s4 .tabs .add { border: 1px solid var(--ph); color: var(--ph); border-radius: 50%; width: 38px; height: 38px; }
+
+/* ============ 5. NEO-BRUTALIST OPS ============ */
+.s5 { --bg: #f4f1ea; --ink: #111111; --hi: #ffe14d; --ok: #00c46a; --bad: #ff3b30; --mon: #3d5afe; --muted: #555;
+  background: var(--bg); color: var(--ink); font-family: "Archivo", sans-serif; }
+.s5 .sb { color: var(--ink); }
+.s5 .box { border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: #fff; }
+.s5 .hd { display: flex; justify-content: space-between; align-items: center; }
+.s5 .hd b { font-family: "Archivo Black", sans-serif; font-size: 30px; letter-spacing: -.02em; line-height: 1; }
+.s5 .hd span { font-weight: 800; font-size: 10px; background: var(--ok); border: 2px solid var(--ink); padding: 3px 6px; }
+.s5 .big { display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; }
+.s5 .big .l { background: var(--ok); padding: 8px 10px; }
+.s5 .big .l b { font-family: "Archivo Black", sans-serif; font-size: 58px; line-height: .9; display: block; }
+.s5 .big .l span { font-weight: 800; font-size: 11px; text-transform: uppercase; }
+.s5 .big .r { display: grid; gap: 6px; }
+.s5 .big .r div { padding: 4px 8px; display: flex; justify-content: space-between; align-items: baseline; font-weight: 800; font-size: 11px; text-transform: uppercase; }
+.s5 .big .r div b { font-family: "Archivo Black", sans-serif; font-size: 20px; }
+.s5 .cd { background: var(--hi); padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.s5 .cd b { font-family: "Archivo Black", sans-serif; font-size: 28px; }
+.s5 .cd p { margin: 0; font-weight: 600; font-size: 12px; line-height: 1.25; }
+.s5 .card { padding: 10px; display: grid; gap: 8px; }
+.s5 .card .r1 { display: flex; justify-content: space-between; gap: 8px; }
+.s5 .card h4 { margin: 0; font-family: "Archivo Black", sans-serif; font-size: 16px; line-height: 1.1; }
+.s5 .card .meta { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+.s5 .stk { background: var(--ok); border: 2px solid var(--ink); font-weight: 800; font-size: 10px; padding: 2px 6px; height: fit-content; white-space: nowrap; transform: rotate(3deg); }
+.s5 .card .r2 { display: flex; gap: 8px; align-items: center; font-weight: 800; font-size: 12px; }
+.s5 .card .r2 span { border: 2px solid var(--ink); padding: 3px 6px; }
+.s5 .go { margin-left: auto; background: var(--ink); color: var(--hi); font-family: "Archivo Black", sans-serif; font-size: 15px; padding: 7px 16px; border: 0; box-shadow: 3px 3px 0 var(--bad); }
+.s5 .rows { display: grid; }
+.s5 .rows div { display: grid; grid-template-columns: 1fr auto; padding: 7px 10px; border-top: 2.5px solid var(--ink); font-weight: 600; font-size: 13px; }
+.s5 .rows div:first-child { border-top: 0; }
+.s5 .rows small { display: block; font-size: 10.5px; color: var(--muted); }
+.s5 .rows em { font-style: normal; font-weight: 800; font-size: 10px; align-self: center; border: 2px solid var(--ink); padding: 2px 5px; }
+.s5 .tabs { border-top: 2.5px solid var(--ink); background: #fff; font-weight: 800; }
+.s5 .tabs .on { background: var(--hi); border: 2px solid var(--ink); margin: 0 4px; padding: 3px 0; }
+.s5 .tabs .add { background: var(--ink); color: var(--hi); }
+
+.foot { max-width: 1240px; margin: 36px auto 0; color: var(--page-muted); font-size: 13px; text-align: center; }
+@media (max-width: 400px) { figure, .phone { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Pick a style for the Radar screen</h1>
+    <p>Five more visual directions for the Brazier home screen. Each shows the same sample data: 2 items live, 9 watching, the next Pokémon Center preorder window and adapter health, so you can compare look and feel directly.</p>
+  </div>
+  <div class="legend">SAMPLE DATA · 3:04 AM ET</div>
+</header>
+
+<main class="sheet">
+
+<!-- 1. FLIGHT DECK -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION 1</span>
+    <h2>Flight Deck</h2>
+    <p>Light, aviation-style cockpit display. Annunciator lights for retailers, ruled tables, black countdown strip, safety-orange actions.</p>
+    <span class="best"><b>Best for:</b> daylight readability and a calm, trustworthy, pro-tool feel.</span>
+  </figcaption>
+  <div class="phone s1">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><b>Radar</b><span>SYS NOMINAL · p95 1.8s</span></div>
+      <div class="annun"><div>BBY</div><div>TGT</div><div>WMT</div><div>GME</div><div class="w">PKC</div><div class="x">AMZ</div></div>
+      <div class="kp n">
+        <div><b style="color:var(--ok)">2</b><span>Live</span></div>
+        <div><b style="color:var(--mon)">9</b><span>Watching</span></div>
+        <div><b style="color:var(--bad)">3</b><span>Sold out</span></div>
+        <div><b>5</b><span>Alerts 24h</span></div>
+      </div>
+      <div class="nx"><span class="t n" data-cd>08:42</span><div><p>Pokémon Center preorder: Mega Evolution ETB</p><small>CONFIRMED · 3:13 AM ET · BURST ARMED</small></div></div>
+      <div class="lbl"><span>LIVE NOW · 2</span></div>
+      <div class="live">
+        <div class="r1"><div><h4>Prismatic Evolutions ETB</h4><div class="meta">TARGET · TCIN 93954435</div></div><span class="pill">IN STOCK</span></div>
+        <div class="r2 n"><div>PRICE<b>$59.99</b></div><div>LIVE<b data-up="47">0:47</b></div><div>SELLOUT<b>~6m</b></div><button class="go">GO →</button></div>
+      </div>
+      <div class="lbl"><span>MONITORING · 9</span><a href="#all">ALL</a></div>
+      <table>
+        <tr><th>ITEM</th><th>TIER</th><th>STATE</th></tr>
+        <tr><td>Destined Rivals Bundle<br><span class="st" style="color:var(--ok)">BBY LIVE</span></td><td class="m">15s</td><td class="m" style="color:var(--ok)">IN 2:13</td></tr>
+        <tr><td>Mega Evolution ETB (PC)</td><td class="m" style="color:var(--acc)">5s</td><td class="m">OOS 3s</td></tr>
+        <tr><td>Phantasmal Flames Box</td><td class="m">30s</td><td class="m">OOS 12s</td></tr>
+        <tr><td>Journey Together ETB</td><td class="m">30s</td><td class="m">OOS 21s</td></tr>
+      </table>
+    </div>
+    <div class="tabs"><span class="on">Radar</span><span>Cal</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+<!-- 2. TRADING DESK -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION 2</span>
+    <h2>Trading Desk</h2>
+    <p>A dense financial terminal. Scrolling restock ticker, watch list as a quote board with resale spread, function-key actions.</p>
+    <span class="best"><b>Best for:</b> resellers who care about margin and want maximum data per screen.</span>
+  </figcaption>
+  <div class="phone s2">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="bar"><span>DRPH RADAR &lt;GO&gt;</span><span class="n">03:04:12 ET</span></div>
+      <div class="ticker"><span class="tt">
+        <span class="up">▲ TGT PRE-ETB IN $59.99</span><span class="up">▲ BBY DRI-BNDL IN $26.99</span><span class="dn">▼ WMT JTG-ETB OOS</span><span class="am">◆ PKC 429 BACKOFF</span><span class="mu">● GME PFL-BOX OOS</span>
+        <span class="up">▲ TGT PRE-ETB IN $59.99</span><span class="up">▲ BBY DRI-BNDL IN $26.99</span><span class="dn">▼ WMT JTG-ETB OOS</span><span class="am">◆ PKC 429 BACKOFF</span><span class="mu">● GME PFL-BOX OOS</span>
+      </span></div>
+      <div class="grid4 n">
+        <div><b class="up">2</b><span>LIVE</span></div><div><b>9</b><span>WATCH</span></div><div><b class="dn">3</b><span>SOLD</span></div><div><b class="am">1.8s</b><span>P95</span></div>
+      </div>
+      <div class="sec"><span>1) WATCHLIST</span><em>14 SEC · SORT: STATE</em></div>
+      <table class="n">
+        <tr><th>TICKER</th><th>RTL</th><th>LAST</th><th>COMP</th><th>SPRD</th></tr>
+        <tr class="hot"><td class="up">PRE-ETB</td><td>TGT</td><td>59.99</td><td>94</td><td class="up">+57%</td></tr>
+        <tr class="hot"><td class="up">DRI-BNDL</td><td>BBY</td><td>26.99</td><td>41</td><td class="up">+52%</td></tr>
+        <tr><td class="am">MEG-ETB-PC</td><td>PKC</td><td class="mu">OOS</td><td>88</td><td class="mu">T-8m</td></tr>
+        <tr><td>PFL-BOX</td><td>WMT</td><td class="mu">OOS</td><td>172</td><td class="mu">—</td></tr>
+        <tr><td>JTG-ETB</td><td>TGT</td><td class="mu">OOS</td><td>71</td><td class="mu">—</td></tr>
+        <tr><td>PRE-SPC</td><td>ALL</td><td class="mu">OOS</td><td>205</td><td class="mu">—</td></tr>
+      </table>
+      <div class="sec"><span>2) RESTOCKS 14D · PRE-ETB</span><em>TGT</em></div>
+      <div class="chart"><svg viewBox="0 0 300 70" preserveAspectRatio="none" id="s2chart"></svg></div>
+      <div class="fk"><span class="g">F1 GO</span><span>F2 ARM</span><span>F3 CAL</span><span>F4 LOG</span></div>
+      <div class="cmd"><span>&gt; WATCH PFL ETB ALL</span><i></i></div>
+    </div>
+    <div class="tabs"><span class="on">Radar</span><span>Cal</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+<!-- 3. TACTICAL HUD -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION 3</span>
+    <h2>Tactical HUD</h2>
+    <p>A fighter-jet heads-up display. Cyan vector lines, chamfered panels, a targeting reticle for the next window, "target locked" for live stock.</p>
+    <span class="best"><b>Best for:</b> the most dramatic, game-like energy. Strong brand moment.</span>
+  </figcaption>
+  <div class="phone s3">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><b>RADAR</b><span>◉ ONLINE 5/6</span></div>
+      <div class="cut reticle">
+        <svg width="110" height="110" viewBox="0 0 110 110" aria-label="Countdown reticle">
+          <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(57,213,255,.25)" stroke-width="1"/>
+          <circle cx="55" cy="55" r="46" fill="none" stroke="#39d5ff" stroke-width="3" stroke-dasharray="289" stroke-dashoffset="80" transform="rotate(-90 55 55)" data-ring="289"/>
+          <circle cx="55" cy="55" r="34" fill="none" stroke="rgba(57,213,255,.35)" stroke-dasharray="2 4"/>
+          <path d="M55 2v12M55 96v12M2 55h12M96 55h12" stroke="#39d5ff" stroke-width="1.5"/>
+          <text x="55" y="58" text-anchor="middle" fill="#cfefff" font-family="Share Tech Mono" font-size="17" data-cd>08:42</text>
+          <text x="55" y="72" text-anchor="middle" fill="#5f8aa3" font-family="Share Tech Mono" font-size="8">T-MINUS</text>
+        </svg>
+        <div>
+          <div class="lab">NEXT WINDOW · PKC</div>
+          <div class="tgt">Mega Evolution ETB · Pokémon Center preorder</div>
+          <div class="tags"><span class="tag" style="color:var(--ok)">CONFIRMED</span><span class="tag" style="color:var(--warn)">BURST T-10</span></div>
+        </div>
+      </div>
+      <div class="kp n">
+        <div class="cut"><b style="color:var(--ok)">02</b><span>LIVE</span></div>
+        <div class="cut"><b style="color:var(--cy)">09</b><span>TRACK</span></div>
+        <div class="cut"><b style="color:var(--bad)">03</b><span>LOST</span></div>
+        <div class="cut"><b style="color:var(--warn)">05</b><span>ALERTS</span></div>
+      </div>
+      <div class="sec">TARGET LOCKED</div>
+      <div class="cut lock">
+        <span class="lk">■ LOCK</span>
+        <h4>Prismatic Evolutions<br>Elite Trainer Box</h4>
+        <div class="row n"><span>TGT · <b>$59.99</b> · LIVE <b data-up="47">0:47</b></span><span class="go">ENGAGE</span></div>
+      </div>
+      <div class="sec">TRACKING</div>
+      <div class="trk">
+        <div class="cut"><span>Destined Rivals Bundle<small>BBY · IN STOCK · $26.99</small></span><em style="color:var(--ok)">LOCK</em></div>
+        <div class="cut"><span>Phantasmal Flames Box<small>WMT BBY GME +2 · 30s</small></span><em>SCAN</em></div>
+        <div class="cut"><span>Journey Together ETB<small>TGT WMT · pickup ≤25km</small></span><em>SCAN</em></div>
+      </div>
+    </div>
+    <div class="tabs"><span class="on">Radar</span><span>Cal</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+<!-- 4. RADAR SCOPE -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION 4</span>
+    <h2>Radar Scope</h2>
+    <p>Takes the name literally. A sweeping phosphor scope where each watch is a blip: angle is the retailer, distance from center is time until its next expected window.</p>
+    <span class="best"><b>Best for:</b> an instantly memorable signature screen. Pairs with a list view one tap away.</span>
+  </figcaption>
+  <div class="phone s4">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><span>BRAZIER <b>RADAR</b></span><span>SWEEP 1.8s · 14 CONTACTS</span></div>
+      <div class="scope" id="scope">
+        <canvas id="scopeCanvas" width="600" height="600" style="width:256px;height:256px" aria-label="Radar scope showing watched items as blips"></canvas>
+      </div>
+      <div class="read n">
+        <div><b>2</b><span>CONTACT</span></div><div><b>9</b><span>TRACK</span></div><div><b>3</b><span>LOST</span></div><div><b data-cd>08:42</b><span>NEXT WIN</span></div>
+      </div>
+      <div class="contact">
+        <div><small>● CONTACT · TGT · 0:47</small><p>Prismatic Evolutions ETB · $59.99</p><em>2nd contact: Destined Rivals Bundle · BBY</em></div>
+        <span class="go">GO</span>
+      </div>
+      <div class="list">
+        <div><i>◆</i><span>MEG ETB PC · PKC</span><em>T-8m BURST</em></div>
+        <div><i>·</i><span>PFL BOX · 5 RTL</span><em>30s</em></div>
+        <div><i>·</i><span>JTG ETB · TGT WMT</span><em>30s</em></div>
+      </div>
+    </div>
+    <div class="tabs"><span class="on">Radar</span><span>Cal</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+<!-- 5. NEO-BRUTALIST OPS -->
+<figure>
+  <figcaption>
+    <span class="num">OPTION 5</span>
+    <h2>Brutalist Ops</h2>
+    <p>Loud and blunt. Heavy black borders, hard shadows, giant numbers, flat signal colors. Reads like a war-room whiteboard.</p>
+    <span class="best"><b>Best for:</b> standing out in the App Store and appealing to a younger collector crowd.</span>
+  </figcaption>
+  <div class="phone s5">
+    <div class="isl"></div><div class="sb"><span>3:04</span><span>●●●</span></div>
+    <div class="body">
+      <div class="hd"><b>RADAR</b><span>● ALL SYSTEMS GO</span></div>
+      <div class="big">
+        <div class="box l"><b>2</b><span>Live right now</span></div>
+        <div class="r">
+          <div class="box"><span>Watching</span><b>9</b></div>
+          <div class="box"><span>Sold out</span><b>3</b></div>
+          <div class="box"><span>Alerts</span><b>5</b></div>
+        </div>
+      </div>
+      <div class="box cd"><p>Pokémon Center preorder<br>Mega Evolution ETB</p><b class="n" data-cd>08:42</b></div>
+      <div class="box card">
+        <div class="r1"><div><h4>Prismatic Evolutions ETB</h4><div class="meta">Target · ship + pickup</div></div><span class="stk">IN STOCK!</span></div>
+        <div class="r2 n"><span>$59.99</span><span data-up="47">0:47</span><button class="go">GO</button></div>
+      </div>
+      <div class="box rows">
+        <div><span>Destined Rivals Bundle<small>Best Buy · $26.99</small></span><em style="background:var(--ok)">LIVE</em></div>
+        <div><span>Mega Evolution ETB (PC)<small>Pokémon Center · 5s checks</small></span><em style="background:var(--hi)">ARMED</em></div>
+        <div><span>Phantasmal Flames Box<small>5 retailers · 30s</small></span><em>WATCH</em></div>
+      </div>
+    </div>
+    <div class="tabs"><span class="on">Radar</span><span>Cal</span><span class="add">+</span><span>Feed</span><span>Me</span></div>
+  </div>
+</figure>
+
+</main>
+<p class="foot">Reply with an option number, or combine them (for example, Flight Deck layout with the Radar Scope as a toggle).</p>
+
+<script>
+(function () {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Trading desk chart: restock spikes as bars on a grid
+  const c = document.getElementById('s2chart');
+  const spikes = [3, 10, 17, 25];
+  let g = '';
+  for (let i = 0; i <= 14; i++) g += `<line x1="${i * 300 / 14}" x2="${i * 300 / 14}" y1="0" y2="70" stroke="#1d1d1d"/>`;
+  for (let y = 14; y < 70; y += 14) g += `<line x1="0" x2="300" y1="${y}" y2="${y}" stroke="#1d1d1d"/>`;
+  spikes.forEach((d, i) => { const x = d / 26 * 296; const h = [38, 30, 44, 52][i]; g += `<rect x="${x}" y="${66 - h}" width="5" height="${h}" fill="#3ddc84" opacity="${i === 3 ? 1 : .55}"/>`; });
+  g += `<text x="4" y="10" fill="#8a8a8a" font-size="8" font-family="Roboto Mono">MIN IN STOCK</text><text x="296" y="10" fill="#3ddc84" font-size="8" font-family="Roboto Mono" text-anchor="end">LAST 6m (NOW)</text>`;
+  c.innerHTML = g;
+
+  // Radar scope
+  const cv = document.getElementById('scopeCanvas'), ctx = cv.getContext('2d');
+  const R = 280, C = 300;
+  const retailers = ['BBY', 'TGT', 'WMT', 'GME', 'PKC', 'AMZ'];
+  const blips = [
+    { a: 1, r: .2, hot: true, l: 'PRE ETB' },
+    { a: 0, r: .24, hot: true, l: 'DRI BNDL', left: true },
+    { a: 4, r: .36, warn: true, l: 'MEG ETB', left: true },
+    { a: 2, r: .62, l: 'PFL' },
+    { a: 1, r: .7, l: 'JTG' },
+    { a: 3, r: .55 }, { a: 0, r: .8 }, { a: 2, r: .85 }, { a: 5, r: .9 }, { a: 3, r: .75 }, { a: 4, r: .66 }
+  ].map((b, i) => ({ ...b, ang: (b.a / 6) * Math.PI * 2 - Math.PI / 2 + (b.hot || b.warn ? .35 : (i % 3 - 1) * .12) }));
+  let sweep = 0;
+  function draw() {
+    ctx.clearRect(0, 0, 600, 600);
+    ctx.save(); ctx.translate(C, C);
+    ctx.fillStyle = '#061a16'; ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(46,242,192,.22)'; ctx.lineWidth = 2;
+    [.25, .5, .75, 1].forEach(f => { ctx.beginPath(); ctx.arc(0, 0, R * f, 0, Math.PI * 2); ctx.stroke(); });
+    ctx.font = '20px "Share Tech Mono"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    retailers.forEach((rt, i) => {
+      const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * R, Math.sin(a) * R); ctx.stroke();
+      ctx.fillStyle = rt === 'PKC' ? '#ffb547' : '#4f8f80';
+      ctx.fillText(rt, Math.cos(a + .26) * (R - 24), Math.sin(a + .26) * (R - 24));
+    });
+    ctx.fillStyle = '#4f8f80'; ctx.font = '16px "Share Tech Mono"';
+    ctx.fillText('NOW', 0, 18); ctx.fillText('1h', R * .25 + 14, -10); ctx.fillText('1d', R * .5 + 14, -10); ctx.fillText('1w', R * .75 + 14, -10);
+    // sweep wedge
+    const grad = ctx.createConicGradient ? ctx.createConicGradient(sweep - 0.9, 0, 0) : null;
+    if (grad) { grad.addColorStop(0, 'rgba(46,242,192,0)'); grad.addColorStop(0.14, 'rgba(46,242,192,.28)'); grad.addColorStop(0.1433, 'rgba(46,242,192,0)'); ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill(); }
+    ctx.strokeStyle = '#2ef2c0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(sweep) * R, Math.sin(sweep) * R); ctx.stroke();
+    blips.forEach(b => {
+      const x = Math.cos(b.ang) * R * b.r, y = Math.sin(b.ang) * R * b.r;
+      let since = ((sweep - b.ang) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+      const glow = reduce ? 1 : Math.max(.35, 1 - since / (Math.PI * 2));
+      const col = b.hot ? '255,224,102' : b.warn ? '255,181,71' : '46,242,192';
+      ctx.fillStyle = `rgba(${col},${glow})`;
+      ctx.beginPath(); ctx.arc(x, y, b.hot ? 9 : 6, 0, Math.PI * 2); ctx.fill();
+      if (b.hot) { ctx.strokeStyle = `rgba(${col},.6)`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 16, 0, Math.PI * 2); ctx.stroke(); }
+      if (b.l) { ctx.fillStyle = `rgba(${col},.95)`; ctx.font = '18px "Share Tech Mono"'; ctx.textAlign = b.left ? 'right' : 'left'; ctx.fillText(b.l, x + (b.left ? -14 : 14), y - 14); ctx.textAlign = 'center'; }
+    });
+    ctx.restore();
+  }
+  function loop() { sweep += 0.035; if (sweep > Math.PI * 2) sweep -= Math.PI * 2; draw(); requestAnimationFrame(loop); }
+  sweep = 1.2;
+  document.fonts.ready.then(() => { draw(); if (!reduce) requestAnimationFrame(loop); });
+
+  // Shared timers
+  let cd = 522;
+  const cds = document.querySelectorAll('[data-cd]'), ups = document.querySelectorAll('[data-up]'), ring = document.querySelector('[data-ring]');
+  function tick() {
+    cd = Math.max(0, cd - 1);
+    const s = `${String(Math.floor(cd / 60)).padStart(2, '0')}:${String(cd % 60).padStart(2, '0')}`;
+    cds.forEach(e => e.textContent = s);
+    if (ring) ring.setAttribute('stroke-dashoffset', (289 * cd / 900).toFixed(1));
+    ups.forEach(e => { const v = +e.dataset.up + 1; e.dataset.up = v; e.textContent = `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`; });
+  }
+  if (!reduce) setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

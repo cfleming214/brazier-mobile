@@ -1,0 +1,20 @@
+# DROP-59 scenarios 1–2: sign in, notifications granted, watch from catalog lands on Radar.
+appId: com.brazier.app
+tags: [onboarding, watches]
+---
+- runFlow:
+    file: ../subflows/sign-in.yaml
+- tapOn:
+    id: 'tab-profile'
+- assertNotVisible:
+    id: 'enable-alerts'
+- tapOn:
+    id: 'tab-radar'
+- runFlow: ../subflows/add-prismatic-watch.yaml
+# All launch retailers that carry the product are armed by default.
+- assertVisible: 'Best Buy'
+- assertVisible: 'Target'
+- assertVisible: 'Walmart'
+- tapOn: '← RADAR'
+- assertVisible: 'Monitoring · 1'
+- assertVisible: 'Prismatic Evolutions Elite Trainer Box'

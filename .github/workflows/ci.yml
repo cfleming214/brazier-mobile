@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, typecheck, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  database:
+    name: Migrations, schema lint, RLS tests, worker integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.0
+      - run: supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,realtime,storage-api,postgres-meta
+      - run: supabase db lint --level warning --fail-on warning
+      - run: supabase test db
+      - name: Sign-in email contains a 6-digit code
+        run: bash e2e/scripts/check-auth-email.sh
+      - name: Worker integration tests (catalog import, poll -> detect -> notify, latency)
+        run: |
+          eval "$(supabase status -o env | grep -E '^(SERVICE_ROLE_KEY|API_URL)=')"
+          SUPABASE_URL=$API_URL SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY pnpm --filter @brazier/worker test
+
+  e2e-services:
+    name: Test doubles build and pass their tests
+    runs-on: ubuntu-latest
+    env:
+      # Compose interpolates the whole file, including the worker this job doesn't start.
+      SUPABASE_SERVICE_ROLE_KEY: unused-by-test-doubles
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f e2e/docker-compose.yml up -d --build --wait fake-retailer fake-push
+      - run: curl -sf localhost:4010/health && curl -sf localhost:4020/health
+      - if: always()
+        run: docker compose -f e2e/docker-compose.yml down -v
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

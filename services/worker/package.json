@@ -1,0 +1,28 @@
+{
+  "name": "@brazier/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "catalog:sets": "tsx src/cli.ts catalog:sets",
+    "catalog:sealed": "tsx src/cli.ts catalog:sealed",
+    "canary": "tsx src/cli.ts canary",
+    "start": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@brazier/shared": "workspace:*",
+    "@sentry/node": "^10.78.0",
+    "@supabase/supabase-js": "^2.118.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@brazier/fake-push": "workspace:*",
+    "@brazier/fake-retailer": "workspace:*",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "~5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "_source": "Hand-built in the documented Walmart Affiliate API product/v2/items response shape. Replace with live recordings via services/worker/scripts/record-fixtures.ts once API keys are configured.",
+  "items": [
+    {
+      "itemId": 7000001,
+      "name": "Pokémon TCG Prismatic Evolutions Elite Trainer Box",
+      "salePrice": 49.97,
+      "stock": "Available",
+      "sellerInfo": "Walmart.com",
+      "availableOnline": true
+    },
+    {
+      "itemId": 7000002,
+      "name": "Pokémon TCG Destined Rivals Booster Bundle",
+      "salePrice": 26.94,
+      "stock": "Not available",
+      "sellerInfo": "Walmart.com",
+      "availableOnline": false
+    },
+    {
+      "itemId": 7000003,
+      "name": "Pokémon TCG Mega Evolution Elite Trainer Box",
+      "salePrice": 49.97,
+      "stock": "Available",
+      "sellerInfo": "Walmart.com",
+      "preOrder": true
+    },
+    {
+      "itemId": 7000004,
+      "name": "Pokémon TCG Journey Together Booster Box",
+      "salePrice": 289.99,
+      "stock": "Limited Supply",
+      "sellerInfo": "CardKingdomDeals",
+      "marketplace": true
+    }
+  ]
+}

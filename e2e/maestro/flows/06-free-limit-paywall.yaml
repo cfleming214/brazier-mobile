@@ -1,0 +1,38 @@
+# DROP-61 scenario 10: a free user's 4th active watch opens the paywall.
+# The e2e build has no RevenueCat key, so the paywall shows fallback plans; sandbox purchase is
+# covered by the manual release checklist (docs/SMOKE_CHECKLIST.md).
+appId: com.brazier.app
+tags: [paywall]
+---
+- runFlow:
+    file: ../subflows/sign-in.yaml
+- runFlow:
+    file: ../subflows/add-watch-by-name.yaml
+    env: { NAME: 'Prismatic Evolutions' }
+- runFlow:
+    file: ../subflows/add-watch-by-name.yaml
+    env: { NAME: 'Destined Rivals' }
+- runFlow:
+    file: ../subflows/add-watch-by-name.yaml
+    env: { NAME: 'Journey Together' }
+- tapOn:
+    id: 'tab-add'
+- tapOn:
+    id: 'search-input'
+- inputText: 'Phantasmal Flames'
+- tapOn:
+    id: 'search-result-0'
+- tapOn:
+    id: 'save-watch'
+- extendedWaitUntil:
+    visible:
+      id: 'paywall-limit'
+    timeout: 10000
+- assertVisible: 'BRAZIER PRO'
+- assertVisible:
+    id: 'offer-pro_annual'
+- tapOn:
+    id: 'close-paywall'
+- tapOn:
+    id: 'tab-profile'
+- assertVisible: '3 of 3 active watches used'

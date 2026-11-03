@@ -1,0 +1,65 @@
+name: Nightly canaries
+
+# DROP-64: one polite real request per adapter and calendar feed. A parser failure flips that
+# adapter to degraded and opens (or updates) an `adapter-broken` issue.
+# Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, BESTBUY_API_KEY, WALMART_CONSUMER_ID,
+# WALMART_PRIVATE_KEY, AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_PARTNER_TAG.
+# Variables: CANARY_SKUS (JSON list of long-lived products), CALENDAR_FEEDS.
+on:
+  schedule:
+    - cron: '43 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Run canaries
+        id: canary
+        working-directory: services/worker
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BESTBUY_API_KEY: ${{ secrets.BESTBUY_API_KEY }}
+          WALMART_CONSUMER_ID: ${{ secrets.WALMART_CONSUMER_ID }}
+          WALMART_PRIVATE_KEY: ${{ secrets.WALMART_PRIVATE_KEY }}
+          AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
+          AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
+          AMAZON_PARTNER_TAG: ${{ secrets.AMAZON_PARTNER_TAG }}
+          CANARY_SKUS: ${{ vars.CANARY_SKUS }}
+          CALENDAR_FEEDS: ${{ vars.CALENDAR_FEEDS || '[]' }}
+        run: pnpm canary
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canary-report
+          path: services/worker/canary-report.json
+      - name: Open or update adapter-broken issue
+        if: steps.canary.outcome == 'failure' && hashFiles('services/worker/canary-issue.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create adapter-broken --color d93f0b --description "Nightly canary found a broken adapter" 2>/dev/null || true
+          existing=$(gh issue list --label adapter-broken --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file services/worker/canary-issue.md
+          else
+            gh issue create --title "Canary: adapter or feed broken ($(date -u +%F))" \
+              --label adapter-broken --body-file services/worker/canary-issue.md
+          fi
+      - name: Fail the run when a canary failed
+        if: steps.canary.outcome == 'failure'
+        run: exit 1

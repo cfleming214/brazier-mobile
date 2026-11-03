@@ -1,0 +1,44 @@
+# DROP-60 scenarios 4 and 11: restock → push recorded → inbox → cold-start deep link → Checkout Sheet.
+# Emulators can't receive real APNs/FCM pushes from the fake push server, so delivery is asserted
+# against fake-push and the in-app inbox, and the tap is simulated with the alert's deep link.
+appId: com.brazier.app
+tags: [alerts]
+---
+- runScript:
+    file: ../scripts/control.js
+    env: { ACTION: reset }
+- runScript:
+    file: ../scripts/control.js
+    env: { ACTION: set, RETAILER: bestbuy, SKU: '9000001', STATE: OUT_OF_STOCK, PRICE: '4999' }
+- runFlow:
+    file: ../subflows/sign-in.yaml
+- runFlow: ../subflows/add-prismatic-watch.yaml
+- runScript:
+    file: ../scripts/control.js
+    env: { ACTION: set, RETAILER: bestbuy, SKU: '9000001', STATE: IN_STOCK, PRICE: '4999' }
+# Radar flips to LIVE once the worker confirms the restock.
+- tapOn: '← RADAR'
+- extendedWaitUntil:
+    visible: 'Live now · 1'
+    timeout: 20000
+- runScript:
+    file: ../scripts/control.js
+    env: { ACTION: pushes }
+- assertTrue: ${output.pushCount >= 1}
+- tapOn:
+    id: 'open-inbox'
+- assertVisible: '.*Best Buy.*'
+# Cold start from the alert's "Go to Checkout" action.
+- runScript:
+    file: ../scripts/control.js
+    env: { ACTION: latestWatch, EMAIL: '${EMAIL}', SERVICE_KEY: '${SERVICE_KEY}' }
+- stopApp
+- openLink: 'brazier://watch/${output.watchId}?go=1'
+- extendedWaitUntil:
+    visible:
+      id: 'checkout-go-bestbuy'
+    timeout: 15000
+- assertVisible:
+    id: 'checkout-go-bestbuy'
+- assertVisible:
+    id: 'checkout-add-profile'
