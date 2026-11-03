@@ -15,3 +15,8 @@ e2e/artifacts/
 services/worker/src/__tests__/fixtures/recorded/
 services/worker/canary-report.json
 services/worker/canary-issue.md
+
+# Native build artifacts
+*.ipa
+*.apk
+*.aab
