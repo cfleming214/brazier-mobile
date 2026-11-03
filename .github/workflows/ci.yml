@@ -53,9 +53,12 @@ jobs:
   e2e-services:
     name: Test doubles build and pass their tests
     runs-on: ubuntu-latest
+    env:
+      # Compose interpolates the whole file, including the worker this job doesn't start.
+      SUPABASE_SERVICE_ROLE_KEY: unused-by-test-doubles
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose -f e2e/docker-compose.yml up -d --build --wait
+      - run: docker compose -f e2e/docker-compose.yml up -d --build --wait fake-retailer fake-push
       - run: curl -sf localhost:4010/health && curl -sf localhost:4020/health
       - if: always()
         run: docker compose -f e2e/docker-compose.yml down -v
