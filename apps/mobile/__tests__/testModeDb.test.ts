@@ -3,6 +3,7 @@
  * adapter with the expo-sqlite methods db.ts uses.
  */
 import type { SQLiteDatabase } from 'expo-sqlite';
+import { describeSqlite, openMemoryDb, type NodeDb } from './helpers/sqlite';
 import { LISTINGS, PRODUCTS, RETAILERS } from '@/lib/testMode/dataset';
 import {
   adapterHealthIn,
@@ -18,51 +19,13 @@ import {
 import { rebuild, searchText, summarizeTestDb } from '@/lib/testMode/db';
 import { refreshDropSchedule } from '@/lib/testMode/schedule';
 
-type Params = (string | number | null)[];
-type NodeDb = {
-  exec(sql: string): void;
-  close(): void;
-  prepare(sql: string): { run(...p: Params): unknown; get(...p: Params): unknown; all(...p: Params): unknown[] };
-};
-
-let DatabaseSync: (new (path: string) => NodeDb) | null = null;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  DatabaseSync = require('node:sqlite').DatabaseSync;
-} catch {
-  DatabaseSync = null;
-}
-
-function adapt(db: NodeDb): SQLiteDatabase {
-  const adapter = {
-    execAsync: async (sql: string) => db.exec(sql),
-    runAsync: async (sql: string, params: Params = []) => db.prepare(sql).run(...params),
-    getFirstAsync: async (sql: string, params: Params = []) => db.prepare(sql).get(...params) ?? null,
-    getAllAsync: async (sql: string, params: Params = []) => db.prepare(sql).all(...params),
-    withTransactionAsync: async (task: () => Promise<void>) => {
-      db.exec('begin');
-      try {
-        await task();
-        db.exec('commit');
-      } catch (e) {
-        db.exec('rollback');
-        throw e;
-      }
-    },
-  };
-  return adapter as unknown as SQLiteDatabase;
-}
-
-const describeSqlite = DatabaseSync ? describe : describe.skip;
 
 describeSqlite('test-mode database', () => {
   let raw: NodeDb;
   let db: SQLiteDatabase;
 
   beforeEach(async () => {
-    raw = new DatabaseSync!(':memory:');
-    raw.exec('PRAGMA foreign_keys = ON');
-    db = adapt(raw);
+    ({ raw, db } = openMemoryDb());
     await rebuild(db);
   });
 

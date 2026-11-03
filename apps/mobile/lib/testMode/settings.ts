@@ -63,8 +63,11 @@ export async function currentDataSource(): Promise<DataSource> {
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  return () => void listeners.delete(listener);
 }
+
+/** Get told when any test switch changes. */
+export const subscribeTestSettings = subscribe;
 
 function useFlag(flag: TestFlag): [boolean, (next: boolean) => Promise<void>] {
   useEffect(() => {
